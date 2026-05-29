@@ -8,7 +8,7 @@ CREATE TABLE Users (
     UserId INT IDENTITY(1,1) PRIMARY KEY,
     FullName NVARCHAR(100) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
-    Password VARCHAR(255) NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
     Role VARCHAR(20) NOT NULL -- Admin / Lecturer / Student
 );
 

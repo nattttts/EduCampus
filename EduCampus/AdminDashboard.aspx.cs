@@ -11,7 +11,18 @@ namespace EduCampus
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Protect page (must login first)
+            if (Session["Role"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
 
+            if (Session["Role"].ToString() != "Admin")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
         }
     }
 }

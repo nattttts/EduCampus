@@ -24,5 +24,11 @@ namespace EduCampus
                 return;
             }
         }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();              // clear session
+            Response.Redirect("Login.aspx"); // go back to login
+        }
     }
 }

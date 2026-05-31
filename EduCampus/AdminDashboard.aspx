@@ -59,7 +59,7 @@
                     <asp:Button ID="btnLogout" runat="server"
                         Text="Logout"
                         CssClass="btn btn-danger"
-                        />
+                        OnClick="btnLogout_Click" />
 
                 </div>
 

@@ -25,6 +25,7 @@ namespace EduCampus
             }
         }
 
+        // Logout
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();              // clear session

@@ -16,7 +16,7 @@ VALUES
 
 SELECT * FROM Users;
 
-INSERT INTO Lecturers (UserID) VALUES (2), (3);
+INSERT INTO Lecturers (Department, UserID) VALUES ('SOC', 2), ('SOC', 3);
 
 INSERT INTO Students (StudentID, UserID, ProgrammeID) 
 VALUES ('P260001', 4, 1), ('P260002', 5, 1), ('P260003', 6, 2);

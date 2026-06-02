@@ -33,7 +33,7 @@
                             <a class="nav-link" href="RegisterLecturer.aspx">Register Lecturer</a>
                         </li>
                          <li class="nav-item">
-                            <a class="nav-link" href="#">Assign Lecturer</a>
+                            <a class="nav-link" href="AssignLecturer.aspx">Assign Lecturer</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Register Student</a>

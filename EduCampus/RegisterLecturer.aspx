@@ -66,7 +66,7 @@
         </div>
     </nav>
 
-    <!-- FORM -->
+    <!-- Form -->
     <div class="container mt-5 d-flex justify-content-center">
         <div class="card shadow p-4" style="width: 400px;">
             
@@ -74,12 +74,12 @@
 
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <asp:TextBox ID="txtName" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter name" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Lecturer Email</label>
-                <asp:TextBox ID="txtLecturerEmail" runat="server" CssClass="form-control" autocomplete="off" />
+                <asp:TextBox ID="txtLecturerEmail" runat="server" CssClass="form-control" placeholder="Enter email e.g. lecturer@example.com" autocomplete="off" />
             </div>
 
             <div class="mb-3">
@@ -87,12 +87,13 @@
                 <asp:TextBox ID="txtLecturerPass" runat="server"
                     CssClass="form-control"
                     TextMode="Password"
+                    placeholder="Enter password"
                     autocomplete="new-password" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Department</label>
-                <asp:TextBox ID="txtDept" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtDept" runat="server" CssClass="form-control" placeholder="Enter department e.g. SOC" />
             </div>
 
             <div class="d-grid">
@@ -108,13 +109,13 @@
         </div>
     </div>
 
-    <!-- SEARCH + GRID -->
+    <!-- Seach + Grid -->
     <div class="container mt-4">
         <div class="card shadow p-4">
 
             <h4 class="mb-3">📋 Registered Lecturers</h4>
 
-            <!-- SEARCH -->
+            <!-- Search -->
             <div class="row mb-3">
                 <div class="col-md-4">
                     <asp:TextBox ID="txtSearchDept" runat="server"
@@ -135,7 +136,7 @@
                 </div>
             </div>
 
-            <!-- GRIDVIEW -->
+            <!-- Gridview -->
             <asp:GridView ID="gvLecturers" runat="server"
                 CssClass="table table-bordered table-striped"
                 AutoGenerateColumns="false"

@@ -34,10 +34,12 @@ namespace EduCampus
             }
         }
 
+        // Loads all lecturers into the lecturer dropdown list
         private void LoadLecturers()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                // Join Lecturers and Users tables to retrieve lecturer details
                 string query = @"
                     SELECT
                         l.LecturerID,
@@ -57,6 +59,7 @@ namespace EduCampus
             }
         }
 
+        // Loads courses that have not yet been assigned in the selected session
         private void LoadCourses()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -86,6 +89,7 @@ namespace EduCampus
             }
         }
 
+        // Refresh available courses whenever a different session is selected
         protected void ddlSession_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadCourses();
@@ -103,7 +107,8 @@ namespace EduCampus
                 {
                     if (item.Selected)
                     {
-                        // Check if already assigned
+                        // Check whether the course has already been assigned
+                        // in the selected academic session
                         string checkQuery = @"
                             SELECT COUNT(*)
                             FROM CourseOfferings
@@ -126,6 +131,8 @@ namespace EduCampus
 
                         anySelected = true;
 
+                        // Create a new course offering by assigning
+                        // the selected lecturer to the selected course
                         string query = @"
                             INSERT INTO CourseOfferings
                             (Session, CourseID, LecturerID)
@@ -141,6 +148,7 @@ namespace EduCampus
                     }
                 }
 
+                // Ensure at least one course was selected
                 if (!anySelected)
                 {
                     lblMsg.Text = "Please select at least one subject!";
@@ -151,15 +159,19 @@ namespace EduCampus
                 lblMsg.Text = "Subjects assigned successfully!";
                 lblMsg.CssClass = "text-success";
 
+                // Refresh available courses and assignment list
                 LoadCourses();
                 LoadAssignments();
             }
         }
 
+        // Loads all lecturer-course assignments into the GridView
         private void LoadAssignments()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                // Retrieve lecturer, session, and course information
+                // for all course offerings
                 string query = @"
                 SELECT
                     co.OfferingID,
@@ -188,6 +200,7 @@ namespace EduCampus
         {
             if (e.CommandName == "DeleteRow")
             {
+                // Retrieve the selected course offering ID
                 int index = Convert.ToInt32(e.CommandArgument);
                 int offeringId = Convert.ToInt32(gvAssign.DataKeys[index].Value);
 
@@ -195,7 +208,8 @@ namespace EduCampus
                 {
                     conn.Open();
 
-                    // Check if there's enrolments for this offering
+                    // Prevent deletion if students are already enrolled
+                    // in the course offering
                     string checkQuery = @"
                         SELECT COUNT(*)
                         FROM Enrolments
@@ -213,7 +227,7 @@ namespace EduCampus
                         return;
                     }
 
-                    // Delete offering if no enrolments
+                    // Delete the course offering if there are no enrolments
                     string query = "DELETE FROM CourseOfferings WHERE OfferingID = @id";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@id", offeringId);
@@ -224,6 +238,7 @@ namespace EduCampus
                 lblMsg.Text = "Deleted successfully!";
                 lblMsg.CssClass = "text-success";
 
+                // Refresh course list and assignment table
                 LoadCourses();
                 LoadAssignments();
             }

@@ -67,81 +67,88 @@
         </nav>
 
         <!-- Manage programme form -->
-        <div class="container mt-4">
-            <h3 class="text-center">Manage Programme</h3>
+        <div class="container mt-5 d-flex justify-content-center">
+            <div class="card shadow p-4" style="width: 400px;">
+                <h3 class="text-center mb-4">Manage Programme</h3>
 
-            <div class="mb-3">
-                <label>Programme Code</label>
-                <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter Programme Code"></asp:TextBox>
+                <div class="mb-3">
+                    <label class="form-label">Programme Code</label>
+                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter Programme Code"></asp:TextBox>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Programme Name</label>
+                    <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter Programme Name"></asp:TextBox>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <!-- Save button -->
+                    <asp:Button ID="btnSave" runat="server"
+                        Text="Save Programme"
+                        CssClass="btn btn-primary"
+                        OnClick="btnSave_Click" />
+              
+                    <!-- Clear button -->
+                    <asp:Button ID="btnClear" runat="server"
+                        Text="Clear"
+                        CssClass="btn btn-secondary"
+                        OnClick="btnClear_Click"/>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <asp:Label ID="lblMsg" runat="server"></asp:Label>
+                </div>
+
             </div>
-
-            <div class="mb-3">
-                <label>Programme Name</label>
-                <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter Programme Name"></asp:TextBox>
-            </div>
-
-            <!-- Save button -->
-            <asp:Button ID="btnSave" runat="server"
-                Text="Save Programme"
-                CssClass="btn btn-primary"
-                OnClick="btnSave_Click" />
-
-            <!-- Clear button -->
-            <asp:Button ID="btnClear" runat="server"
-                Text="Clear"
-                CssClass="btn btn-secondary"
-                OnClick="btnClear_Click"/>
-
-            <asp:Label ID="lblMsg" runat="server"></asp:Label>
-
-            <hr />
-
-            <!-- Programme List -->
-            <h4>Programme List</h4>
-
-            <asp:GridView ID="gvProgramme" runat="server"
-                CssClass="table table-bordered"
-                HeaderStyle-CssClass="table-dark"
-                AutoGenerateColumns="False"
-                DataKeyNames="ProgrammeID"
-                OnRowEditing="gvProgramme_RowEditing"
-                OnRowUpdating="gvProgramme_RowUpdating"
-                OnRowCancelingEdit="gvProgramme_RowCancelingEdit">
-
-                <Columns>
-
-                    <asp:BoundField DataField="ProgrammeID" HeaderText="No." ReadOnly="True" />
-                    <asp:BoundField DataField="ProgrammeCode" HeaderText="Programme Code" />
-                    <asp:BoundField DataField="ProgrammeName" HeaderText="Programme Name" />
-
-                    <asp:TemplateField HeaderText="Action">
-
-                        <ItemTemplate>
-                            <asp:LinkButton ID="btnEdit" runat="server"
-                                CommandName="Edit"
-                                Text="Edit"
-                                CssClass="btn btn-primary btn-sm me-2" />
-                        </ItemTemplate>
-
-                        <EditItemTemplate>
-                            <asp:LinkButton ID="btnUpdate" runat="server"
-                                CommandName="Update"
-                                Text="Update"
-                                CssClass="btn btn-success btn-sm me-2" />
-
-                            <asp:LinkButton ID="btnCancel" runat="server"
-                                CommandName="Cancel"
-                                Text="Cancel"
-                                CssClass="btn btn-secondary btn-sm" />
-                        </EditItemTemplate>
-
-                    </asp:TemplateField>
-
-                </Columns>
-
-            </asp:GridView>
-
         </div>
+        
+        <!-- Programme List -->
+        <div class="container mt-4">
+            <div class="card shadow p-4">
+                <h4 class="mb-3">Programme List</h4>
+
+                <!-- Gridview -->
+                <asp:GridView ID="gvProgramme" runat="server"
+                    CssClass="table table-bordered table-striped"
+                    AutoGenerateColumns="False"
+                    DataKeyNames="ProgrammeID"
+                    EmptyDataText="No programmes found"
+                    OnRowEditing="gvProgramme_RowEditing"
+                    OnRowUpdating="gvProgramme_RowUpdating"
+                    OnRowCancelingEdit="gvProgramme_RowCancelingEdit">
+
+                    <Columns>
+                        <asp:BoundField DataField="ProgrammeID" HeaderText="No." ReadOnly="True" />
+                        <asp:BoundField DataField="ProgrammeCode" HeaderText="Programme Code" />
+                        <asp:BoundField DataField="ProgrammeName" HeaderText="Programme Name" />
+
+                        <asp:TemplateField HeaderText="Action">
+
+                            <ItemTemplate>
+                                <asp:LinkButton ID="btnEdit" runat="server"
+                                    CommandName="Edit"
+                                    Text="Edit"
+                                    CssClass="btn btn-primary btn-sm me-2" />
+                            </ItemTemplate>
+
+                            <EditItemTemplate>
+                                <asp:LinkButton ID="btnUpdate" runat="server"
+                                    CommandName="Update"
+                                    Text="Update"
+                                    CssClass="btn btn-success btn-sm me-2" />
+
+                                <asp:LinkButton ID="btnCancel" runat="server"
+                                    CommandName="Cancel"
+                                    Text="Cancel"
+                                    CssClass="btn btn-secondary btn-sm" />
+                            </EditItemTemplate>
+
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+            </div>
+        </div>
+
     </form>
 </body>
 </html>

@@ -90,15 +90,23 @@ CREATE TABLE Announcements (
     FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
 );
 
--- ENROLMENTS TABLE
-CREATE TABLE Enrolments (
+-- ENROLLMENTMASTER TABLE
+CREATE TABLE EnrollmentMaster (
     EnrolmentID INT IDENTITY(1,1) PRIMARY KEY,
     DateEnrolled DATE DEFAULT GETDATE(),
     Status VARCHAR(10) DEFAULT 'Pending',
     StudentID VARCHAR(10) NOT NULL,
+
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)
+);
+
+-- ENROLLMENTDETAILS TABLE
+CREATE TABLE EnrollmentDetails (
+    DetailID INT IDENTITY(1,1) PRIMARY KEY, 
+    EnrolmentID INT NOT NULL,
     OfferingID INT NOT NULL,
 
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (EnrolmentID) REFERENCES EnrollmentMaster(EnrolmentID),
     FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
 );
 
@@ -115,16 +123,35 @@ CREATE TABLE Attendance (
     FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
 );
 
+-- NOTES TABLE
+CREATE TABLE Notes (
+    NoteID INT IDENTITY(1,1) PRIMARY KEY,
+    FileName VARCHAR(255) NOT NULL,
+    FilePath VARCHAR(500) NOT NULL,
+    UploadDate DATETIME DEFAULT GETDATE(),
+    OfferingID INT NOT NULL,
+
+    FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
+);
+
+-- COURSEMARKS TABLE
+CREATE TABLE CourseMarks (
+    MarkID INT IDENTITY(1,1) PRIMARY KEY,
+    AssignmentMark DECIMAL(5,2),
+    TestMark DECIMAL(5,2),
+    FinalMark DECIMAL (5,2),
+    FinalGrade NVARCHAR(5),
+    DetailID INT NOT NULL,
+
+    FOREIGN KEY (DetailID) REFERENCES EnrollmentDetails(DetailID)
+);
+
 -- RESULTS TABLE
 CREATE TABLE Results (
     ResultID INT IDENTITY(1,1) PRIMARY KEY,
-    Mark DECIMAL(5,1),
-    Grade NVARCHAR(5),
+    GPA DECIMAL(3,2),
+    CGPA DECIMAL(3,2),
     EnrolmentID INT NOT NULL,
-    LecturerID INT NOT NULL,
-    StudentID VARCHAR(10) NOT NULL,
 
-    FOREIGN KEY (EnrolmentID) REFERENCES Enrolments(EnrolmentID),
-    FOREIGN KEY (LecturerID) REFERENCES Lecturers(LecturerID),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)
+    FOREIGN KEY (EnrolmentID) REFERENCES EnrollmentMaster(EnrolmentID),
 );

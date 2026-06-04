@@ -33,8 +33,12 @@ VALUES
 ('Apr2026', 3, 1),
 ('Apr2026', 2, 2);
 
-SELECT * FROM Enrolments;
+SELECT * FROM EnrollmentMaster;
 
-INSERT INTO Enrolments (StudentID, OfferingID)
+INSERT INTO EnrollmentMaster (StudentID)
 VALUES
-('P260001', 1), ('P260001', 2), ('P260002', 1), ('P260002', 2), ('P260003', 3);
+('P260001'), ('P260002'), ('P260003');
+
+INSERT INTO EnrollmentDetails (EnrolmentID, OfferingID)
+VALUES
+(1, 1), (1, 2), (2, 1), (3, 3);

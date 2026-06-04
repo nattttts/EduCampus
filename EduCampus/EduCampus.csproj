@@ -125,6 +125,7 @@
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
     <Content Include="Logo.jpeg" />
+    <Content Include="ManageCourse.aspx" />
     <Content Include="ManageProgramme.aspx" />
     <Content Include="RegisterLecturer.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -243,6 +244,13 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageCourse.aspx.cs">
+      <DependentUpon>ManageCourse.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ManageCourse.aspx.designer.cs">
+      <DependentUpon>ManageCourse.aspx</DependentUpon>
     </Compile>
     <Compile Include="ManageProgramme.aspx.cs">
       <DependentUpon>ManageProgramme.aspx</DependentUpon>

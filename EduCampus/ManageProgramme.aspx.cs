@@ -35,7 +35,7 @@ namespace EduCampus
             Response.Redirect("Login.aspx"); // go back to login
         }
 
-        // Load data
+        // Load programme list
         void LoadProgramme()
         {
             using (SqlConnection con = new SqlConnection(connStr))

@@ -27,7 +27,7 @@
                             <a class="nav-link active" href="ManageProgramme.aspx">Programme</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Courses</a>
+                            <a class="nav-link" href="ManageCourse.aspx">Courses</a>
                         </li>
                          <li class="nav-item">
                             <a class="nav-link" href="RegisterLecturer.aspx">Register Lecturer</a>
@@ -73,12 +73,12 @@
 
                 <div class="mb-3">
                     <label class="form-label">Programme Code</label>
-                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter Programme Code"></asp:TextBox>
+                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter programme code"></asp:TextBox>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Programme Name</label>
-                    <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter Programme Name"></asp:TextBox>
+                    <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter programme name"></asp:TextBox>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -144,8 +144,11 @@
                             </EditItemTemplate>
 
                         </asp:TemplateField>
+
                     </Columns>
+
                 </asp:GridView>
+
             </div>
         </div>
 

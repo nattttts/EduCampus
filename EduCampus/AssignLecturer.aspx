@@ -29,7 +29,7 @@
                     <a class="nav-link" href="ManageProgramme.aspx">Programme</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Courses</a>
+                    <a class="nav-link" href="ManageCourse.aspx">Courses</a>
                 </li>
                  <li class="nav-item">
                     <a class="nav-link" href="RegisterLecturer.aspx">Register Lecturer</a>

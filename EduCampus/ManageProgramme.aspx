@@ -118,7 +118,12 @@
                     OnRowCancelingEdit="gvProgramme_RowCancelingEdit">
 
                     <Columns>
-                        <asp:BoundField DataField="ProgrammeID" HeaderText="No." ReadOnly="True" />
+                        <asp:TemplateField HeaderText="No.">
+                            <ItemTemplate>
+                                <%# Container.DataItemIndex + 1 %>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:BoundField DataField="ProgrammeCode" HeaderText="Programme Code" />
                         <asp:BoundField DataField="ProgrammeName" HeaderText="Programme Name" />
 

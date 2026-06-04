@@ -150,7 +150,12 @@
                     OnRowCancelingEdit="gvCourse_RowCancelingEdit">
                 
                     <Columns>
-                        <asp:BoundField DataField="CourseID" HeaderText="No." ReadOnly="True" />
+                        <asp:TemplateField HeaderText="No.">
+                            <ItemTemplate>
+                                <%# Container.DataItemIndex + 1 %>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
                         <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
                         <asp:BoundField DataField="CreditHours" HeaderText="Credit Hours" />

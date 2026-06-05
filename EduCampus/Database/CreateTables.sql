@@ -95,6 +95,8 @@ CREATE TABLE EnrollmentMaster (
     EnrolmentID INT IDENTITY(1,1) PRIMARY KEY,
     DateEnrolled DATE DEFAULT GETDATE(),
     Status VARCHAR(10) DEFAULT 'Pending',
+    Session VARCHAR(10) NOT NULL,
+	Semester VARCHAR(15) NOT NULL,
     StudentID VARCHAR(10) NOT NULL,
 
     FOREIGN KEY (StudentID) REFERENCES Students(StudentID)

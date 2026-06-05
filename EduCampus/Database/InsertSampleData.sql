@@ -35,9 +35,9 @@ VALUES
 
 SELECT * FROM EnrollmentMaster;
 
-INSERT INTO EnrollmentMaster (StudentID)
+INSERT INTO EnrollmentMaster (Session, Semester, StudentID)
 VALUES
-('P260001'), ('P260002'), ('P260003');
+('Apr2026', 'Semester 1', 'P260001'), ('Apr2026', 'Semester 1', 'P260002'), ('Apr2026', 'Semester 2', 'P260003');
 
 INSERT INTO EnrollmentDetails (EnrolmentID, OfferingID)
 VALUES

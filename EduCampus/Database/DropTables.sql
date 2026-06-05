@@ -2,9 +2,15 @@ USE EduCampusDB;
 
 DROP TABLE Results;
 
+DROP TABLE CourseMarks;
+
 DROP TABLE Attendance;
 
-DROP TABLE Enrolments;
+DROP TABLE Notes;
+
+DROP TABLE EnrollmentDetails;
+
+DROP TABLE EnrollmentMaster;
 
 DROP TABLE Announcements;
 

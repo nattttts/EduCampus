@@ -212,7 +212,7 @@ namespace EduCampus
                     // in the course offering
                     string checkQuery = @"
                         SELECT COUNT(*)
-                        FROM Enrolments
+                        FROM EnrollmentDetails
                         WHERE OfferingID = @id";
 
                     SqlCommand checkCmd = new SqlCommand(checkQuery, conn);

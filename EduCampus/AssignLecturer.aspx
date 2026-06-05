@@ -70,7 +70,7 @@
 
 <div class="container mt-5">
 
-    <!-- FORM -->
+    <!-- Form -->
     <div class="row justify-content-center">
         <div class="col-md-7">
             <div class="card shadow-lg p-4">
@@ -129,7 +129,7 @@
         </div>
     </div>
 
-    <!-- TABLE -->
+    <!-- Table -->
     <div class="row mt-5">
         <div class="col-12">
             <div class="card shadow-lg p-4">

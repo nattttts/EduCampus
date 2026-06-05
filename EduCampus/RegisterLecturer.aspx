@@ -140,13 +140,51 @@
             <asp:GridView ID="gvLecturers" runat="server"
                 CssClass="table table-bordered table-striped"
                 AutoGenerateColumns="false"
-                EmptyDataText="No lecturers found">
+                DataKeyNames="LecturerID"
+                EmptyDataText="No lecturers found"
+                OnRowEditing="gvLecturer_RowEditing"
+                OnRowUpdating="gvLecturer_RowUpdating"
+                OnRowCancelingEdit="gvLecturer_RowCancelingEdit"
+                OnRowCommand="gvLecturer_RowCommand">
 
                 <Columns>
-                    <asp:BoundField DataField="LecturerID" HeaderText="ID" />
+                    <asp:TemplateField HeaderText="No.">
+                        <ItemTemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                     <asp:BoundField DataField="FullName" HeaderText="Name" />
                     <asp:BoundField DataField="Email" HeaderText="Email" />
                     <asp:BoundField DataField="Department" HeaderText="Department" />
+
+                    <asp:TemplateField HeaderText="Actions">
+
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnEdit" runat="server"
+                                CommandName="Edit"
+                                Text="Edit"
+                                CssClass="btn btn-primary btn-sm me-2" />
+                            <asp:LinkButton ID="btnDelete" runat="server"
+                                CommandName="DeleteRow"
+                                Text="Delete"
+                                CssClass="btn btn-danger btn-sm"
+                                OnClientClick="return confirm('Are you sure you want to delete this lecturer?');" />
+                        </ItemTemplate>
+
+                        <EditItemTemplate>
+                            <asp:LinkButton ID="btnUpdate" runat="server"
+                                CommandName="Update"
+                                Text="Update"
+                                CssClass="btn btn-success btn-sm me-2" />
+
+                            <asp:LinkButton ID="btnCancel" runat="server"
+                                CommandName="Cancel"
+                                Text="Cancel"
+                                CssClass="btn btn-secondary btn-sm" />
+                        </EditItemTemplate>
+
+                    </asp:TemplateField>
                 </Columns>
 
             </asp:GridView>

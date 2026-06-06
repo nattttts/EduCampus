@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace EduCampus
@@ -193,22 +192,31 @@ namespace EduCampus
         }
 
         // Edit mode
-        protected void gvLecturer_RowEditing(object sender, System.Web.UI.WebControls.GridViewEditEventArgs e)
+        protected void gvLecturer_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvLecturers.EditIndex = e.NewEditIndex;
             LoadLecturers();
         }
 
         // Update lecturer information
-        protected void gvLecturer_RowUpdating(object sender, System.Web.UI.WebControls.GridViewUpdateEventArgs e)
+        protected void gvLecturer_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
             int lecturerId = Convert.ToInt32(gvLecturers.DataKeys[e.RowIndex].Value);
 
-            string fullName = ((System.Web.UI.WebControls.TextBox)gvLecturers.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
-            string email = ((System.Web.UI.WebControls.TextBox)gvLecturers.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
-            string department = ((System.Web.UI.WebControls.TextBox)gvLecturers.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
+            string fullName = ((TextBox)gvLecturers.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
+            string email = ((TextBox)gvLecturers.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
+            string department = ((TextBox)gvLecturers.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
 
-            
+            // Validate that all fields have been filled in
+            if (fullName.Trim() == "" || email.Trim() == "" || department.Trim() == "")
+            {
+                lblMessage.CssClass = "text-danger";
+                lblMessage.Text = "Please fill in all fields.";
+
+                gvLecturers.EditIndex = -1;
+                LoadLecturers();
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -279,7 +287,7 @@ namespace EduCampus
         }
 
         // Cancel
-        protected void gvLecturer_RowCancelingEdit(object sender, System.Web.UI.WebControls.GridViewCancelEditEventArgs e)
+        protected void gvLecturer_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             gvLecturers.EditIndex = -1;
             LoadLecturers();
@@ -289,7 +297,7 @@ namespace EduCampus
         {
             if (e.CommandName == "DeleteRow")
             {
-                GridViewRow row = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                GridViewRow row = (GridViewRow)((System.Web.UI.Control)e.CommandSource).NamingContainer;
 
                 int index = row.RowIndex;
                 int lecturerId = Convert.ToInt32(gvLecturers.DataKeys[index].Value);

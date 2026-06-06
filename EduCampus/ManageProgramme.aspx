@@ -115,7 +115,8 @@
                     EmptyDataText="No programmes found"
                     OnRowEditing="gvProgramme_RowEditing"
                     OnRowUpdating="gvProgramme_RowUpdating"
-                    OnRowCancelingEdit="gvProgramme_RowCancelingEdit">
+                    OnRowCancelingEdit="gvProgramme_RowCancelingEdit"
+                    OnRowDeleting="gvProgramme_RowDeleting">
 
                     <Columns>
                         <asp:TemplateField HeaderText="No.">
@@ -134,6 +135,12 @@
                                     CommandName="Edit"
                                     Text="Edit"
                                     CssClass="btn btn-primary btn-sm me-2" />
+
+                                <asp:LinkButton ID="btnDelete" runat="server"
+                                    CommandName="Delete"
+                                    Text="Delete"
+                                    CssClass="btn btn-danger btn-sm"
+                                    OnClientClick="return confirm('Are you sure you want to delete this programme?');" />
                             </ItemTemplate>
 
                             <EditItemTemplate>

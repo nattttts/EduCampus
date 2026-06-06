@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace EduCampus
 {
@@ -63,13 +64,30 @@ namespace EduCampus
 
                 using (SqlConnection con = new SqlConnection(connStr))
                 {
+                    con.Open();
+
+                    // Check duplicate programme code
+                    string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code";
+
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                    checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim());
+
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        lblMsg.ForeColor = System.Drawing.Color.Red;
+                        lblMsg.Text = "Programme code already exists.";
+                        return;
+                    }
+
+                    // Insert programme
                     string query = "INSERT INTO Programmes (ProgrammeCode, ProgrammeName) VALUES (@code, @name)";
                     SqlCommand cmd = new SqlCommand(query, con);
 
                     cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim());
                     cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
 
-                    con.Open();
                     cmd.ExecuteNonQuery();
                 }
 
@@ -111,8 +129,41 @@ namespace EduCampus
             string code = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
             string name = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
 
+            if (code.Trim() == "" || name.Trim() == "")
+            {
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Please fill in all fields.";
+
+                gvProgramme.EditIndex = -1;
+                LoadProgramme();
+                return;
+            }
+
             using (SqlConnection con = new SqlConnection(connStr))
             {
+                con.Open();
+
+                // Check duplicate programme code
+                string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code AND ProgrammeID != @id";
+
+                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+
+                checkCmd.Parameters.AddWithValue("@code", code);
+                checkCmd.Parameters.AddWithValue("@id", id);
+
+                int count = (int)checkCmd.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = "Programme code already exists.";
+
+                    gvProgramme.EditIndex = -1;
+                    LoadProgramme();
+                    return;
+                }
+
+                // Update programme
                 string query = "UPDATE Programmes SET ProgrammeCode=@code, ProgrammeName=@name WHERE ProgrammeID=@id";
 
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -121,7 +172,6 @@ namespace EduCampus
                 cmd.Parameters.AddWithValue("@code", code);
                 cmd.Parameters.AddWithValue("@name", name);
 
-                con.Open();
                 cmd.ExecuteNonQuery();
             }
 
@@ -137,6 +187,67 @@ namespace EduCampus
         {
             gvProgramme.EditIndex = -1;
             LoadProgramme();
+        }
+
+        // Delete
+        protected void gvProgramme_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        { 
+            int id = Convert.ToInt32(gvProgramme.DataKeys[e.RowIndex].Value);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                // Check if programme is assigned to any course
+                string checkCourseQuery = "SELECT COUNT(*) FROM Courses WHERE ProgrammeID=@id";
+
+                SqlCommand checkCourseCmd = new SqlCommand(checkCourseQuery, conn);
+                checkCourseCmd.Parameters.AddWithValue("@id", id);
+
+                int courseCount = Convert.ToInt32(checkCourseCmd.ExecuteScalar());
+
+                // Check if programme is assigned to any student
+                string checkStudentQuery = "SELECT COUNT(*) FROM Students WHERE ProgrammeID=@id";
+
+                SqlCommand checkStudentCmd = new SqlCommand(checkStudentQuery, conn);
+                checkStudentCmd.Parameters.AddWithValue("@id", id);
+
+                int studentCount = Convert.ToInt32(checkStudentCmd.ExecuteScalar());
+
+                // If programme is assigned to courses or students, prevent deletion and show error message
+                if (courseCount > 0 && studentCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {courseCount} course(s) and {studentCount} student(s).";
+                    return;
+                }
+                else if (courseCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {courseCount} course(s).";
+                    return;
+                }
+                else if (studentCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {studentCount} student(s).";
+                    return;
+                }
+
+                // Delete only when programme no assigned to any course and student
+                string query = "DELETE FROM Programmes WHERE ProgrammeID=@id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            LoadProgramme();
+
+            lblMsg.ForeColor = System.Drawing.Color.Green;
+            lblMsg.Text = "Programme deleted successfully!";
         }
     }
 }

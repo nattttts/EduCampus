@@ -12,6 +12,12 @@ namespace EduCampus
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Role"].ToString() != "Student")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
+
             if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");

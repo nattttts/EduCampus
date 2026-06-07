@@ -16,6 +16,12 @@ namespace EduCampus
 
         private void LoadStudentProfile()
         {
+            if (Session["Role"].ToString() != "Student")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
+
             // Ensure user is logged in
             if (Session["Email"] == null)
             {

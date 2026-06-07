@@ -13,6 +13,12 @@ namespace EduCampus
         protected void Page_Load(object sender, EventArgs e)
         {
             // CHECK LOGIN
+            if (Session["Role"].ToString() != "Student")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
+
             if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");
@@ -35,7 +41,7 @@ namespace EduCampus
                 // TOTAL COURSES
                 string totalQuery = @"
                     SELECT COUNT(*)
-                    FROM Enrolments
+                    FROM EnrollmentMaster
                     WHERE StudentID = (
                         SELECT StudentID FROM Students
                         WHERE UserID = (
@@ -51,7 +57,7 @@ namespace EduCampus
                 // APPROVED COURSES
                 string approvedQuery = @"
                     SELECT COUNT(*)
-                    FROM Enrolments
+                    FROM EnrollmentMaster
                     WHERE Status = 'Approved'
                     AND StudentID = (
                         SELECT StudentID FROM Students
@@ -68,7 +74,7 @@ namespace EduCampus
                 // PENDING COURSES
                 string pendingQuery = @"
                     SELECT COUNT(*)
-                    FROM Enrolments
+                    FROM EnrollmentMaster
                     WHERE Status = 'Pending'
                     AND StudentID = (
                         SELECT StudentID FROM Students

@@ -64,7 +64,7 @@ namespace EduCampus
                         c.CourseCode,
                         c.CourseName,
                         e.Status
-                    FROM Enrolments e
+                    FROM EnrollmentMaster e
                     INNER JOIN CourseOfferings o ON e.OfferingID = o.OfferingID
                     INNER JOIN Courses c ON o.CourseID = c.CourseID
                     WHERE e.StudentID = (
@@ -110,7 +110,7 @@ namespace EduCampus
 
                 // INSERT ENROLMENT
                 string insertQuery = @"
-                    INSERT INTO Enrolments
+                    INSERT INTO EnrollmentMaster
                     (DateEnrolled, Status, StudentID, OfferingID)
                     VALUES
                     (GETDATE(), 'Pending', @StudentID, @OfferingID)";
@@ -134,7 +134,7 @@ namespace EduCampus
 
             using (SqlConnection con = new SqlConnection(cs))
             {
-                string query = "DELETE FROM Enrolments WHERE EnrolmentID=@ID";
+                string query = "DELETE FROM EnrollmentMaster WHERE EnrolmentID=@ID";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@ID", enrolmentID);

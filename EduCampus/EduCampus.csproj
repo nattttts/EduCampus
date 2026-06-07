@@ -128,6 +128,7 @@
     <Content Include="ManageCourse.aspx" />
     <Content Include="ManageProgramme.aspx" />
     <Content Include="RegisterLecturer.aspx" />
+    <Content Include="RegisterStudent.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -266,6 +267,13 @@
     </Compile>
     <Compile Include="RegisterLecturer.aspx.designer.cs">
       <DependentUpon>RegisterLecturer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RegisterStudent.aspx.cs">
+      <DependentUpon>RegisterStudent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RegisterStudent.aspx.designer.cs">
+      <DependentUpon>RegisterStudent.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

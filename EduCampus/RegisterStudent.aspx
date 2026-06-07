@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="RegisterLecturer.aspx.cs" Inherits="EduCampus.RegisterLecturer" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="RegisterStudent.aspx.cs" Inherits="EduCampus.RegisterStudent" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,13 +30,13 @@
                         <a class="nav-link" href="ManageCourse.aspx">Courses</a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link active" href="RegisterLecturer.aspx">Register Lecturer</a>
+                        <a class="nav-link" href="RegisterLecturer.aspx">Register Lecturer</a>
                     </li>
                      <li class="nav-item">
                         <a class="nav-link" href="AssignLecturer.aspx">Assign Lecturer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="RegisterStudent.aspx">Register Student</a>
+                        <a class="nav-link active" href="RegisterStudent.aspx">Register Student</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Enrolment</a>
@@ -69,8 +69,13 @@
     <!-- Form -->
     <div class="container mt-5 d-flex justify-content-center">
         <div class="card shadow p-4" style="width: 400px;">
-            
-            <h3 class="text-center mb-4">👩‍🏫 Register Lecturer</h3>
+        
+            <h3 class="text-center mb-4">Register Student</h3>
+
+            <div class="mb-3">
+                <label class="form-label">Student ID</label>
+                <asp:TextBox ID="txtStudentID" runat="server" CssClass="form-control" placeholder="Enter student ID (e.g. P260001)" />
+            </div>
 
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
@@ -78,13 +83,13 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Lecturer Email</label>
-                <asp:TextBox ID="txtLecturerEmail" runat="server" CssClass="form-control" placeholder="Enter email e.g. lecturer@example.com" autocomplete="off" />
+                <label class="form-label">Student Email</label>
+                <asp:TextBox ID="txtStudentEmail" runat="server" CssClass="form-control" placeholder="Enter email e.g. student@example.com" autocomplete="off" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <asp:TextBox ID="txtLecturerPass" runat="server"
+                <asp:TextBox ID="txtStudentPass" runat="server"
                     CssClass="form-control"
                     TextMode="Password"
                     placeholder="Enter password"
@@ -92,8 +97,11 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Department</label>
-                <asp:TextBox ID="txtDept" runat="server" CssClass="form-control" placeholder="Enter department e.g. SOC" />
+                <label class="form-label">Programme</label>
+                <asp:DropDownList ID="ddlProgramme"
+                    runat="server"
+                    CssClass="form-select">
+                </asp:DropDownList>
             </div>
 
             <div class="d-grid">
@@ -113,14 +121,14 @@
     <div class="container mt-4">
         <div class="card shadow p-4">
 
-            <h4 class="mb-3">📋 Registered Lecturers</h4>
+            <h4 class="mb-3">Registered Students</h4>
 
             <!-- Search -->
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <asp:TextBox ID="txtSearchDept" runat="server"
+                    <asp:TextBox ID="txtSearchProgramme" runat="server"
                         CssClass="form-control"
-                        Placeholder="Enter Department (e.g., IT)" />
+                        Placeholder="Enter Programme Name (e.g., Diploma in Computer Science)" />
                 </div>
 
                 <div class="col-md-2">
@@ -137,26 +145,35 @@
             </div>
 
             <!-- Gridview -->
-            <asp:GridView ID="gvLecturers" runat="server"
+            <asp:GridView ID="gvStudents" runat="server"
                 CssClass="table table-bordered table-striped"
                 AutoGenerateColumns="false"
-                DataKeyNames="LecturerID"
-                EmptyDataText="No lecturers found"
-                OnRowEditing="gvLecturer_RowEditing"
-                OnRowUpdating="gvLecturer_RowUpdating"
-                OnRowCancelingEdit="gvLecturer_RowCancelingEdit"
-                OnRowCommand="gvLecturer_RowCommand">
+                DataKeyNames="StudentID"
+                EmptyDataText="No students found"
+                OnRowEditing="gvStudent_RowEditing"
+                OnRowUpdating="gvStudent_RowUpdating"
+                OnRowCancelingEdit="gvStudent_RowCancelingEdit"
+                OnRowCommand="gvStudent_RowCommand"
+                OnRowDataBound="gvStudent_RowDataBound">
 
                 <Columns>
-                    <asp:TemplateField HeaderText="No.">
-                        <ItemTemplate>
-                            <%# Container.DataItemIndex + 1 %>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-
+                    <asp:BoundField DataField="StudentID" HeaderText="Student ID" ReadOnly="true" />
                     <asp:BoundField DataField="FullName" HeaderText="Name" />
                     <asp:BoundField DataField="Email" HeaderText="Email" />
-                    <asp:BoundField DataField="Department" HeaderText="Department" />
+                    <asp:TemplateField HeaderText="Programme">
+
+                        <ItemTemplate>
+                            <%# Eval("ProgrammeName") %>
+                        </ItemTemplate>
+
+                        <EditItemTemplate>
+                            <asp:DropDownList ID="ddlEditProgramme"
+                                runat="server"
+                                CssClass="form-select">
+                            </asp:DropDownList>
+                        </EditItemTemplate>
+
+                    </asp:TemplateField>
 
                     <asp:TemplateField HeaderText="Actions">
 
@@ -169,7 +186,7 @@
                                 CommandName="DeleteRow"
                                 Text="Delete"
                                 CssClass="btn btn-danger btn-sm"
-                                OnClientClick="return confirm('Are you sure you want to delete this lecturer?');" />
+                                OnClientClick="return confirm('Are you sure you want to delete this student?');" />
                         </ItemTemplate>
 
                         <EditItemTemplate>
@@ -194,4 +211,5 @@
 
 </form>
 </body>
+
 </html>

@@ -293,6 +293,7 @@ namespace EduCampus
             LoadLecturers();
         }
 
+        // Delete lecturer
         protected void gvLecturer_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "DeleteRow")
@@ -332,7 +333,7 @@ namespace EduCampus
 
                     int userId = Convert.ToInt32(getUserCmd.ExecuteScalar());
 
-                    // Delete lecturer first
+                    // Delete lecturer 
                     string deleteLecturer = "DELETE FROM Lecturers WHERE LecturerID = @id";
                     SqlCommand delLecturerCmd = new SqlCommand(deleteLecturer, conn);
                     delLecturerCmd.Parameters.AddWithValue("@id", lecturerId);

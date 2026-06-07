@@ -38,7 +38,7 @@
                     <a class="nav-link active" href="AssignLecturer.aspx">Assign Lecturer</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Register Student</a>
+                    <a class="nav-link" href="RegisterStudent.aspx">Register Student</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Enrolment</a>

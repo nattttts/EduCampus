@@ -59,26 +59,36 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT 
-                        e.EnrolmentID,
-                        c.CourseCode,
-                        c.CourseName,
-                        e.Status
-                    FROM EnrollmentMaster e
-                    INNER JOIN CourseOfferings o ON e.OfferingID = o.OfferingID
-                    INNER JOIN Courses c ON o.CourseID = c.CourseID
-                    WHERE e.StudentID = (
-                        SELECT StudentID FROM Students
-                        WHERE UserID = (
-                            SELECT UserId FROM Users WHERE Email = @Email
-                        )
-                    )";
+                SELECT
+                    em.EnrolmentID,
+                    c.CourseCode,
+                    c.CourseName,
+                    em.Status
+                FROM EnrollmentMaster em
+                INNER JOIN EnrollmentDetails ed
+                    ON em.EnrolmentID = ed.EnrolmentID
+                INNER JOIN CourseOfferings co
+                    ON ed.OfferingID = co.OfferingID
+                INNER JOIN Courses c
+                    ON co.CourseID = c.CourseID
+                WHERE em.StudentID =
+                (
+                    SELECT StudentID
+                    FROM Students
+                    WHERE UserID =
+                    (
+                        SELECT UserID
+                        FROM Users
+                        WHERE Email = @Email
+                    )
+                )";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Email", Session["Email"]);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
+
                 da.Fill(dt);
 
                 gvEnrollment.DataSource = dt;
@@ -98,26 +108,37 @@ namespace EduCampus
 
                 // GET STUDENT ID
                 string studentQuery = @"
-                    SELECT StudentID FROM Students
-                    WHERE UserID = (
-                        SELECT UserId FROM Users WHERE Email = @Email
-                    )";
+            SELECT StudentID 
+            FROM Students
+            WHERE UserID = (
+                SELECT UserId 
+                FROM Users 
+                WHERE Email = @Email
+            )";
 
                 SqlCommand studentCmd = new SqlCommand(studentQuery, con);
                 studentCmd.Parameters.AddWithValue("@Email", Session["Email"]);
 
-                string studentID = studentCmd.ExecuteScalar().ToString();
+                object result = studentCmd.ExecuteScalar();
 
-                // INSERT ENROLMENT
+                if (result == null)
+                {
+                    lblMessage.Text = "Student not found!";
+                    return;
+                }
+
+                string studentID = result.ToString();
+
+                // INSERT ENROLLMENT (FIXED COLUMN NAME)
                 string insertQuery = @"
-                    INSERT INTO EnrollmentMaster
-                    (DateEnrolled, Status, StudentID, OfferingID)
-                    VALUES
-                    (GETDATE(), 'Pending', @StudentID, @OfferingID)";
+            INSERT INTO EnrollmentMaster
+            (DateEnrolled, Status, StudentID, CourseOfferingID)
+            VALUES
+            (GETDATE(), 'Pending', @StudentID, @CourseOfferingID)";
 
                 SqlCommand cmd = new SqlCommand(insertQuery, con);
                 cmd.Parameters.AddWithValue("@StudentID", studentID);
-                cmd.Parameters.AddWithValue("@OfferingID", offeringID);
+                cmd.Parameters.AddWithValue("@CourseOfferingID", offeringID);
 
                 cmd.ExecuteNonQuery();
             }
@@ -134,16 +155,41 @@ namespace EduCampus
 
             using (SqlConnection con = new SqlConnection(cs))
             {
-                string query = "DELETE FROM EnrollmentMaster WHERE EnrolmentID=@ID";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@ID", enrolmentID);
-
                 con.Open();
-                cmd.ExecuteNonQuery();
+
+                SqlTransaction trans = con.BeginTransaction();
+
+                try
+                {
+                    // 1. DELETE CHILD FIRST (EnrollmentDetails)
+                    string deleteDetail = @"
+                DELETE FROM EnrollmentDetails
+                WHERE EnrolmentID = @ID";
+
+                    SqlCommand cmd1 = new SqlCommand(deleteDetail, con, trans);
+                    cmd1.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmd1.ExecuteNonQuery();
+
+                    // 2. DELETE PARENT (EnrollmentMaster)
+                    string deleteMaster = @"
+                DELETE FROM EnrollmentMaster
+                WHERE EnrolmentID = @ID";
+
+                    SqlCommand cmd2 = new SqlCommand(deleteMaster, con, trans);
+                    cmd2.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmd2.ExecuteNonQuery();
+
+                    trans.Commit();
+
+                    lblMessage.Text = "Course Dropped Successfully!";
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    lblMessage.Text = "Error: " + ex.Message;
+                }
             }
 
-            lblMessage.Text = "Course Dropped Successfully!";
             LoadMyCourses();
         }
     }

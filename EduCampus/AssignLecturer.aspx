@@ -44,7 +44,7 @@
                     <a class="nav-link" href="#">Enrolment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Announcements</a>
+                    <a class="nav-link" href="AdminAnnouncements.aspx">Announcements</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Calendar</a>

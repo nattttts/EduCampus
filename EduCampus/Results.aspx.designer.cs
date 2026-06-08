@@ -11,11 +11,6 @@
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// btnBackDashboard control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Button btnBackDashboard;
-
-        /// <summary>
         /// btnSem1 control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Button btnSem1;

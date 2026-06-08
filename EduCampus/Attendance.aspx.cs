@@ -115,9 +115,5 @@ namespace EduCampus
                 gvAttendance.DataBind();
             }
         }
-        protected void btnBackDashboard_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("StudentDashboard.aspx");
-        }
     }
 }

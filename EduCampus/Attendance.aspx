@@ -4,9 +4,43 @@
 <html>
 <head runat="server">
     <title>Attendance</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        /* NAVBAR */
+        .topbar {
+            background-color: darkblue;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* PAGE */
+        .container {
+            margin-top: 40px;
+        }
+
         .present {
             background-color: #28a745;
             color: white;
@@ -23,23 +57,29 @@
             display: inline-block;
         }
     </style>
+
 </head>
 
 <body>
+
 <form id="form1" runat="server">
 
-<div class="container mt-4">
+<!-- NAVIGATION -->
+<div class="topbar">
+
+    <div class="menu">
+        <a href="StudentDashboard.aspx">Dashboard</a>
+        <a href="StudentEnrollCourse.aspx">Courses</a>
+        <a href="Results.aspx">Results</a>
+        <a href="Attendance.aspx">Attendance</a>
+        <a href="StudentProfile.aspx">Profile</a>
+    </div>
+
+</div>
+
+<!-- CONTENT -->
 
     <!-- FILTER -->
-    <div class="d-flex justify-content-start mb-3">
-
-    <asp:Button ID="btnBackDashboard"
-        runat="server"
-        Text="← Back to Dashboard"
-        CssClass="btn btn-secondary"
-        OnClick="btnBackDashboard_Click" />
-
-    </div>
     <div class="row mb-3">
         <div class="col-md-4">
 
@@ -53,7 +93,7 @@
         </div>
     </div>
 
-    <!-- TABLE -->
+    <!-- GRID -->
     <asp:GridView ID="gvAttendance" runat="server"
         AutoGenerateColumns="false"
         CssClass="table table-bordered">
@@ -65,11 +105,9 @@
 
             <asp:TemplateField HeaderText="Status">
                 <ItemTemplate>
-
                     <span class='<%# Eval("Status").ToString() == "Present" ? "present" : "absent" %>'>
                         <%# Eval("Status") %>
                     </span>
-
                 </ItemTemplate>
             </asp:TemplateField>
 
@@ -82,5 +120,6 @@
 </div>
 
 </form>
+
 </body>
 </html>

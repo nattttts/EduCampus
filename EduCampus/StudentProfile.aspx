@@ -7,12 +7,64 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="style.css" rel="stylesheet" />
+
+     <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        /* NAVBAR */
+        .topbar {
+            background-color: darkblue;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout {
+            color: white;
+        }
+
+        /* PAGE */
+        .container {
+            margin-top: 40px;
+        }
+    </style>
+
 </head>
 
 <body>
 
 <form id="form1" runat="server">
 
+<!-- NAVIGATION -->
+<div class="topbar">
+
+    <div class="menu">
+        <a href="StudentDashboard.aspx">Dashboard</a>
+        <a href="StudentEnrollCourse.aspx">Courses</a>
+        <a href="Results.aspx">Results</a>
+        <a href="Attendance.aspx">Attendance</a>
+        <a href="StudentProfile.aspx">Profile</a>
+    </div>
+
+</div>
 
 <div class="container mt-5">
 
@@ -62,14 +114,6 @@
                             CssClass="form-control"
                             ReadOnly="true">
                         </asp:TextBox>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <asp:Button ID="btnBackDashboard"
-                            runat="server"
-                            Text="Back to Dashboard"
-                            CssClass="btn btn-primary"
-                            OnClick="btnBackDashboard_Click" />
                     </div>
 
                 </div>

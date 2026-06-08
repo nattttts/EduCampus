@@ -136,6 +136,15 @@ namespace EduCampus
                     }
 
                     // Check whether the student ID already exists
+                    string studentId = txtStudentID.Text.Trim().ToUpper();
+
+                    if (studentId.Length > 10)
+                    {
+                        lblMessage.CssClass = "text-danger";
+                        lblMessage.Text = "Student ID cannot exceed 10 characters.";
+                        return;
+                    }
+
                     string checkStudentQuery = @"
                         SELECT COUNT(*) 
                         FROM Students 
@@ -143,7 +152,7 @@ namespace EduCampus
 
                     SqlCommand checkStudentCmd = new SqlCommand(checkStudentQuery, conn);
 
-                    checkStudentCmd.Parameters.AddWithValue("@studentId", txtStudentID.Text);
+                    checkStudentCmd.Parameters.AddWithValue("@studentId", studentId);
 
                     int studentCount = Convert.ToInt32(checkStudentCmd.ExecuteScalar());
 

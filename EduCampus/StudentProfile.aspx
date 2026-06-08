@@ -64,6 +64,14 @@
                         </asp:TextBox>
                     </div>
 
+                    <div class="text-center mt-4">
+                        <asp:Button ID="btnBackDashboard"
+                            runat="server"
+                            Text="Back to Dashboard"
+                            CssClass="btn btn-primary"
+                            OnClick="btnBackDashboard_Click" />
+                    </div>
+
                 </div>
 
             </div>

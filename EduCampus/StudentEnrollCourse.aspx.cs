@@ -53,7 +53,7 @@ namespace EduCampus
             }
         }
 
-        // LOAD AVAILABLE COURSES (WHERE FIX ADDED HERE)
+        // LOAD AVAILABLE COURSES
         private void LoadCourses()
         {
             using (SqlConnection con = new SqlConnection(cs))
@@ -79,7 +79,7 @@ namespace EduCampus
             }
         }
 
-        // LOAD MY COURSES (WHERE FIX ALREADY OK, CLEANED)
+        // LOAD MY COURSES
         private void LoadMyCourses()
         {
             using (SqlConnection con = new SqlConnection(cs))
@@ -118,7 +118,7 @@ namespace EduCampus
             }
         }
 
-        // ENROLL COURSE (WHERE FIX ADDED FOR DUPLICATE SAFETY)
+        // ENROLL COURSE
         protected void btnEnroll_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
@@ -139,7 +139,6 @@ namespace EduCampus
                         return;
                     }
 
-                    // WHERE FIX (clean duplicate check)
                     string checkQuery = @"
                     SELECT COUNT(*)
                     FROM EnrollmentDetails ed
@@ -217,7 +216,7 @@ namespace EduCampus
             LoadMyCourses();
         }
 
-        // DROP COURSE (WHERE FIX: SAFE DELETE ORDER)
+        // DROP COURSE
         protected void btnDrop_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;

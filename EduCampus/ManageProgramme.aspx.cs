@@ -71,7 +71,7 @@ namespace EduCampus
                     string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code";
 
                     SqlCommand checkCmd = new SqlCommand(checkQuery, con);
-                    checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim());
+                    checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
 
                     int count = (int)checkCmd.ExecuteScalar();
 
@@ -86,7 +86,7 @@ namespace EduCampus
                     string query = "INSERT INTO Programmes (ProgrammeCode, ProgrammeName) VALUES (@code, @name)";
                     SqlCommand cmd = new SqlCommand(query, con);
 
-                    cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim());
+                    cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
                     cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
 
                     cmd.ExecuteNonQuery();
@@ -151,7 +151,7 @@ namespace EduCampus
 
                 SqlCommand checkCmd = new SqlCommand(checkQuery, con);
 
-                checkCmd.Parameters.AddWithValue("@code", code);
+                checkCmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
                 checkCmd.Parameters.AddWithValue("@id", id);
 
                 int count = (int)checkCmd.ExecuteScalar();
@@ -172,12 +172,13 @@ namespace EduCampus
                 SqlCommand cmd = new SqlCommand(query, con);
 
                 cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@code", code);
+                cmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
                 cmd.Parameters.AddWithValue("@name", name);
 
                 cmd.ExecuteNonQuery();
             }
 
+            // Exit edit mode and refresh the programme list
             gvProgramme.EditIndex = -1;
             LoadProgramme();
 
@@ -246,7 +247,7 @@ namespace EduCampus
 
                 cmd.ExecuteNonQuery();
             }
-
+            // Refresh the programme list after successful deletion
             LoadProgramme();
 
             lblMsg.ForeColor = System.Drawing.Color.Green;

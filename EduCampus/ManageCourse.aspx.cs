@@ -121,7 +121,7 @@ namespace EduCampus
                     SqlCommand cmd = new SqlCommand(query, con);
 
                     cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
-                    cmd.Parameters.AddWithValue("@name", txtName.Text);
+                    cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
                     cmd.Parameters.AddWithValue("@credit", creditHours);
                     cmd.Parameters.AddWithValue("@programmeId", ddlProgramme.SelectedValue);
 

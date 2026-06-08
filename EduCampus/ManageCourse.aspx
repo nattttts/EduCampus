@@ -123,7 +123,7 @@
                     <div class="col-md-4">
                         <asp:TextBox ID="txtSearchDept" runat="server"
                             CssClass="form-control"
-                            Placeholder="Enter programme name" />
+                            Placeholder="Enter Programme Name (e.g., Diploma in Computer Science)" />
                     </div>
 
                     <div class="col-md-2">

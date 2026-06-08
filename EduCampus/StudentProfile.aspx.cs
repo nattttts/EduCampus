@@ -8,6 +8,18 @@ namespace EduCampus
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Role"] == null || Session["Email"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            if (Session["Role"].ToString() != "Student")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 LoadStudentProfile();
@@ -16,19 +28,6 @@ namespace EduCampus
 
         private void LoadStudentProfile()
         {
-            if (Session["Role"].ToString() != "Student")
-            {
-                Response.Redirect("AccessDenied.aspx");
-                return;
-            }
-
-            // Ensure user is logged in
-            if (Session["Email"] == null)
-            {
-                Response.Redirect("Login.aspx");
-                return;
-            }
-
             string email = Session["Email"].ToString();
 
             string connectionString =
@@ -50,7 +49,6 @@ namespace EduCampus
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 SqlCommand cmd = new SqlCommand(query, conn);
-
                 cmd.Parameters.AddWithValue("@Email", email);
 
                 conn.Open();
@@ -65,11 +63,7 @@ namespace EduCampus
                     txtProgramme.Text = reader["ProgrammeName"].ToString();
                 }
             }
+        }
 
-        }
-        protected void btnBackDashboard_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("StudentDashboard.aspx");
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace EduCampus
 {
@@ -49,6 +50,7 @@ namespace EduCampus
                 ddlProgramme.DataTextField = "ProgrammeName";
                 ddlProgramme.DataValueField = "ProgrammeID";
                 ddlProgramme.DataBind();
+                ddlProgramme.Items.Insert(0, new ListItem("-- Select Programme --", ""));
             }
         }
 
@@ -57,10 +59,10 @@ namespace EduCampus
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = @"SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours,
-                                 p.ProgrammeName
+                string query = @"SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, c.ProgrammeID, p.ProgrammeName
                                  FROM Courses c
-                                 INNER JOIN Programmes p ON c.ProgrammeID = p.ProgrammeID";
+                                 INNER JOIN Programmes p 
+                                 ON c.ProgrammeID = p.ProgrammeID";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();
@@ -76,39 +78,71 @@ namespace EduCampus
         {
             try
             {
-                if (txtCode.Text == "" || txtName.Text == "" || txtCredit.Text == "")
+                // Validate that all fields have been filled in
+                if (txtCode.Text.Trim() == "" || txtName.Text.Trim() == "" || txtCredit.Text.Trim() == "" || ddlProgramme.SelectedValue == "")
                 {
                     lblMsg.ForeColor = System.Drawing.Color.Red;
                     lblMsg.Text = "Please fill in all fields.";
                     return;
                 }
 
+                // Validate that credit hours is a positive number
+                int creditHours;
+
+                if (!int.TryParse(txtCredit.Text.Trim(), out creditHours) || creditHours <= 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = "Credit hours must be a positive number.";
+                    return;
+                }
+
                 using (SqlConnection con = new SqlConnection(connStr))
                 {
-                    string query = "INSERT INTO Courses (CourseCode, CourseName, CreditHours, ProgrammeID) VALUES (@code, @name, @credit, @pid)";
+                    con.Open();
+
+                    // Check if any duplicate course code
+                    string checkQuery = "SELECT COUNT(*) FROM Courses WHERE CourseCode = @code";
+
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                    checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
+
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        lblMsg.ForeColor = System.Drawing.Color.Red;
+                        lblMsg.Text = "Course code already exists.";
+                        return;
+                    }
+
+                    // Insert course
+                    string query = "INSERT INTO Courses (CourseCode, CourseName, CreditHours, ProgrammeID) " +
+                                   "VALUES (@code, @name, @credit, @programmeId)";
                     SqlCommand cmd = new SqlCommand(query, con);
 
-                    cmd.Parameters.AddWithValue("@code", txtCode.Text);
+                    cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
                     cmd.Parameters.AddWithValue("@name", txtName.Text);
-                    cmd.Parameters.AddWithValue("@credit", txtCredit.Text);
-                    cmd.Parameters.AddWithValue("@pid", ddlProgramme.SelectedValue);
+                    cmd.Parameters.AddWithValue("@credit", creditHours);
+                    cmd.Parameters.AddWithValue("@programmeId", ddlProgramme.SelectedValue);
 
-                    con.Open();
                     cmd.ExecuteNonQuery();
                 }
 
                 lblMsg.ForeColor = System.Drawing.Color.Green;
                 lblMsg.Text = "Course added successfully!";
 
+                // Clear form fields after successful add course
                 txtCode.Text = "";
                 txtName.Text = "";
                 txtCredit.Text = "";
+                ddlProgramme.SelectedIndex = 0;
 
                 LoadCourse();
             }
             catch (Exception ex)
             {
-                lblMsg.Text = ex.Message;
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Error: " + ex.Message;
             }
         }
 
@@ -118,16 +152,18 @@ namespace EduCampus
             txtCode.Text = "";
             txtName.Text = "";
             txtCredit.Text = "";
+            ddlProgramme.SelectedIndex = 0;
             lblMsg.Text = "";
         }
 
+        // Search
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Search course by programme
+                // Search courses by programme
                 string query = @"
-                    SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, p.ProgrammeName
+                    SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, c.ProgrammeID, p.ProgrammeName
                     FROM Courses c
                     INNER JOIN Programmes p 
                     ON c.ProgrammeID = p.ProgrammeID
@@ -145,6 +181,7 @@ namespace EduCampus
             }
         }
 
+        // Reset
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearchDept.Text = "";
@@ -158,6 +195,41 @@ namespace EduCampus
             LoadCourse();
         }
 
+        protected void gvCourse_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            // Only run for rows in edit mode
+            if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) > 0)
+            {
+                // Find the dropdown inside the edit template
+                DropDownList ddlProgramme = (DropDownList)e.Row.FindControl("ddlEditProgramme");
+
+                if (ddlProgramme != null)
+                {
+                    using (SqlConnection conn = new SqlConnection(connStr))
+                    {
+                        // Load all programmes into dropdown
+                        string query = @"SELECT ProgrammeID, ProgrammeName
+                                         FROM Programmes";
+
+                        SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        ddlProgramme.DataSource = dt;
+                        ddlProgramme.DataTextField = "ProgrammeName";
+                        ddlProgramme.DataValueField = "ProgrammeID";
+                        ddlProgramme.DataBind();
+                    }
+
+                    // Get current programme of this course row
+                    string currentProgrammeId = System.Web.UI.DataBinder.Eval(e.Row.DataItem, "ProgrammeID").ToString();
+
+                    // Set selected value in dropdown
+                    ddlProgramme.SelectedValue = currentProgrammeId;
+                }
+            }
+        }
+
         // Update
         protected void gvCourse_RowUpdating(object sender, System.Web.UI.WebControls.GridViewUpdateEventArgs e)
         {
@@ -167,21 +239,76 @@ namespace EduCampus
             string name = ((System.Web.UI.WebControls.TextBox)gvCourse.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
             string credit = ((System.Web.UI.WebControls.TextBox)gvCourse.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
 
+            // Get selected programme from edit dropdown
+            DropDownList ddlProgramme = (DropDownList)gvCourse.Rows[e.RowIndex].FindControl("ddlEditProgramme");
+            
+            int programmeId = Convert.ToInt32(ddlProgramme.SelectedValue);
+
+            // Validate that all fields have been filled in
+            if (code.Trim() == "" || name.Trim() == "" || credit.Trim() == "")
+            {
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Please fill in all fields.";
+
+                gvCourse.EditIndex = -1;
+                LoadCourse();
+                return;
+            }
+
+            // Validate that credit hours is a positive number
+            int creditHours;
+
+            if (!int.TryParse(credit.Trim(), out creditHours) || creditHours <= 0)
+            {
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Credit hours must be a positive number.";
+
+                gvCourse.EditIndex = -1;
+                LoadCourse();
+                return;
+            }
+
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = "UPDATE Courses SET CourseCode=@code, CourseName=@name, CreditHours=@credit WHERE CourseID=@id";
+                con.Open();
+
+                // Check if any duplicate course code
+                string checkQuery = "SELECT COUNT(*) FROM Courses WHERE CourseCode = @code AND CourseID != @id";
+
+                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+
+                checkCmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
+                checkCmd.Parameters.AddWithValue("@id", id);
+
+                int count = (int)checkCmd.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = "Course code already exists.";
+ 
+                    gvCourse.EditIndex = -1;
+                    LoadCourse();
+                    return;
+                }
+
+                // Update course information
+                string query = @"UPDATE Courses 
+                                 SET CourseCode=@code, CourseName=@name, CreditHours=@credit, ProgrammeID=@programmeId
+                                 WHERE CourseID=@id";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
                 cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@code", code);
+                cmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
                 cmd.Parameters.AddWithValue("@name", name);
-                cmd.Parameters.AddWithValue("@credit", credit);
+                cmd.Parameters.AddWithValue("@credit", creditHours);
+                cmd.Parameters.AddWithValue("@programmeId", programmeId);
 
-                con.Open();
                 cmd.ExecuteNonQuery();
             }
 
+            // Exit edit mode and refresh the course list 
             gvCourse.EditIndex = -1;
             LoadCourse();
 
@@ -194,6 +321,47 @@ namespace EduCampus
         {
             gvCourse.EditIndex = -1;
             LoadCourse();
+        }
+
+        // Delete
+        protected void gvCourse_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            int id = Convert.ToInt32(gvCourse.DataKeys[e.RowIndex].Value);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                // Check if course is assigned to any course offerings
+                string checkQuery = "SELECT COUNT(*) FROM CourseOfferings WHERE CourseID=@id";
+
+                SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                checkCmd.Parameters.AddWithValue("@id", id);
+
+                int count = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                // If course is assigned to course offerings, prevent deletion and show error message
+                if (count > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete course: course is assigned to {count} course offerings.";
+                    return;
+                }
+
+                // Delete only when course no assigned to any course offerings
+                string query = "DELETE FROM Courses WHERE CourseID=@id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+            // Refresh the course list after successful deletion
+            LoadCourse();
+
+            lblMsg.ForeColor = System.Drawing.Color.Green;
+            lblMsg.Text = "Course deleted successfully!";
         }
     }
 }

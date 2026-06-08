@@ -147,7 +147,9 @@
                     EmptyDataText="No courses found"
                     OnRowEditing="gvCourse_RowEditing"
                     OnRowUpdating="gvCourse_RowUpdating"
-                    OnRowCancelingEdit="gvCourse_RowCancelingEdit">
+                    OnRowCancelingEdit="gvCourse_RowCancelingEdit"
+                    OnRowDeleting="gvCourse_RowDeleting"
+                    OnRowDataBound="gvCourse_RowDataBound">
                 
                     <Columns>
                         <asp:TemplateField HeaderText="No.">
@@ -159,7 +161,20 @@
                         <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
                         <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
                         <asp:BoundField DataField="CreditHours" HeaderText="Credit Hours" />
-                        <asp:BoundField DataField="ProgrammeName" HeaderText="Programme" />
+                        <asp:TemplateField HeaderText="Programme">
+                            
+                            <ItemTemplate>
+                                <%# Eval("ProgrammeName") %>
+                            </ItemTemplate>
+
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="ddlEditProgramme" 
+                                    runat="server" 
+                                    CssClass="form-select">
+                                </asp:DropDownList>
+                            </EditItemTemplate>
+
+                        </asp:TemplateField>
 
                         <asp:TemplateField HeaderText="Action">
                             <ItemTemplate>
@@ -167,6 +182,12 @@
                                     CommandName="Edit"
                                     Text="Edit"
                                     CssClass="btn btn-primary btn-sm me-2" />
+
+                                <asp:LinkButton ID="btnDelete" runat="server"
+                                    CommandName="Delete"
+                                    Text="Delete"
+                                    CssClass="btn btn-danger btn-sm"
+                                    OnClientClick="return confirm('Are you sure you want to delete this course?');" />
                             </ItemTemplate>
 
                             <EditItemTemplate>

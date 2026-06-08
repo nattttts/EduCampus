@@ -55,6 +55,7 @@ namespace EduCampus
         {
             try
             {
+                // Validate that all fields have been filled in
                 if (txtCode.Text.Trim() == "" || txtName.Text.Trim() == "")
                 {
                     lblMsg.ForeColor = System.Drawing.Color.Red;
@@ -66,7 +67,7 @@ namespace EduCampus
                 {
                     con.Open();
 
-                    // Check duplicate programme code
+                    // Check if any duplicate programme code
                     string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code";
 
                     SqlCommand checkCmd = new SqlCommand(checkQuery, con);
@@ -94,6 +95,7 @@ namespace EduCampus
                 lblMsg.ForeColor = System.Drawing.Color.Green;
                 lblMsg.Text = "Programme added successfully!";
 
+                // Clear form fields after successful add programme
                 txtCode.Text = "";
                 txtName.Text = "";
 
@@ -129,6 +131,7 @@ namespace EduCampus
             string code = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
             string name = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
 
+            // Validate that all fields have been filled in
             if (code.Trim() == "" || name.Trim() == "")
             {
                 lblMsg.ForeColor = System.Drawing.Color.Red;
@@ -143,7 +146,7 @@ namespace EduCampus
             {
                 con.Open();
 
-                // Check duplicate programme code
+                // Check if any duplicate programme code
                 string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code AND ProgrammeID != @id";
 
                 SqlCommand checkCmd = new SqlCommand(checkQuery, con);
@@ -163,7 +166,7 @@ namespace EduCampus
                     return;
                 }
 
-                // Update programme
+                // Update programme information
                 string query = "UPDATE Programmes SET ProgrammeCode=@code, ProgrammeName=@name WHERE ProgrammeID=@id";
 
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -198,7 +201,7 @@ namespace EduCampus
             {
                 conn.Open();
 
-                // Check if programme is assigned to any course
+                // Check if programme is assigned to any courses
                 string checkCourseQuery = "SELECT COUNT(*) FROM Courses WHERE ProgrammeID=@id";
 
                 SqlCommand checkCourseCmd = new SqlCommand(checkCourseQuery, conn);
@@ -206,7 +209,7 @@ namespace EduCampus
 
                 int courseCount = Convert.ToInt32(checkCourseCmd.ExecuteScalar());
 
-                // Check if programme is assigned to any student
+                // Check if programme is assigned to any students
                 string checkStudentQuery = "SELECT COUNT(*) FROM Students WHERE ProgrammeID=@id";
 
                 SqlCommand checkStudentCmd = new SqlCommand(checkStudentQuery, conn);

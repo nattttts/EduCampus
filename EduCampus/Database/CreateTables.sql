@@ -118,11 +118,9 @@ CREATE TABLE Attendance (
     AttendanceDate DATE DEFAULT GETDATE(),
     Status VARCHAR(10) NOT NULL,
     Remarks NVARCHAR(255),
-    StudentID VARCHAR(10) NOT NULL,
-    OfferingID INT NOT NULL,
+    DetailID INT NOT NULL,
 
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
+    FOREIGN KEY (DetailID) REFERENCES EnrollmentDetails(DetailID)
 );
 
 -- NOTES TABLE

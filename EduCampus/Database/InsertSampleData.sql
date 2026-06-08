@@ -44,3 +44,27 @@ VALUES
 INSERT INTO EnrollmentDetails (EnrolmentID, OfferingID)
 VALUES
 (1, 1), (1, 2), (2, 1), (3, 3);
+
+INSERT INTO Attendance (Status, Remarks, DetailID)
+VALUES
+('Present', NULL, 1),
+('Present', NULL, 1),
+('Absent', 'Medical Leave', 1),
+
+('Present', NULL, 2),
+('Present', NULL, 2),
+
+('Present', NULL, 3),
+('Absent', 'No Show', 3);
+
+INSERT INTO CourseMarks (AssignmentMark, TestMark, FinalMark, FinalGrade, DetailID)
+VALUES
+(85, 90, 88, 'A', 1),
+(75, 80, 78, 'B+', 2);
+
+INSERT INTO Results (GPA, CGPA, EnrolmentID)
+VALUES
+(3.75, 3.75, 1),
+(3.10, 3.10, 2);
+
+SELECT * FROM Attendance;

@@ -6,97 +6,128 @@
 <head runat="server">
     <title>Course Management</title>
 
+    <!-- CSS -->
     <style>
-        body { font-family: Arial; margin: 20px; }
+        body { font-family: Arial; margin: 0; background-color: #f5f5f5; }
 
-        .menu {
+        .topbar {
             background-color: darkblue;
             padding: 15px;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex: 1;
         }
 
         .menu a {
             color: white;
-            margin-right: 20px;
             text-decoration: none;
+            font-weight: bold;
         }
 
-        h2 { color: darkblue; margin-top: 20px; }
+        .logout {
+            color: white;
+        }
 
-        .grid { margin-top: 15px; }
+        .container {
+            padding: 30px;
+        }
+
+        h2 {
+            color: darkblue;
+        }
+
+        .grid {
+            width: 100%;
+            margin-top: 15px;
+        }
     </style>
 
-        </head>
+</head>
 
-        <body>
+<body>
 
-        <form id="form1" runat="server">
+<form id="form1" runat="server">
 
-        <!-- MENU -->
-        <div class="menu">
-            <a href="StudentDashboard.aspx">Dashboard</a>
-            <a href="StudentEnrollCourse.aspx">Courses</a>
-        </div>
+<!-- NAVIGATION -->
+<div class="topbar">
 
-        <h2>Available Courses</h2>
+    <div class="menu">
+        <a href="StudentDashboard.aspx">Dashboard</a>
+        <a href="StudentEnrollCourse.aspx">Courses</a>
+        <a href="Results.aspx">Results</a>
+        <a href="Attendance.aspx">Attendance</a>
+        <a href="StudentProfile.aspx">Profile</a>
+    </div>>
 
-        <asp:GridView ID="gvCourses" runat="server"
-            AutoGenerateColumns="False"
-            CssClass="grid"
-            Width="100%">
+</div>
 
-            <Columns>
-                <asp:BoundField DataField="OfferingID" HeaderText="ID" />
-                <asp:BoundField DataField="CourseCode" HeaderText="Code" />
-                <asp:BoundField DataField="CourseName" HeaderText="Name" />
-                <asp:BoundField DataField="CreditHours" HeaderText="Credit" />
+<!-- PAGE CONTENT -->
+<div class="container">
 
-                <asp:TemplateField HeaderText="Action">
-                    <ItemTemplate>
-                        <asp:Button ID="btnEnroll" runat="server"
-                            Text="Enroll"
-                            CommandArgument='<%# Eval("OfferingID") %>'
-                            OnClick="btnEnroll_Click" />
-                    </ItemTemplate>
-                </asp:TemplateField>
-            </Columns>
+    <h2>Available Courses</h2>
 
-        </asp:GridView>
+    <asp:GridView ID="gvCourses" runat="server"
+        AutoGenerateColumns="False"
+        CssClass="grid">
 
-        <hr />
+        <Columns>
+            <asp:BoundField DataField="OfferingID" HeaderText="ID" />
+            <asp:BoundField DataField="CourseCode" HeaderText="Code" />
+            <asp:BoundField DataField="CourseName" HeaderText="Name" />
+            <asp:BoundField DataField="CreditHours" HeaderText="Credit" />
 
-        <h2>My Enrolled Courses</h2>
+            <asp:TemplateField HeaderText="Action">
+                <ItemTemplate>
+                    <asp:Button ID="btnEnroll" runat="server"
+                        Text="Enroll"
+                        CommandArgument='<%# Eval("OfferingID") %>'
+                        OnClick="btnEnroll_Click" />
+                </ItemTemplate>
+            </asp:TemplateField>
+        </Columns>
 
-        <asp:GridView ID="gvEnrollment" runat="server"
-            AutoGenerateColumns="False"
-            CssClass="grid"
-            Width="100%">
+    </asp:GridView>
 
-            <Columns>
+    <hr />
 
-                <asp:BoundField DataField="CourseCode" HeaderText="Code" />
-                <asp:BoundField DataField="CourseName" HeaderText="Course" />
-                <asp:BoundField DataField="Status" HeaderText="Status" />
+    <h2>My Enrolled Courses</h2>
 
-                <asp:TemplateField HeaderText="Action">
-                    <ItemTemplate>
-                        <asp:Button ID="btnDrop" runat="server"
-                            Text="Drop"
-                            CommandArgument='<%# Eval("EnrolmentID") %>'
-                            OnClick="btnDrop_Click"
-                            CssClass="btn btn-danger" />
-                    </ItemTemplate>
-                </asp:TemplateField>
+    <asp:GridView ID="gvEnrollment" runat="server"
+        AutoGenerateColumns="False"
+        CssClass="grid">
 
-            </Columns>
+        <Columns>
+            <asp:BoundField DataField="CourseCode" HeaderText="Code" />
+            <asp:BoundField DataField="CourseName" HeaderText="Course" />
+            <asp:BoundField DataField="Status" HeaderText="Status" />
 
-        </asp:GridView>
+            <asp:TemplateField HeaderText="Action">
+                <ItemTemplate>
+                    <asp:Button ID="btnDrop" runat="server"
+                        Text="Drop"
+                        CommandArgument='<%# Eval("EnrolmentID") %>'
+                        OnClick="btnDrop_Click" />
+                </ItemTemplate>
+            </asp:TemplateField>
 
-        <br />
+        </Columns>
 
-        <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+    </asp:GridView>
 
-        </form>
+    <br />
+
+    <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+
+</div>
+
+</form>
 
 </body>
 </html>

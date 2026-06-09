@@ -59,10 +59,17 @@ namespace EduCampus
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = @"SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, c.ProgrammeID, p.ProgrammeName
-                                 FROM Courses c
-                                 INNER JOIN Programmes p 
-                                 ON c.ProgrammeID = p.ProgrammeID";
+                string query = @"
+                    SELECT 
+                        c.CourseID, 
+                        c.CourseCode, 
+                        c.CourseName, 
+                        c.CreditHours, 
+                        c.ProgrammeID, 
+                        p.ProgrammeName
+                    FROM Courses c
+                    INNER JOIN Programmes p 
+                        ON c.ProgrammeID = p.ProgrammeID";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();
@@ -163,10 +170,16 @@ namespace EduCampus
             {
                 // Search courses by programme
                 string query = @"
-                    SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, c.ProgrammeID, p.ProgrammeName
+                    SELECT
+                        c.CourseID, 
+                        c.CourseCode, 
+                        c.CourseName, 
+                        c.CreditHours, 
+                        c.ProgrammeID, 
+                        p.ProgrammeName
                     FROM Courses c
                     INNER JOIN Programmes p 
-                    ON c.ProgrammeID = p.ProgrammeID
+                        ON c.ProgrammeID = p.ProgrammeID
                     WHERE p.ProgrammeName LIKE @dept";
 
                 SqlCommand cmd = new SqlCommand(query, conn);

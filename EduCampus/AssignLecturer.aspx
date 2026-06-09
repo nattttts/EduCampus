@@ -41,7 +41,7 @@
                     <a class="nav-link" href="RegisterStudent.aspx">Register Student</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Enrolment</a>
+                    <a class="nav-link" href="AdminViewEnrollment.aspx">Enrollment</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="AdminAnnouncements.aspx">Announcements</a>

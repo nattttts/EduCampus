@@ -134,7 +134,28 @@
         <div class="col-12">
             <div class="card shadow-lg p-4">
 
-                <h5 class="mb-3">Assigned Subjects</h5>
+                <h4 class="mb-3">Assigned Subjects</h4>
+
+                <!-- Search -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <asp:TextBox ID="txtSearchAssignment" runat="server"
+                            CssClass="form-control"
+                            Placeholder="Enter lecturer name/course name/course code (e.g. Tan Mei Ling, DCS2101, Data Structures)" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <asp:Button ID="btnSearch" runat="server" Text="Search"
+                            CssClass="btn btn-primary w-100"
+                            OnClick="btnSearch_Click" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <asp:Button ID="btnReset" runat="server" Text="Reset"
+                            CssClass="btn btn-secondary w-100"
+                            OnClick="btnReset_Click" />
+                    </div>
+                </div>
 
                 <asp:GridView ID="gvAssign" runat="server"
                     CssClass="table table-striped table-hover"

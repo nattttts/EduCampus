@@ -196,6 +196,47 @@ namespace EduCampus
             }
         }
 
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search assignment by lecturer name/course name/course code
+                string query = @"
+                    SELECT
+                        co.OfferingID,
+                        u.FullName,
+                        co.Session,
+                        c.CourseName,
+                        c.CourseCode
+                    FROM CourseOfferings co
+                    INNER JOIN Lecturers l
+                        ON co.LecturerID = l.LecturerID
+                    INNER JOIN Users u
+                        ON l.UserID = u.UserID
+                    INNER JOIN Courses c
+                        ON co.CourseID = c.CourseID
+                    WHERE u.FullName LIKE @search
+                       OR c.CourseName LIKE @search
+                       OR c.CourseCode LIKE @search";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearchAssignment.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvAssign.DataSource = dt;
+                gvAssign.DataBind();
+            }
+        }
+
+        protected void btnReset_Click(object sender, EventArgs e)
+        {
+            txtSearchAssignment.Text = "";
+            LoadAssignments();
+        }
+
         protected void gvAssign_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "DeleteRow")

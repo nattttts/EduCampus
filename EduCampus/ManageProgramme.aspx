@@ -107,6 +107,27 @@
             <div class="card shadow p-4">
                 <h4 class="mb-3">Programme List</h4>
 
+                 <!-- Search -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <asp:TextBox ID="txtSearch" runat="server"
+                            CssClass="form-control"
+                            Placeholder="Enter programme code/programme name" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <asp:Button ID="btnSearch" runat="server" Text="Search"
+                            CssClass="btn btn-primary w-100"
+                            OnClick="btnSearch_Click" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <asp:Button ID="btnReset" runat="server" Text="Reset"
+                            CssClass="btn btn-secondary w-100"
+                            OnClick="btnReset_Click" />
+                    </div>
+                </div>
+
                 <!-- Gridview -->
                 <asp:GridView ID="gvProgramme" runat="server"
                     CssClass="table table-bordered table-striped"

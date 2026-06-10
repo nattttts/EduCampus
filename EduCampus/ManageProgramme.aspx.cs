@@ -116,6 +116,40 @@ namespace EduCampus
             lblMsg.Text = "";
         }
 
+        // Search
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search courses by programme
+                string query = @"
+                    SELECT 
+                        ProgrammeID,
+                        ProgrammeCode,
+                        ProgrammeName
+                    FROM Programmes
+                    WHERE ProgrammeCode LIKE @search
+                        OR ProgrammeName LIKE @search";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvProgramme.DataSource = dt;
+                gvProgramme.DataBind();
+            }
+        }
+
+        // Reset
+        protected void btnReset_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+            LoadProgramme();
+        }
+
         // Edit mode
         protected void gvProgramme_RowEditing(object sender, System.Web.UI.WebControls.GridViewEditEventArgs e)
         {

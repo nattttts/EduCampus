@@ -185,7 +185,7 @@ namespace EduCampus
                         OR p.ProgrammeName LIKE @search";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text + "%");
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();

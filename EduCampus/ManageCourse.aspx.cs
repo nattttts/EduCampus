@@ -180,10 +180,12 @@ namespace EduCampus
                     FROM Courses c
                     INNER JOIN Programmes p 
                         ON c.ProgrammeID = p.ProgrammeID
-                    WHERE p.ProgrammeName LIKE @dept";
+                    WHERE c.CourseCode LIKE @search
+                        OR c.CourseName LIKE @search
+                        OR p.ProgrammeName LIKE @search";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@dept", "%" + txtSearchDept.Text + "%");
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text + "%");
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -197,7 +199,7 @@ namespace EduCampus
         // Reset
         protected void btnReset_Click(object sender, EventArgs e)
         {
-            txtSearchDept.Text = "";
+            txtSearch.Text = "";
             LoadCourse();
         }
 

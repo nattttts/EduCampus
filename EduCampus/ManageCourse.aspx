@@ -121,9 +121,9 @@
                  <!-- Search -->
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <asp:TextBox ID="txtSearchDept" runat="server"
+                        <asp:TextBox ID="txtSearch" runat="server"
                             CssClass="form-control"
-                            Placeholder="Enter Programme Name (e.g., Diploma in Computer Science)" />
+                            Placeholder="Enter course code/course name/programme" />
                     </div>
 
                     <div class="col-md-2">

@@ -111,6 +111,9 @@ namespace EduCampus
                 return;
             }
 
+            // Normalize student ID to uppercase and trim whitespace
+            string studentId = txtStudentID.Text.Trim().ToUpper();
+
             // Hash password before saving it to the database
             string hashedPassword = HashPassword(txtStudentPass.Text);
 
@@ -134,9 +137,6 @@ namespace EduCampus
                         lblMessage.Text = "Email already exists. Please use another email.";
                         return;
                     }
-
-                    // Check whether the student ID already exists
-                    string studentId = txtStudentID.Text.Trim().ToUpper();
 
                     if (studentId.Length > 10)
                     {
@@ -190,7 +190,7 @@ namespace EduCampus
 
                     SqlCommand studentCmd = new SqlCommand(studentQuery, conn);
 
-                    studentCmd.Parameters.AddWithValue("@studentId", txtStudentID.Text);
+                    studentCmd.Parameters.AddWithValue("@studentId", studentId);
                     studentCmd.Parameters.AddWithValue("@userID", userID);
                     studentCmd.Parameters.AddWithValue("@programmeId", ddlProgramme.SelectedValue);
 

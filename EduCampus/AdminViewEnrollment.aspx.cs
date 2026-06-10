@@ -81,7 +81,7 @@ namespace EduCampus
             string query = @"
                 SELECT 
                     em.EnrolmentID, 
-                    s.StudentID, 
+                    em.StudentID, 
                     u.FullName, 
                     em.Session, 
                     em.Semester, 

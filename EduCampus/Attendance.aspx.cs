@@ -24,8 +24,8 @@ namespace EduCampus
             }
         }
 
-        // GET STUDENT ID
-        private int GetStudentID(SqlConnection con)
+        // GET STUDENT ID (STRING, NOT INT!)
+        private string GetStudentID(SqlConnection con)
         {
             string query = @"
                 SELECT StudentID 
@@ -37,29 +37,25 @@ namespace EduCampus
 
             object result = cmd.ExecuteScalar();
 
-            if (result == null || result == DBNull.Value)
-                return 0;
-
-            int id;
-            int.TryParse(result.ToString(), out id);
-            return id;
+            return (result == null || result == DBNull.Value) ? "" : result.ToString();
         }
 
-        // LOAD DROPDOWN COURSES
+        // LOAD COURSES (via Enrollment flow)
         void LoadCourses()
         {
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
 
-                int studentID = GetStudentID(con);
+                string studentID = GetStudentID(con);
 
                 string query = @"
                     SELECT DISTINCT c.CourseID, c.CourseName
-                    FROM Attendance a
-                    INNER JOIN EnrollmentDetails e ON a.EnrollmentID = e.EnrollmentID
-                    INNER JOIN Courses c ON e.CourseID = c.CourseID
-                    WHERE e.StudentID = @StudentID";
+                    FROM EnrollmentMaster em
+                    INNER JOIN EnrollmentDetails ed ON em.EnrolmentID = ed.EnrolmentID
+                    INNER JOIN CourseOfferings co ON ed.OfferingID = co.OfferingID
+                    INNER JOIN Courses c ON co.CourseID = c.CourseID
+                    WHERE em.StudentID = @StudentID";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@StudentID", studentID);
@@ -85,14 +81,14 @@ namespace EduCampus
                 LoadAttendance(ddlCourse.SelectedValue);
         }
 
-        // LOAD ATTENDANCE GRID
+        // LOAD ATTENDANCE (CORRECT USING DetailID)
         void LoadAttendance(string courseID)
         {
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
 
-                int studentID = GetStudentID(con);
+                string studentID = GetStudentID(con);
 
                 string query = @"
                     SELECT 
@@ -101,9 +97,11 @@ namespace EduCampus
                         a.Status,
                         a.Remarks
                     FROM Attendance a
-                    INNER JOIN EnrollmentDetails e ON a.EnrollmentID = e.EnrollmentID
-                    INNER JOIN Courses c ON e.CourseID = c.CourseID
-                    WHERE e.StudentID = @StudentID";
+                    INNER JOIN EnrollmentDetails ed ON a.DetailID = ed.DetailID
+                    INNER JOIN EnrollmentMaster em ON ed.EnrolmentID = em.EnrolmentID
+                    INNER JOIN CourseOfferings co ON ed.OfferingID = co.OfferingID
+                    INNER JOIN Courses c ON co.CourseID = c.CourseID
+                    WHERE em.StudentID = @StudentID";
 
                 if (!string.IsNullOrEmpty(courseID) && courseID != "0")
                 {

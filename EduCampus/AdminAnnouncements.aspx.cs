@@ -2,8 +2,6 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace EduCampus
@@ -51,6 +49,30 @@ namespace EduCampus
             }
         }
 
+        private void SearchAnnouncements()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search announcements by title (case-insensitive)
+                string query = @"
+                    SELECT AnnouncementID, Title, Message, PostedDateTime
+                    FROM Announcements
+                    WHERE OfferingID IS NULL
+                    AND Title LIKE @title
+                    ORDER BY PostedDateTime DESC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@title", "%" + txtSearchTitle.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvAnnouncements.DataSource = dt;
+                gvAnnouncements.DataBind();
+            }
+        }
+
         // Handle posting a new announcement
         protected void btnPostAnnouncement_Click(object sender, EventArgs e)
         {
@@ -88,47 +110,36 @@ namespace EduCampus
         // Handle searching announcements by title
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                // Search announcements by title (case-insensitive)
-                string query = @"
-                    SELECT AnnouncementID, Title, Message, PostedDateTime
-                    FROM Announcements
-                    WHERE OfferingID IS NULL
-                    AND Title LIKE @title
-                    ORDER BY PostedDateTime DESC";
+            SearchAnnouncements();
+        }
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@title", "%" + txtSearchTitle.Text.Trim() + "%");
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                gvAnnouncements.DataSource = dt;
-                gvAnnouncements.DataBind();
-            }
+        private void RefreshAnnouncementGrid()
+        {
+            if (txtSearchTitle.Text.Trim() == "")
+                LoadAnnouncements();
+            else
+                SearchAnnouncements();
         }
 
         // Handle resetting the search
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearchTitle.Text = "";
-            LoadAnnouncements();
+            RefreshAnnouncementGrid();
         }
 
         // Handle editing an announcement
         protected void gvAnnouncements_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvAnnouncements.EditIndex = e.NewEditIndex;
-            LoadAnnouncements();
+            RefreshAnnouncementGrid();
         }
 
         // Cancel editing an announcement
         protected void gvAnnouncements_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             gvAnnouncements.EditIndex = -1;
-            LoadAnnouncements();
+            RefreshAnnouncementGrid();
         }
 
         // Handle updating an announcement
@@ -146,7 +157,7 @@ namespace EduCampus
                 lblMessage.Text = "Fields cannot be empty!";
 
                 gvAnnouncements.EditIndex = -1;
-                LoadAnnouncements();
+                RefreshAnnouncementGrid();
                 return;
             }
 
@@ -170,7 +181,7 @@ namespace EduCampus
             }
 
             gvAnnouncements.EditIndex = -1;
-            LoadAnnouncements();
+            RefreshAnnouncementGrid();
 
             lblMessage.CssClass = "text-success";
             lblMessage.Text = "Announcement updated successfully!";
@@ -181,7 +192,7 @@ namespace EduCampus
         {
             if (e.CommandName == "DeleteRow")
             {
-                GridViewRow row = (GridViewRow)((Control)e.CommandSource).NamingContainer;
+                GridViewRow row = (GridViewRow)((System.Web.UI.Control)e.CommandSource).NamingContainer;
                 int index = row.RowIndex;
 
                 int id = Convert.ToInt32(gvAnnouncements.DataKeys[index].Value);
@@ -201,7 +212,7 @@ namespace EduCampus
                     cmd.ExecuteNonQuery();
                 }
 
-                LoadAnnouncements();
+                RefreshAnnouncementGrid();
 
                 lblMessage.CssClass = "text-success";
                 lblMessage.Text = "Announcement deleted successfully!";

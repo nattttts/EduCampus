@@ -5,67 +5,42 @@
 <head runat="server">
     <title>Student Profile</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="style.css" rel="stylesheet" />
-
-     <style>
-        body {
-            font-family: Arial;
-            margin: 0;
-            background-color: #f5f5f5;
-        }
-
-        /* NAVBAR */
-        .topbar {
-            background-color: darkblue;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu {
-            display: flex;
-            gap: 25px;
-            justify-content: center;
-            flex: 1;
-        }
-
-        .menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .logout {
-            color: white;
-        }
-
-        /* PAGE */
-        .container {
-            margin-top: 40px;
-        }
-    </style>
-
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <form id="form2" runat="server">
+        <!-- Navigation bar -->
+        <nav class="navbar navbar-expand-lg bg-white">
+            <div class="container-fluid">
+                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2">
 
-<form id="form1" runat="server">
+                <div class="collapse navbar-collapse">
+                    <!-- Menu -->
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                             <a class="nav-link active" href="StudentDashboard.aspx">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="Results.aspx">Results</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="StudentProfile.aspx">Profile</a>
+                        </li>
+                    </ul>
 
-<!-- NAVIGATION -->
-<div class="topbar">
+                </div>
 
-    <div class="menu">
-        <a href="StudentDashboard.aspx">Dashboard</a>
-        <a href="StudentEnrollCourse.aspx">Courses</a>
-        <a href="Results.aspx">Results</a>
-        <a href="Attendance.aspx">Attendance</a>
-        <a href="StudentProfile.aspx">Profile</a>
-    </div>
-
-</div>
-
+            </div>
+        </nav>
 <div class="container mt-5">
 
     <div class="row justify-content-center">

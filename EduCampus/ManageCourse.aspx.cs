@@ -25,8 +25,8 @@ namespace EduCampus
 
             if (!IsPostBack)
             {
-                LoadProgramme();
-                LoadCourse();
+                LoadProgrammes();
+                LoadCourses();
             }
         }
 
@@ -38,7 +38,7 @@ namespace EduCampus
         }
 
         // Load Programme dropdown
-        void LoadProgramme()
+        private void LoadProgrammes()
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
@@ -55,7 +55,7 @@ namespace EduCampus
         }
 
         // Load course list
-        void LoadCourse()
+        private void LoadCourses()
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
@@ -72,6 +72,38 @@ namespace EduCampus
                         ON c.ProgrammeID = p.ProgrammeID";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvCourse.DataSource = dt;
+                gvCourse.DataBind();
+            }
+        }
+
+        private void SearchCourses()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search courses by programme
+                string query = @"
+                    SELECT
+                        c.CourseID, 
+                        c.CourseCode, 
+                        c.CourseName, 
+                        c.CreditHours, 
+                        c.ProgrammeID, 
+                        p.ProgrammeName
+                    FROM Courses c
+                    INNER JOIN Programmes p 
+                        ON c.ProgrammeID = p.ProgrammeID
+                    WHERE c.CourseCode LIKE @search
+                        OR c.CourseName LIKE @search
+                        OR p.ProgrammeName LIKE @search";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -144,7 +176,7 @@ namespace EduCampus
                 txtCredit.Text = "";
                 ddlProgramme.SelectedIndex = 0;
 
-                LoadCourse();
+                LoadCourses();
             }
             catch (Exception ex)
             {
@@ -166,48 +198,29 @@ namespace EduCampus
         // Search
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                // Search courses by programme
-                string query = @"
-                    SELECT
-                        c.CourseID, 
-                        c.CourseCode, 
-                        c.CourseName, 
-                        c.CreditHours, 
-                        c.ProgrammeID, 
-                        p.ProgrammeName
-                    FROM Courses c
-                    INNER JOIN Programmes p 
-                        ON c.ProgrammeID = p.ProgrammeID
-                    WHERE c.CourseCode LIKE @search
-                        OR c.CourseName LIKE @search
-                        OR p.ProgrammeName LIKE @search";
+            SearchCourses();
+        }
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                gvCourse.DataSource = dt;
-                gvCourse.DataBind();
-            }
+        private void RefreshCourseGrid()
+        {
+            if (txtSearch.Text.Trim() == "")
+                LoadCourses();
+            else
+                SearchCourses();
         }
 
         // Reset
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearch.Text = "";
-            LoadCourse();
+            RefreshCourseGrid();
         }
 
         // Edit mode
         protected void gvCourse_RowEditing(object sender, System.Web.UI.WebControls.GridViewEditEventArgs e)
         {
             gvCourse.EditIndex = e.NewEditIndex;
-            LoadCourse();
+            RefreshCourseGrid();
         }
 
         protected void gvCourse_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -266,7 +279,7 @@ namespace EduCampus
                 lblMsg.Text = "Please fill in all fields.";
 
                 gvCourse.EditIndex = -1;
-                LoadCourse();
+                RefreshCourseGrid();
                 return;
             }
 
@@ -277,9 +290,6 @@ namespace EduCampus
             {
                 lblMsg.ForeColor = System.Drawing.Color.Red;
                 lblMsg.Text = "Credit hours must be a positive number.";
-
-                gvCourse.EditIndex = -1;
-                LoadCourse();
                 return;
             }
 
@@ -301,9 +311,6 @@ namespace EduCampus
                 {
                     lblMsg.ForeColor = System.Drawing.Color.Red;
                     lblMsg.Text = "Course code already exists.";
- 
-                    gvCourse.EditIndex = -1;
-                    LoadCourse();
                     return;
                 }
 
@@ -325,7 +332,7 @@ namespace EduCampus
 
             // Exit edit mode and refresh the course list 
             gvCourse.EditIndex = -1;
-            LoadCourse();
+            RefreshCourseGrid();
 
             lblMsg.ForeColor = System.Drawing.Color.Green;
             lblMsg.Text = "Course updated successfully!";
@@ -335,7 +342,7 @@ namespace EduCampus
         protected void gvCourse_RowCancelingEdit(object sender, System.Web.UI.WebControls.GridViewCancelEditEventArgs e)
         {
             gvCourse.EditIndex = -1;
-            LoadCourse();
+            RefreshCourseGrid();
         }
 
         // Delete
@@ -373,7 +380,7 @@ namespace EduCampus
                 cmd.ExecuteNonQuery();
             }
             // Refresh the course list after successful deletion
-            LoadCourse();
+            RefreshCourseGrid();
 
             lblMsg.ForeColor = System.Drawing.Color.Green;
             lblMsg.Text = "Course deleted successfully!";

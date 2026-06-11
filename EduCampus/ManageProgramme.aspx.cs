@@ -25,7 +25,7 @@ namespace EduCampus
 
             if (!IsPostBack)
             {
-                LoadProgramme();
+                LoadProgrammes();
             }
         }
 
@@ -37,11 +37,36 @@ namespace EduCampus
         }
 
         // Load programme list
-        void LoadProgramme()
+        private void LoadProgrammes()
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvProgramme.DataSource = dt;
+                gvProgramme.DataBind();
+            }
+        }
+        private void SearchProgrammes()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search programme
+                string query = @"
+                    SELECT 
+                        ProgrammeID,
+                        ProgrammeCode,
+                        ProgrammeName
+                    FROM Programmes
+                    WHERE ProgrammeCode LIKE @search
+                        OR ProgrammeName LIKE @search";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -99,7 +124,7 @@ namespace EduCampus
                 txtCode.Text = "";
                 txtName.Text = "";
 
-                LoadProgramme();
+                LoadProgrammes();
             }
             catch (Exception ex)
             {
@@ -119,42 +144,29 @@ namespace EduCampus
         // Search
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                // Search courses by programme
-                string query = @"
-                    SELECT 
-                        ProgrammeID,
-                        ProgrammeCode,
-                        ProgrammeName
-                    FROM Programmes
-                    WHERE ProgrammeCode LIKE @search
-                        OR ProgrammeName LIKE @search";
+            SearchProgrammes();
+        }
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                gvProgramme.DataSource = dt;
-                gvProgramme.DataBind();
-            }
+        private void RefreshProgrammeGrid()
+        {
+            if (txtSearch.Text.Trim() == "")
+                LoadProgrammes();
+            else
+                SearchProgrammes();
         }
 
         // Reset
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearch.Text = "";
-            LoadProgramme();
+            RefreshProgrammeGrid();
         }
 
         // Edit mode
         protected void gvProgramme_RowEditing(object sender, System.Web.UI.WebControls.GridViewEditEventArgs e)
         {
             gvProgramme.EditIndex = e.NewEditIndex;
-            LoadProgramme();
+            RefreshProgrammeGrid();
         }
 
         // Update
@@ -172,7 +184,7 @@ namespace EduCampus
                 lblMsg.Text = "Please fill in all fields.";
 
                 gvProgramme.EditIndex = -1;
-                LoadProgramme();
+                RefreshProgrammeGrid();
                 return;
             }
 
@@ -194,9 +206,6 @@ namespace EduCampus
                 {
                     lblMsg.ForeColor = System.Drawing.Color.Red;
                     lblMsg.Text = "Programme code already exists.";
-
-                    gvProgramme.EditIndex = -1;
-                    LoadProgramme();
                     return;
                 }
 
@@ -214,7 +223,7 @@ namespace EduCampus
 
             // Exit edit mode and refresh the programme list
             gvProgramme.EditIndex = -1;
-            LoadProgramme();
+            RefreshProgrammeGrid();
 
             lblMsg.ForeColor = System.Drawing.Color.Green;
             lblMsg.Text = "Programme updated successfully!";
@@ -224,7 +233,7 @@ namespace EduCampus
         protected void gvProgramme_RowCancelingEdit(object sender, System.Web.UI.WebControls.GridViewCancelEditEventArgs e)
         {
             gvProgramme.EditIndex = -1;
-            LoadProgramme();
+            RefreshProgrammeGrid();
         }
 
         // Delete
@@ -282,7 +291,7 @@ namespace EduCampus
                 cmd.ExecuteNonQuery();
             }
             // Refresh the programme list after successful deletion
-            LoadProgramme();
+            RefreshProgrammeGrid();
 
             lblMsg.ForeColor = System.Drawing.Color.Green;
             lblMsg.Text = "Programme deleted successfully!";

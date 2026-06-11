@@ -75,6 +75,34 @@ namespace EduCampus
             }
         }
 
+        private void SearchLecturers()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search lecturers by department
+                string query = @"
+                    SELECT
+                        l.LecturerID,
+                        u.FullName,
+                        u.Email,
+                        l.Department
+                    FROM Lecturers l
+                    INNER JOIN Users u
+                        ON l.UserID = u.UserID
+                    WHERE l.Department LIKE @dept";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@dept", "%" + txtSearchDept.Text + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvLecturers.DataSource = dt;
+                gvLecturers.DataBind();
+            }
+        }
+
         protected void btnRegister_Click(object sender, EventArgs e)
         {
             // Validate that all required fields have been filled in
@@ -159,43 +187,28 @@ namespace EduCampus
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                // Search lecturers by department
-                string query = @"
-                    SELECT
-                        l.LecturerID,
-                        u.FullName,
-                        u.Email,
-                        l.Department
-                    FROM Lecturers l
-                    INNER JOIN Users u
-                        ON l.UserID = u.UserID
-                    WHERE l.Department LIKE @dept";
+            SearchLecturers();
+        }
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@dept", "%" + txtSearchDept.Text + "%");
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                gvLecturers.DataSource = dt;
-                gvLecturers.DataBind();
-            }
+        private void RefreshLecturerGrid()
+        {
+            if (txtSearchDept.Text.Trim() == "")
+                LoadLecturers();
+            else
+                SearchLecturers();
         }
 
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearchDept.Text = "";
-            LoadLecturers();
+            RefreshLecturerGrid();
         }
 
         // Edit mode
         protected void gvLecturer_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvLecturers.EditIndex = e.NewEditIndex;
-            LoadLecturers();
+            RefreshLecturerGrid();
         }
 
         // Update lecturer information
@@ -214,7 +227,7 @@ namespace EduCampus
                 lblMessage.Text = "Please fill in all fields.";
 
                 gvLecturers.EditIndex = -1;
-                LoadLecturers();
+                RefreshLecturerGrid();
                 return;
             }
 
@@ -280,7 +293,7 @@ namespace EduCampus
 
             // Exit edit mode and refresh the lecturer list
             gvLecturers.EditIndex = -1;
-            LoadLecturers();
+            RefreshLecturerGrid();
 
             lblMessage.CssClass = "text-success";
             lblMessage.Text = "Lecturer updated successfully!";
@@ -290,7 +303,7 @@ namespace EduCampus
         protected void gvLecturer_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             gvLecturers.EditIndex = -1;
-            LoadLecturers();
+            RefreshLecturerGrid();
         }
 
         // Delete lecturer
@@ -346,7 +359,7 @@ namespace EduCampus
                     delUserCmd.ExecuteNonQuery();
                 }
 
-                LoadLecturers();
+                RefreshLecturerGrid();
 
                 lblMessage.CssClass = "text-success";
                 lblMessage.Text = "Lecturer deleted successfully!";

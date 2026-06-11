@@ -101,6 +101,39 @@ namespace EduCampus
             }
         }
 
+        private void SearchStudents()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+            SELECT
+                s.StudentID,
+                u.FullName,
+                u.Email,
+                p.ProgrammeID,
+                p.ProgrammeName
+            FROM Students s
+            INNER JOIN Users u
+                ON s.UserID = u.UserID
+            INNER JOIN Programmes p
+                ON s.ProgrammeID = p.ProgrammeID
+            WHERE p.ProgrammeName LIKE @programme";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue(
+                    "@programme",
+                    "%" + txtSearchProgramme.Text + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvStudents.DataSource = dt;
+                gvStudents.DataBind();
+            }
+        }
+
         protected void btnRegister_Click(object sender, EventArgs e)
         {
             // Validate that all required fields have been filled in
@@ -207,7 +240,7 @@ namespace EduCampus
                     ddlProgramme.SelectedIndex = 0;
 
                     // Refresh student list
-                    LoadStudents();
+                    RefreshStudentGrid();
                 }
                 catch (Exception ex)
                 {
@@ -219,48 +252,31 @@ namespace EduCampus
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                // Search students by programme
-                string query = @"
-                    SELECT
-                        s.StudentID,
-                        u.FullName,
-                        u.Email,
-                        p.ProgrammeID,
-                        p.ProgrammeName
-                    FROM Students s
-                    INNER JOIN Users u
-                        ON s.UserID = u.UserID
-                    INNER JOIN Programmes p
-                        ON s.ProgrammeID = p.ProgrammeID
-                    WHERE p.ProgrammeName LIKE @programme";
+            SearchStudents();
+        }
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@programme", "%" + txtSearchProgramme.Text + "%");
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                gvStudents.DataSource = dt;
-                gvStudents.DataBind();
-            }
+        private void RefreshStudentGrid()
+        {
+            if (txtSearchProgramme.Text.Trim() == "")
+                LoadStudents();
+            else
+                SearchStudents();
         }
 
         protected void btnReset_Click(object sender, EventArgs e)
         {
             txtSearchProgramme.Text = "";
-            LoadStudents();
+            RefreshStudentGrid();
         }
 
         // Edit mode
         protected void gvStudent_RowEditing(object sender, GridViewEditEventArgs e)
         {
             gvStudents.EditIndex = e.NewEditIndex;
-            LoadStudents();
+            RefreshStudentGrid();
         }
 
+        // When a row enters edit mode, populate the programme dropdown and set the selected value to the student's current programme
         protected void gvStudent_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             // Only run for rows in edit mode
@@ -316,7 +332,7 @@ namespace EduCampus
                 lblMessage.Text = "Please fill in all fields.";
 
                 gvStudents.EditIndex = -1;
-                LoadStudents();
+                RefreshStudentGrid();
                 return;
             }
 
@@ -386,7 +402,7 @@ namespace EduCampus
 
             // Exit edit mode and refresh the student list
             gvStudents.EditIndex = -1;
-            LoadStudents();
+            RefreshStudentGrid();
 
             lblMessage.CssClass = "text-success";
             lblMessage.Text = "Student updated successfully!";
@@ -396,7 +412,7 @@ namespace EduCampus
         protected void gvStudent_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             gvStudents.EditIndex = -1;
-            LoadStudents();
+            RefreshStudentGrid();
         }
 
         // Delete student
@@ -466,7 +482,7 @@ namespace EduCampus
                     delUserCmd.ExecuteNonQuery();
                 }
 
-                LoadStudents();
+                RefreshStudentGrid();
 
                 lblMessage.CssClass = "text-success";
                 lblMessage.Text = "Student deleted successfully!";

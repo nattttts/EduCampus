@@ -138,9 +138,13 @@ CREATE TABLE Notes (
 CREATE TABLE CourseMarks (
     MarkID INT IDENTITY(1,1) PRIMARY KEY,
     AssignmentMark DECIMAL(5,2),
-    TestMark DECIMAL(5,2),
+    QuizMark DECIMAL(5,2),
+    MidTestMark DECIMAL(5,2),
+    FinalExamMark DECIMAL(5,2),
+
     FinalMark DECIMAL (5,2),
     FinalGrade NVARCHAR(5),
+    GradePoint DECIMAL(5,2),
     DetailID INT NOT NULL,
 
     FOREIGN KEY (DetailID) REFERENCES EnrollmentDetails(DetailID)

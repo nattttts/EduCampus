@@ -183,6 +183,7 @@
     <Content Include="Site.Master" />
     <Content Include="StudentDashboard.aspx" />
     <Content Include="StudentEnrollCourse.aspx" />
+    <Content Include="StudentNotes.aspx" />
     <Content Include="StudentProfile.aspx" />
     <Content Include="style.css" />
     <Content Include="ViewSwitcher.ascx" />
@@ -273,6 +274,13 @@
     </Compile>
     <Compile Include="StudentEnrollCourse.aspx.designer.cs">
       <DependentUpon>StudentEnrollCourse.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="StudentNotes.aspx.cs">
+      <DependentUpon>StudentNotes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudentNotes.aspx.designer.cs">
+      <DependentUpon>StudentNotes.aspx</DependentUpon>
     </Compile>
     <Compile Include="StudentProfile.aspx.cs">
       <DependentUpon>StudentProfile.aspx</DependentUpon>

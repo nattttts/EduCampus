@@ -2,8 +2,8 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Drawing;
 
 namespace EduCampus
 {
@@ -35,13 +35,12 @@ namespace EduCampus
         }
 
         // ================= GET STUDENT ID =================
-        private string GetStudentID(SqlConnection con)
+        private int? GetStudentID(SqlConnection con)
         {
             string query = @"
                 SELECT StudentID
                 FROM Students
-                WHERE UserID =
-                (
+                WHERE UserID = (
                     SELECT UserID FROM Users WHERE Email = @Email
                 )";
 
@@ -49,7 +48,11 @@ namespace EduCampus
             cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
             object result = cmd.ExecuteScalar();
-            return result == null ? "" : result.ToString();
+
+            if (result == null)
+                return null;
+
+            return Convert.ToInt32(result);
         }
 
         // ================= LOAD SESSION =================
@@ -113,15 +116,15 @@ namespace EduCampus
 
                 try
                 {
-                    string studentID = GetStudentID(con);
+                    int? studentID = GetStudentID(con);
 
-                    if (string.IsNullOrEmpty(studentID))
+                    if (studentID == null)
                     {
                         lblMessage.Text = "Student not found.";
                         return;
                     }
 
-                    // INSERT MASTER
+                    // MASTER INSERT
                     string insertMaster = @"
                         INSERT INTO EnrollmentMaster
                         (DateEnrolled, Status, Session, Semester, StudentID)
@@ -137,7 +140,7 @@ namespace EduCampus
 
                     int enrolmentID = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    // INSERT DETAILS
+                    // DETAILS INSERT
                     foreach (GridViewRow row in gvCourses.Rows)
                     {
                         CheckBox chk = (CheckBox)row.FindControl("chkSelect");
@@ -178,7 +181,7 @@ namespace EduCampus
 
                     trans.Commit();
 
-                    lblMessage.ForeColor = System.Drawing.Color.Green;
+                    lblMessage.ForeColor = Color.Green;
                     lblMessage.Text = "Enrollment successful!";
 
                     LoadMyCourses();
@@ -187,7 +190,7 @@ namespace EduCampus
                 {
                     trans.Rollback();
 
-                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.ForeColor = Color.Red;
                     lblMessage.Text = ex.Message;
                 }
             }
@@ -210,17 +213,15 @@ namespace EduCampus
                     INNER JOIN EnrollmentDetails ed ON em.EnrolmentID = ed.EnrolmentID
                     INNER JOIN CourseOfferings co ON ed.OfferingID = co.OfferingID
                     INNER JOIN Courses c ON co.CourseID = c.CourseID
-                    WHERE em.StudentID =
-                    (
+                    WHERE em.StudentID = (
                         SELECT StudentID FROM Students
-                        WHERE UserID =
-                        (
+                        WHERE UserID = (
                             SELECT UserID FROM Users WHERE Email = @Email
                         )
                     )";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Email", Session["Email"]);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -231,7 +232,7 @@ namespace EduCampus
             }
         }
 
-        // ================= DROP COURSE =================
+        // ================= DROP COURSE  =================
         protected void btnDrop_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
@@ -244,6 +245,7 @@ namespace EduCampus
 
                 try
                 {
+                    // DELETE CHILD FIRST 
                     string deleteDetails = @"
                         DELETE FROM EnrollmentDetails
                         WHERE EnrolmentID = @ID";
@@ -262,7 +264,7 @@ namespace EduCampus
 
                     trans.Commit();
 
-                    lblMessage.ForeColor = System.Drawing.Color.Green;
+                    lblMessage.ForeColor = Color.Green;
                     lblMessage.Text = "Course dropped successfully!";
 
                     LoadMyCourses();
@@ -271,7 +273,7 @@ namespace EduCampus
                 {
                     trans.Rollback();
 
-                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.ForeColor = Color.Red;
                     lblMessage.Text = ex.Message;
                 }
             }

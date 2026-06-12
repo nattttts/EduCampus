@@ -4,103 +4,199 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head runat="server">
-    <title>Enroll Course</title>
+    <title>Student Enroll Course</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link href="style.css" rel="stylesheet" />
 </head>
 
 <body>
 
 <form id="form2" runat="server">
+
     <!-- Navigation bar -->
     <nav class="navbar navbar-expand-lg bg-white">
         <div class="container-fluid">
             <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2">
 
             <div class="collapse navbar-collapse">
-                <!-- Menu -->
                 <ul class="navbar-nav me-auto">
+
                     <li class="nav-item">
-                         <a class="nav-link active" href="StudentDashboard.aspx">Home</a>
+                        <a class="nav-link" href="StudentDashboard.aspx">Home</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
+                        <a class="nav-link active" href="StudentEnrollCourse.aspx">Course</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="Attendance.aspx">Attendance</a>
                     </li>
-                     <li class="nav-item">
+
+                    <li class="nav-item">
                         <a class="nav-link" href="Results.aspx">Results</a>
                     </li>
-                     <li class="nav-item">
+
+                    <li class="nav-item">
                         <a class="nav-link" href="StudentProfile.aspx">Profile</a>
                     </li>
                 </ul>
-            </div>
 
+                 <!-- Logout button -->
+                 <asp:Button ID="btnLogout" runat="server"
+                     Text="Logout"
+                     CssClass="btn btn-danger"
+                     OnClick="btnLogout_Click" />
+
+            </div>
         </div>
     </nav>
 
-<!-- PAGE CONTENT -->
-<div class="container">
+    <!-- CENTERED CONTENT -->
+    <div class="content-area">
 
-    <h2>Available Courses</h2>
+        <h2>Course Enrollment</h2>
 
-    <asp:GridView ID="gvCourses" runat="server"
-        AutoGenerateColumns="False"
-        CssClass="grid">
+        <!-- SESSION -->
+        <div class="selection-box">
 
-        <Columns>
-            <asp:BoundField DataField="OfferingID" HeaderText="ID" />
-            <asp:BoundField DataField="CourseCode" HeaderText="Code" />
-            <asp:BoundField DataField="CourseName" HeaderText="Name" />
-            <asp:BoundField DataField="CreditHours" HeaderText="Credit" />
+            <asp:Label ID="Label1"
+                runat="server"
+                Text="Select Session"
+                CssClass="form-label">
+            </asp:Label>
 
-            <asp:TemplateField HeaderText="Action">
-                <ItemTemplate>
-                    <asp:Button ID="btnEnroll" runat="server"
-                        Text="Enroll"
-                        CommandArgument='<%# Eval("OfferingID") %>'
-                        OnClick="btnEnroll_Click" />
-                </ItemTemplate>
-            </asp:TemplateField>
-        </Columns>
+            <br />
 
-    </asp:GridView>
+            <asp:DropDownList ID="ddlSession"
+                runat="server"
+                CssClass="form-control"
+                AutoPostBack="True"
+                OnSelectedIndexChanged="ddlSession_SelectedIndexChanged">
+            </asp:DropDownList>
 
-    <hr />
+            <br />
 
-    <h2>My Enrolled Courses</h2>
+            <!-- SEMESTER -->
 
-    <asp:GridView ID="gvEnrollment" runat="server"
-        AutoGenerateColumns="False"
-        CssClass="grid">
+            <asp:Label ID="Label2"
+                runat="server"
+                Text="Select Semester"
+                CssClass="form-label">
+            </asp:Label>
 
-        <Columns>
-            <asp:BoundField DataField="CourseCode" HeaderText="Code" />
-            <asp:BoundField DataField="CourseName" HeaderText="Course" />
-            <asp:BoundField DataField="Status" HeaderText="Status" />
+            <br />
 
-            <asp:TemplateField HeaderText="Action">
-                <ItemTemplate>
-                    <asp:Button ID="btnDrop" runat="server"
-                        Text="Drop"
-                        CommandArgument='<%# Eval("EnrolmentID") %>'
-                        OnClick="btnDrop_Click" />
-                </ItemTemplate>
-            </asp:TemplateField>
+            <asp:DropDownList ID="ddlSemester"
+                runat="server"
+                CssClass="form-control"
+                AutoPostBack="True"
+                OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
 
-        </Columns>
+                <asp:ListItem>Semester 1</asp:ListItem>
+                <asp:ListItem>Semester 2</asp:ListItem>
 
-    </asp:GridView>
+            </asp:DropDownList>
 
-    <br />
+        </div>
 
-    <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+        <br /><br />
 
-</div>
+        <!-- AVAILABLE COURSES -->
+
+        <div class="grid-container">
+
+            <h3>Available Courses</h3>
+
+            <asp:GridView ID="gvCourses"
+                runat="server"
+                AutoGenerateColumns="False"
+                CssClass="table table-bordered table-striped">
+
+                <Columns>
+
+                    <asp:TemplateField HeaderText="Select">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="chkSelect"
+                                runat="server" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
+                    <asp:BoundField DataField="CourseID"
+                        HeaderText="Course ID" />
+
+                    <asp:BoundField DataField="CourseCode"
+                        HeaderText="Course Code" />
+
+                    <asp:BoundField DataField="CourseName"
+                        HeaderText="Course Name" />
+
+                    <asp:BoundField DataField="CreditHours"
+                        HeaderText="Credit Hours" />
+
+                </Columns>
+
+            </asp:GridView>
+
+        </div>
+
+        <br />
+
+        <!-- SUBMIT BUTTON -->
+
+        <asp:Button ID="btnSubmit"
+            runat="server"
+            Text="Submit Enrollment"
+            CssClass="btn btn-primary"
+            Width="220px"
+            OnClick="btnSubmit_Click" />
+
+        <br /><br />
+
+        <asp:Label ID="lblMessage"
+            runat="server"
+            ForeColor="Green">
+        </asp:Label>
+
+        <hr class="w-75" />
+
+        <!-- ENROLLMENT DETAILS -->
+
+        <div class="grid-container">
+
+            <h3>Submitted Enrollment Details</h3>
+
+            <asp:GridView ID="gvEnrollment"
+            runat="server"
+            AutoGenerateColumns="False"
+            CssClass="table table-bordered table-striped">
+
+            <Columns>
+
+                <asp:BoundField DataField="CourseCode" HeaderText="Code" />
+                <asp:BoundField DataField="CourseName" HeaderText="Course" />
+                <asp:BoundField DataField="Status" HeaderText="Status" />
+
+                <asp:TemplateField HeaderText="Action">
+                    <ItemTemplate>
+                        <asp:Button ID="btnDrop"
+                            runat="server"
+                            Text="Drop"
+                            CssClass="btn btn-danger btn-sm"
+                            CommandArgument='<%# Eval("EnrolmentID") %>'
+                            OnClick="btnDrop_Click" />
+                    </ItemTemplate>
+        </asp:TemplateField>
+
+    </Columns>
+
+</asp:GridView>
+
+        </div>
+
+    </div>
 
 </form>
 

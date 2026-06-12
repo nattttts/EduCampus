@@ -18,5 +18,10 @@
         /// gvAttendance control.
         /// </summary>
         protected global::System.Web.UI.WebControls.GridView gvAttendance;
+
+        /// <summary>
+        /// btnLogout control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnLogout;
     }
 }

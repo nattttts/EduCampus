@@ -27,5 +27,10 @@
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtProgramme;
 
+        /// <summary>
+        /// btnLogout control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnLogout;
+
     }
 }

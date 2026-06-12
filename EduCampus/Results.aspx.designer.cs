@@ -23,5 +23,10 @@
         /// gvResults control.
         /// </summary>
         protected global::System.Web.UI.WebControls.GridView gvResults;
+
+        /// <summary>
+        /// btnLogout control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnLogout;
     }
 }

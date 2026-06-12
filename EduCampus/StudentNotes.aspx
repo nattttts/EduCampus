@@ -1,4 +1,4 @@
-﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="StudentNotes.aspx.cs" Inherits="EduCampus.StudentNotes" %>
+﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="StudentNotes.aspx.cs" Inherits="EduCampus.StudentNotes" %>
 
 <!DOCTYPE html>
 
@@ -23,21 +23,34 @@
             <div class="collapse navbar-collapse">
                 <!-- Menu -->
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                         <a class="nav-link" href="StudentDashboard.aspx">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="Attendance.aspx">Attendance</a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link active" href="Results.aspx">Results</a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="StudentProfile.aspx">Profile</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="StudentDashboard.aspx">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="Results.aspx">Results</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="StudentNotification.aspx">Notifications</a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="StudentNotes.aspx">Notes</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="StudentProfile.aspx">Profile</a>
+                </li>
                 </ul>
 
                  <!-- Logout button -->
@@ -50,6 +63,7 @@
 
         </div>
     </nav>
+    <asp:Label ID="lblMessage" runat="server" CssClass="text-danger fw-bold"></asp:Label>
 
     <h2>
 

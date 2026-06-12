@@ -57,7 +57,7 @@ VALUES
 ('Present', NULL, 3),
 ('Absent', 'No Show', 3);
 
-INSERT INTO CourseMarks (AssignmentMark, TestMark, FinalMark, FinalGrade, DetailID)
+INSERT INTO CourseMarks (AssignmentMark, MidTestMark, FinalMark, FinalGrade, DetailID)
 VALUES
 (85, 90, 88, 'A', 1),
 (75, 80, 78, 'B+', 2);

@@ -22,7 +22,7 @@
                  <!-- Menu -->
                  <ul class="navbar-nav me-auto">
                      <li class="nav-item">
-                          <a class="nav-link active" href="StudentDashboard.aspx">Home</a>
+                          <a class="nav-link" href="StudentDashboard.aspx">Home</a>
                      </li>
                      <li class="nav-item">
                          <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
@@ -31,12 +31,18 @@
                          <a class="nav-link" href="Attendance.aspx">Attendance</a>
                      </li>
                       <li class="nav-item">
-                         <a class="nav-link" href="Results.aspx">Results</a>
+                         <a class="nav-link active" href="Results.aspx">Results</a>
                      </li>
                       <li class="nav-item">
                          <a class="nav-link" href="StudentProfile.aspx">Profile</a>
                      </li>
                  </ul>
+
+                  <!-- Logout button -->
+                 <asp:Button ID="btnLogout" runat="server"
+                     Text="Logout"
+                     CssClass="btn btn-danger"
+                     OnClick="btnLogout_Click" />
 
              </div>
 

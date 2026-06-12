@@ -67,6 +67,15 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" href="StudentNotification.aspx">Notifications</a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="StudentNotes.aspx">Notes</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" href="StudentProfile.aspx">Profile</a>
                         </li>
 

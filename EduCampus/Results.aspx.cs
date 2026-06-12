@@ -38,7 +38,7 @@ namespace EduCampus
                     c.CourseCode,
                     c.CourseName,
                     cm.AssignmentMark,
-                    cm.TestMark,
+                    cm.MidTestMark,
                     cm.FinalMark,
                     cm.FinalGrade
                 FROM CourseMarks cm

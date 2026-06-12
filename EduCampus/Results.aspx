@@ -21,22 +21,35 @@
              <div class="collapse navbar-collapse">
                  <!-- Menu -->
                  <ul class="navbar-nav me-auto">
-                     <li class="nav-item">
-                          <a class="nav-link" href="StudentDashboard.aspx">Home</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link" href="Attendance.aspx">Attendance</a>
-                     </li>
-                      <li class="nav-item">
-                         <a class="nav-link active" href="Results.aspx">Results</a>
-                     </li>
-                      <li class="nav-item">
-                         <a class="nav-link" href="StudentProfile.aspx">Profile</a>
-                     </li>
-                 </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="StudentDashboard.aspx">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="StudentEnrollCourse.aspx">Course</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Results.aspx">Results</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="StudentNotification.aspx">Notifications</a>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="StudentNotes.aspx">Notes</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="StudentProfile.aspx">Profile</a>
+                    </li>
+                </ul>
 
                   <!-- Logout button -->
                  <asp:Button ID="btnLogout" runat="server"

@@ -189,7 +189,7 @@
                                     DataFormatString="{0:dd/MM/yyyy HH:mm}"
                                     ReadOnly="True" />
 
-                                <asp:TemplateField HeaderText="Actions">
+                                <asp:TemplateField HeaderText="Actions" ItemStyle-Width="200px">
 
                                     <ItemTemplate>
 

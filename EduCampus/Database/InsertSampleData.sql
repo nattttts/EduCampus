@@ -67,4 +67,51 @@ VALUES
 (3.75, 3.75, 1),
 (3.10, 3.10, 2);
 
-SELECT * FROM Attendance;
+SELECT * FROM Notifications;
+
+INSERT INTO Announcements
+(Title, Message, OfferingID)
+VALUES
+-- General announcements (Admin)
+('Semester Enrolment Open',
+ 'Course enrolment for 2026 is now open. Please complete your enrolment before the deadline.',
+ NULL),
+
+('Examination Timetable Released',
+ 'The final examination timetable has been published. Students are advised to review their schedules carefully.',
+ NULL),
+
+('Fee Payment Reminder',
+ 'Students with outstanding fees are required to settle payments before the examination period.',
+ NULL),
+
+-- Course-specific announcements
+('Week 5 Lecture Notes Uploaded',
+ 'The Week 5 lecture notes have been uploaded to the course materials section.',
+ 1),
+
+('Quiz 1 Schedule',
+ 'Quiz 1 will be conducted during next week''s class session. Please review Chapters 1 to 3.',
+ 1),
+
+('Assignment Submission Reminder',
+ 'Assignment 1 is due this Friday at 11:59 PM. Late submissions will be penalized.',
+ 2),
+
+('Lab Session Change',
+ 'This week''s lab session has been moved to ICT Lab B due to maintenance work.',
+ 2),
+
+('Mid-Term Test Announcement',
+ 'The Mid-Term Test will be held during Week 8. Further details will be provided in class.',
+ 3);
+
+INSERT INTO Notifications (Title, Message, UserID)
+VALUES
+('Attendance Warning',
+ 'Your attendance for Data Structure has fallen below 80%.',
+ 4),
+
+('Semester Results Published',
+ 'Your results for Semester 1 have been released.',
+ 4);

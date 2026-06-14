@@ -38,7 +38,6 @@ namespace EduCampus
         private void LoadOfferings()
         {
             int lecturerId = GetLecturerId();
-            lblMessage.Text = "LecturerID = " + lecturerId;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {

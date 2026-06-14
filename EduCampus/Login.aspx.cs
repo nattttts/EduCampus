@@ -81,7 +81,7 @@ namespace EduCampus
                     }
                     else if (role == "Lecturer")
                     {
-                        Response.Redirect("LecturerDashboard.aspx");
+                        Response.Redirect("LecturerAnnouncements.aspx");
                     }
                     else if (role == "Student")
                     {

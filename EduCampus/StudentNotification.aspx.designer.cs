@@ -12,6 +12,8 @@
         /// </summary>
         protected global::System.Web.UI.WebControls.GridView gvNotifications;
 
+        protected global::System.Web.UI.WebControls.GridView gvAnnouncements;
+
         /// <summary>
         /// btnLogout control.
         /// </summary>

@@ -115,3 +115,17 @@ VALUES
 ('Semester Results Published',
  'Your results for Semester 1 have been released.',
  4);
+
+INSERT INTO AcademicCalendar (Session, StartDate, EndDate, Event)
+VALUES
+('Apr2026', '2026-03-30', '2026-04-3', 'Class begin'),
+
+('Apr2026', '2026-04-08', '2026-04-08', 
+'Last day for enrollment fee without late payment charge for continuing students'),
+
+('Apr2026', '2026-04-15', '2026-04-15', 
+'The CANVAS will be blocked if no payment is made'),
+
+('Apr2026', '2026-05-01', '2026-05-01', 'Public Holiday: Labour Day'),
+
+('Apr2026', '2026-05-18', '2026-05-24', 'Mid Semester Break');

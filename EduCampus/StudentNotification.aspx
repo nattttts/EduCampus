@@ -18,8 +18,7 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg bg-white shadow-sm">
         <div class="container-fluid">
-
-            <a class="navbar-brand fw-bold" href="#">EduCampus</a>
+            <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2">
 
             <div class="collapse navbar-collapse">
 

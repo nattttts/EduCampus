@@ -285,6 +285,7 @@
     </Compile>
     <Compile Include="StudentNotification.aspx.cs">
       <DependentUpon>StudentNotification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="StudentNotification.aspx.designer.cs">
       <DependentUpon>StudentNotification.aspx</DependentUpon>

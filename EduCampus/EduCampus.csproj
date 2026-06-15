@@ -127,6 +127,7 @@
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
     <Content Include="Logo.jpeg" />
+    <Content Include="ManageCalendar.aspx" />
     <Content Include="ManageCourse.aspx" />
     <Content Include="ManageProgramme.aspx" />
     <Content Include="RegisterLecturer.aspx" />
@@ -261,6 +262,13 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManageCalendar.aspx.cs">
+      <DependentUpon>ManageCalendar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ManageCalendar.aspx.designer.cs">
+      <DependentUpon>ManageCalendar.aspx</DependentUpon>
     </Compile>
     <Compile Include="ManageCourse.aspx.cs">
       <DependentUpon>ManageCourse.aspx</DependentUpon>

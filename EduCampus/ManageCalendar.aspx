@@ -1,9 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ManageProgramme.aspx.cs" Inherits="EduCampus.ManageProgramme" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ManageCalendar.aspx.cs" Inherits="EduCampus.ManageCalendar" %>
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>Manage Programme</title>
+    <title>Manage Academic Calendar</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -24,7 +24,7 @@
                              <a class="nav-link" href="AdminDashboard.aspx">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="ManageProgramme.aspx">Programme</a>
+                            <a class="nav-link" href="ManageProgramme.aspx">Programme</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="ManageCourse.aspx">Courses</a>
@@ -45,7 +45,7 @@
                             <a class="nav-link" href="AdminAnnouncements.aspx">Announcements</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="ManageCalendar.aspx">Calendar</a>
+                            <a class="nav-link active" href="ManageCalendar.aspx">Calendar</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Attendance</a>
@@ -68,23 +68,55 @@
 
         <!-- Manage programme form -->
         <div class="container mt-5 d-flex justify-content-center">
-            <div class="card shadow p-4" style="width: 400px;">
-                <h3 class="text-center mb-4">Manage Programme</h3>
+            <div class="card shadow p-4" style="width: 700px;">
+                <h3 class="text-center mb-4">📅 Manage Academic Calendar</h3>
 
                 <div class="mb-3">
-                    <label class="form-label">Programme Code</label>
-                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter programme code"></asp:TextBox>
+                    <label class="form-label">Session</label>
+                    <asp:DropDownList ID="ddlSession"
+                        runat="server"
+                        CssClass="form-select">
+
+                        <asp:ListItem Selected="True">Jan2026</asp:ListItem>
+                        <asp:ListItem>Apr2026</asp:ListItem>
+                        <asp:ListItem>Aug2026</asp:ListItem>
+
+                    </asp:DropDownList>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Programme Name</label>
-                    <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Enter programme name"></asp:TextBox>
+                    <label class="form-label">Start Date</label>
+                    <asp:TextBox ID="txtStartDate"
+                        runat="server"
+                        TextMode="Date"
+                        CssClass="form-control">
+                    </asp:TextBox>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">End Date</label>
+                    <asp:TextBox ID="txtEndDate"
+                        runat="server"
+                        TextMode="Date"
+                        CssClass="form-control">
+                    </asp:TextBox>
+
+                    <small class="form-text"> For single-day events, use the same start and end date.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Event</label>
+                    <asp:TextBox ID="txtEvent" runat="server"
+                        CssClass="form-control"
+                        TextMode="MultiLine"
+                        Rows="3"
+                        placeholder="Enter academic calendar event" />
                 </div>
 
                 <div class="d-flex gap-2">
                     <!-- Save button -->
                     <asp:Button ID="btnSave" runat="server"
-                        Text="Save Programme"
+                        Text="Save Calendar Event"
                         CssClass="btn btn-primary"
                         OnClick="btnSave_Click" />
               
@@ -101,18 +133,18 @@
 
             </div>
         </div>
-        
-        <!-- Programme List -->
+
+        <!-- Academic Calendar List -->
         <div class="container mt-4">
             <div class="card shadow p-4">
-                <h4 class="mb-3">Programme List</h4>
+                <h4 class="mb-3">📋 Academic Calendar</h4>
 
                  <!-- Search -->
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <asp:TextBox ID="txtSearch" runat="server"
                             CssClass="form-control"
-                            Placeholder="Enter programme code/programme name" />
+                            Placeholder="Enter session or event" />
                     </div>
 
                     <div class="col-md-2">
@@ -129,15 +161,15 @@
                 </div>
 
                 <!-- Gridview -->
-                <asp:GridView ID="gvProgramme" runat="server"
+                <asp:GridView ID="gvCalendar" runat="server"
                     CssClass="table table-bordered table-striped"
                     AutoGenerateColumns="False"
-                    DataKeyNames="ProgrammeID"
-                    EmptyDataText="No programmes found"
-                    OnRowEditing="gvProgramme_RowEditing"
-                    OnRowUpdating="gvProgramme_RowUpdating"
-                    OnRowCancelingEdit="gvProgramme_RowCancelingEdit"
-                    OnRowDeleting="gvProgramme_RowDeleting">
+                    DataKeyNames="CalendarID"
+                    EmptyDataText="No academic calendar found"
+                    OnRowEditing="gvCalendar_RowEditing"
+                    OnRowUpdating="gvCalendar_RowUpdating"
+                    OnRowCancelingEdit="gvCalendar_RowCancelingEdit"
+                    OnRowDeleting="gvCalendar_RowDeleting">
 
                     <Columns>
                         <asp:TemplateField HeaderText="No.">
@@ -146,8 +178,52 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <asp:BoundField DataField="ProgrammeCode" HeaderText="Programme Code" />
-                        <asp:BoundField DataField="ProgrammeName" HeaderText="Programme Name" />
+                        <asp:BoundField DataField="Session" HeaderText="Session" ReadOnly="true"/>
+                        
+                        <asp:TemplateField HeaderText="Date">
+
+                            <ItemTemplate>
+                                <%# FormatDate(Eval("StartDate"), Eval("EndDate")) %>
+                            </ItemTemplate>
+
+                            <EditItemTemplate>
+
+                                <asp:TextBox ID="txtEditStartDate"
+                                    runat="server"
+                                    Text='<%# Bind("StartDate","{0:yyyy-MM-dd}") %>'
+                                    TextMode="Date"
+                                    CssClass="form-control mb-1">
+                                </asp:TextBox>
+                                    
+                                <asp:TextBox ID="txtEditEndDate"
+                                    runat="server"
+                                    Text='<%# Bind("EndDate","{0:yyyy-MM-dd}") %>'
+                                    TextMode="Date"
+                                    CssClass="form-control">
+                                </asp:TextBox>
+
+                            </EditItemTemplate>
+
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Event" ItemStyle-Width="600px">
+                            
+                            <ItemTemplate>
+                                <%# Eval("Event") %>
+                            </ItemTemplate>
+
+                            <EditItemTemplate>
+                                 <asp:TextBox ID="txtEditEvent"
+                                     runat="server"
+                                     Text='<%# Bind("Event") %>'
+                                     TextMode="MultiLine"
+                                     Rows="3"
+                                     CssClass="form-control">
+                                 </asp:TextBox>
+
+                            </EditItemTemplate>
+
+                        </asp:TemplateField>
 
                         <asp:TemplateField HeaderText="Action">
 
@@ -161,7 +237,7 @@
                                     CommandName="Delete"
                                     Text="Delete"
                                     CssClass="btn btn-danger btn-sm"
-                                    OnClientClick="return confirm('Are you sure you want to delete this programme?');" />
+                                    OnClientClick="return confirm('Are you sure you want to delete this event?');" />
                             </ItemTemplate>
 
                             <EditItemTemplate>

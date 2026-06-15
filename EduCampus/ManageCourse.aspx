@@ -45,7 +45,7 @@
                              <a class="nav-link" href="AdminAnnouncements.aspx">Announcements</a>
                          </li>
                          <li class="nav-item">
-                             <a class="nav-link" href="#">Calendar</a>
+                             <a class="nav-link" href="ManageCalendar.aspx">Calendar</a>
                          </li>
                          <li class="nav-item">
                              <a class="nav-link" href="#">Attendance</a>

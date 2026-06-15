@@ -87,6 +87,26 @@
 
         </asp:GridView>
 
+        <!-- 📢 ANNOUNCEMENTS SECTION -->
+        <br />
+
+        <h5 class="mt-4">📢 Announcements</h5>
+
+        <asp:GridView ID="gvAnnouncements"
+            runat="server"
+            AutoGenerateColumns="False"
+            CssClass="table table-warning table-striped shadow-sm"
+            GridLines="None">
+
+            <Columns>
+                <asp:BoundField DataField="Title" HeaderText="Title" />
+                <asp:BoundField DataField="Message" HeaderText="Message" />
+                <asp:BoundField DataField="PostedDateTime" HeaderText="Date"
+                    DataFormatString="{0:yyyy-MM-dd HH:mm}" />
+            </Columns>
+
+        </asp:GridView>
+
     </div>
 
 </form>

@@ -49,10 +49,7 @@ namespace EduCampus
 
             object result = cmd.ExecuteScalar();
 
-            if (result == null)
-                return null;
-
-            return Convert.ToInt32(result);
+            return result == null ? (int?)null : Convert.ToInt32(result);
         }
 
         // ================= LOAD SESSION =================
@@ -100,7 +97,6 @@ namespace EduCampus
                 da.Fill(dt);
 
                 gvCourses.DataKeyNames = new string[] { "CourseID" };
-
                 gvCourses.DataSource = dt;
                 gvCourses.DataBind();
             }
@@ -124,7 +120,7 @@ namespace EduCampus
                         return;
                     }
 
-                    // MASTER INSERT
+                    // INSERT MASTER
                     string insertMaster = @"
                         INSERT INTO EnrollmentMaster
                         (DateEnrolled, Status, Session, Semester, StudentID)
@@ -140,10 +136,10 @@ namespace EduCampus
 
                     int enrolmentID = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    // DETAILS INSERT
+                    // INSERT DETAILS
                     foreach (GridViewRow row in gvCourses.Rows)
                     {
-                        CheckBox chk = (CheckBox)row.FindControl("chkSelect");
+                        CheckBox chk = row.FindControl("chkSelect") as CheckBox;
 
                         if (chk != null && chk.Checked)
                         {
@@ -232,7 +228,7 @@ namespace EduCampus
             }
         }
 
-        // ================= DROP COURSE  =================
+        // ================= DROP COURSE =================
         protected void btnDrop_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
@@ -245,7 +241,7 @@ namespace EduCampus
 
                 try
                 {
-                    // DELETE CHILD FIRST 
+                    // DELETE DETAILS FIRST
                     string deleteDetails = @"
                         DELETE FROM EnrollmentDetails
                         WHERE EnrolmentID = @ID";
@@ -254,6 +250,7 @@ namespace EduCampus
                     cmd1.Parameters.AddWithValue("@ID", enrolmentID);
                     cmd1.ExecuteNonQuery();
 
+                    // DELETE MASTER
                     string deleteMaster = @"
                         DELETE FROM EnrollmentMaster
                         WHERE EnrolmentID = @ID";

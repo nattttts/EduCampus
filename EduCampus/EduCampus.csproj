@@ -184,6 +184,7 @@
     <Content Include="StudentDashboard.aspx" />
     <Content Include="StudentEnrollCourse.aspx" />
     <Content Include="StudentNotes.aspx" />
+    <Content Include="StudentNotification.aspx" />
     <Content Include="StudentProfile.aspx" />
     <Content Include="style.css" />
     <Content Include="ViewSwitcher.ascx" />
@@ -281,6 +282,12 @@
     </Compile>
     <Compile Include="StudentNotes.aspx.designer.cs">
       <DependentUpon>StudentNotes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="StudentNotification.aspx.cs">
+      <DependentUpon>StudentNotification.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="StudentNotification.aspx.designer.cs">
+      <DependentUpon>StudentNotification.aspx</DependentUpon>
     </Compile>
     <Compile Include="StudentProfile.aspx.cs">
       <DependentUpon>StudentProfile.aspx</DependentUpon>

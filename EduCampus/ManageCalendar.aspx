@@ -66,7 +66,7 @@
             </div>
         </nav>
 
-        <!-- Manage programme form -->
+        <!-- Manage academic calendar form -->
         <div class="container mt-5 d-flex justify-content-center">
             <div class="card shadow p-4" style="width: 700px;">
                 <h3 class="text-center mb-4">📅 Manage Academic Calendar</h3>

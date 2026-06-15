@@ -37,7 +37,7 @@ namespace EduCampus
             Response.Redirect("Login.aspx"); // go back to login
         }
 
-        // Load event list
+        // Load academic calendar list
         private void LoadCalendar()
         {
             using (SqlConnection conn = new SqlConnection(connStr))

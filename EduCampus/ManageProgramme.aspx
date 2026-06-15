@@ -69,7 +69,7 @@
         <!-- Manage programme form -->
         <div class="container mt-5 d-flex justify-content-center">
             <div class="card shadow p-4" style="width: 400px;">
-                <h3 class="text-center mb-4">Manage Programme</h3>
+                <h3 class="text-center mb-4">🎓 Manage Programme</h3>
 
                 <div class="mb-3">
                     <label class="form-label">Programme Code</label>
@@ -105,7 +105,7 @@
         <!-- Programme List -->
         <div class="container mt-4">
             <div class="card shadow p-4">
-                <h4 class="mb-3">Programme List</h4>
+                <h4 class="mb-3">📋 Programmes</h4>
 
                  <!-- Search -->
                 <div class="row mb-3">

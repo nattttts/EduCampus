@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
@@ -7,7 +8,7 @@ namespace EduCampus
 {
     public partial class ManageProgramme : System.Web.UI.Page
     {
-        string connStr = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=EduCampusDB;Integrated Security=True";
+        string connStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
             // Protect page (must login first)
@@ -39,9 +40,9 @@ namespace EduCampus
         // Load programme list
         private void LoadProgrammes()
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", con);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -88,14 +89,14 @@ namespace EduCampus
                     return;
                 }
 
-                using (SqlConnection con = new SqlConnection(connStr))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
-                    con.Open();
+                    conn.Open();
 
                     // Check if any duplicate programme code
                     string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code";
 
-                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
                     checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
 
                     int count = (int)checkCmd.ExecuteScalar();
@@ -109,7 +110,7 @@ namespace EduCampus
 
                     // Insert programme
                     string query = "INSERT INTO Programmes (ProgrammeCode, ProgrammeName) VALUES (@code, @name)";
-                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
                     cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
@@ -188,14 +189,14 @@ namespace EduCampus
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                con.Open();
+                conn.Open();
 
                 // Check if any duplicate programme code
                 string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code AND ProgrammeID != @id";
 
-                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
 
                 checkCmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
                 checkCmd.Parameters.AddWithValue("@id", id);
@@ -212,7 +213,7 @@ namespace EduCampus
                 // Update programme information
                 string query = "UPDATE Programmes SET ProgrammeCode=@code, ProgrammeName=@name WHERE ProgrammeID=@id";
 
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());

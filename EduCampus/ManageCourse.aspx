@@ -69,7 +69,7 @@
         <!-- Manage course form -->
         <div class="container mt-5 d-flex justify-content-center">
             <div class="card shadow p-4" style="width: 400px;">
-                <h3 class="text-center mb-4">Manage Courses</h3>
+                <h3 class="text-center mb-4">📚 Manage Courses</h3>
 
                 <div class="mb-3">
                     <label class="form-label">Course Code</label>
@@ -116,7 +116,7 @@
         <!-- Course List -->
         <div class="container mt-4">
             <div class="card shadow p-4">
-                <h4 class="mb-3">Course List</h4>
+                <h4 class="mb-3">📋 Courses</h4>
 
                  <!-- Search -->
                 <div class="row mb-3">

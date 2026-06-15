@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
@@ -7,7 +8,7 @@ namespace EduCampus
 {
     public partial class ManageCourse : System.Web.UI.Page
     {
-        string connStr = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=EduCampusDB;Integrated Security=True";
+        string connStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
             // Protect page (must login first)
@@ -40,9 +41,9 @@ namespace EduCampus
         // Load Programme dropdown
         private void LoadProgrammes()
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", con);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -57,7 +58,7 @@ namespace EduCampus
         // Load course list
         private void LoadCourses()
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
                     SELECT 
@@ -71,7 +72,7 @@ namespace EduCampus
                     INNER JOIN Programmes p 
                         ON c.ProgrammeID = p.ProgrammeID";
 
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -135,14 +136,14 @@ namespace EduCampus
                     return;
                 }
 
-                using (SqlConnection con = new SqlConnection(connStr))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
-                    con.Open();
+                    conn.Open();
 
                     // Check if any duplicate course code
                     string checkQuery = "SELECT COUNT(*) FROM Courses WHERE CourseCode = @code";
 
-                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
                     checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
 
                     int count = (int)checkCmd.ExecuteScalar();
@@ -157,7 +158,7 @@ namespace EduCampus
                     // Insert course
                     string query = "INSERT INTO Courses (CourseCode, CourseName, CreditHours, ProgrammeID) " +
                                    "VALUES (@code, @name, @credit, @programmeId)";
-                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
                     cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
@@ -293,14 +294,14 @@ namespace EduCampus
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                con.Open();
+                conn.Open();
 
                 // Check if any duplicate course code
                 string checkQuery = "SELECT COUNT(*) FROM Courses WHERE CourseCode = @code AND CourseID != @id";
 
-                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
 
                 checkCmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
                 checkCmd.Parameters.AddWithValue("@id", id);
@@ -319,7 +320,7 @@ namespace EduCampus
                                  SET CourseCode=@code, CourseName=@name, CreditHours=@credit, ProgrammeID=@programmeId
                                  WHERE CourseID=@id";
 
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());

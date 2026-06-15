@@ -83,19 +83,17 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT 
-                        c.CourseID,
-                        c.CourseCode,
-                        c.CourseName,
-                        c.CreditHours
-                    FROM CourseOfferings co
-                    INNER JOIN Courses c ON co.CourseID = c.CourseID
-                    WHERE co.Session = @Session
-                    AND co.Semester = @Semester";
+                SELECT 
+                    c.CourseID,
+                    c.CourseCode,
+                    c.CourseName,
+                    c.CreditHours
+                FROM CourseOfferings co
+                INNER JOIN Courses c ON co.CourseID = c.CourseID
+                WHERE co.Session = @Session";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                cmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -164,8 +162,7 @@ namespace EduCampus
                                 SELECT TOP 1 OfferingID
                                 FROM CourseOfferings
                                 WHERE CourseID = @CourseID
-                                AND Session = @Session
-                                AND Semester = @Semester";
+                                AND Session = @Session";
 
                             object offeringObj;
 

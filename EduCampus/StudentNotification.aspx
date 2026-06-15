@@ -49,6 +49,10 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link" href="StudentCalendar.aspx">Academic Calendar</a>
+                    </li>
+
+                    <li class="nav-item">
                         <a class="nav-link" href="StudentProfile.aspx">Profile</a>
                     </li>
                 </ul>

@@ -10,7 +10,7 @@ namespace EduCampus
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 🔒 CHECK LOGIN (based on Email since login stores Email)
+            // 🔒 CHECK LOGIN
             if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");
@@ -20,9 +20,11 @@ namespace EduCampus
             if (!IsPostBack)
             {
                 LoadNotifications();
+                LoadAnnouncements();
             }
         }
 
+        // 🔔 EXISTING: NOTIFICATIONS
         void LoadNotifications()
         {
             string email = Session["Email"].ToString();
@@ -32,7 +34,7 @@ namespace EduCampus
             {
                 con.Open();
 
-                // 🔎 STEP 1: GET USERID FROM EMAIL
+                // GET USER ID
                 string getUserIdQuery = @"
                     SELECT UserID 
                     FROM Users 
@@ -53,7 +55,7 @@ namespace EduCampus
                     userId = Convert.ToInt32(result);
                 }
 
-                // 🔔 STEP 2: GET NOTIFICATIONS
+                // GET NOTIFICATIONS
                 string query = @"
                     SELECT Title, Message, CreatedDateTime
                     FROM Notifications
@@ -75,7 +77,79 @@ namespace EduCampus
             }
         }
 
-        // 🚪 LOGOUT
+        // 📢 NEW: ANNOUNCEMENTS
+        void LoadAnnouncements()
+        {
+            string email = Session["Email"].ToString();
+            int userId = 0;
+            string studentId = "";
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+
+                // GET USER ID
+                string getUserIdQuery = @"
+                    SELECT UserID 
+                    FROM Users 
+                    WHERE Email = @Email";
+
+                using (SqlCommand cmdUser = new SqlCommand(getUserIdQuery, con))
+                {
+                    cmdUser.Parameters.AddWithValue("@Email", email);
+
+                    object result = cmdUser.ExecuteScalar();
+
+                    if (result == null)
+                        return;
+
+                    userId = Convert.ToInt32(result);
+                }
+
+                // GET STUDENT ID
+                string getStudentQuery = @"
+                    SELECT StudentID 
+                    FROM Students 
+                    WHERE UserID = @UserID";
+
+                using (SqlCommand cmdStudent = new SqlCommand(getStudentQuery, con))
+                {
+                    cmdStudent.Parameters.AddWithValue("@UserID", userId);
+
+                    object result = cmdStudent.ExecuteScalar();
+
+                    if (result == null)
+                        return;
+
+                    studentId = result.ToString();
+                }
+
+                // GET ANNOUNCEMENTS (BASED ON ENROLLED COURSES)
+                string query = @"
+                    SELECT DISTINCT a.Title, a.Message, a.PostedDateTime
+                    FROM Announcements a
+                    INNER JOIN CourseOfferings co ON a.OfferingID = co.OfferingID
+                    INNER JOIN EnrollmentDetails ed ON co.OfferingID = ed.OfferingID
+                    INNER JOIN EnrollmentMaster em ON ed.EnrolmentID = em.EnrolmentID
+                    WHERE em.StudentID = @StudentID
+                    ORDER BY a.PostedDateTime DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@StudentID", studentId);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+
+                    da.Fill(dt);
+
+                    gvAnnouncements.DataSource = dt;
+                    gvAnnouncements.DataBind();
+                }
+            }
+        }
+
+        // 🚪 LOGOUT (UNCHANGED)
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();

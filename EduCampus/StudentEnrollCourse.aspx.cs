@@ -264,13 +264,13 @@ namespace EduCampus
 
                 try
                 {
-                    string deleteMaster = @"DELETE FROM EnrollmentMaster WHERE EnrolmentID = @ID";
+                    string deleteMaster = @"
+                    DELETE FROM EnrollmentMaster
+                    WHERE EnrolmentID = @ID";
 
-                    using (SqlCommand cmd = new SqlCommand(deleteMaster, con, trans))
-                    {
-                        cmd.Parameters.AddWithValue("@ID", enrolmentID);
-                        cmd.ExecuteNonQuery();
-                    }
+                    SqlCommand cmd = new SqlCommand(deleteMaster, con, trans);
+                    cmd.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmd.ExecuteNonQuery();
 
                     trans.Commit();
 

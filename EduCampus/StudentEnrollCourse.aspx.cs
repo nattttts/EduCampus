@@ -35,32 +35,35 @@ namespace EduCampus
         }
 
         // ================= GET STUDENT ID =================
-        private int? GetStudentID(SqlConnection con)
+        private int? GetStudentID(SqlConnection con, SqlTransaction trans)
         {
             string query = @"
-                SELECT StudentID
-                FROM Students
+                SELECT StudentID 
+                FROM Students 
                 WHERE UserID = (
                     SELECT UserID FROM Users WHERE Email = @Email
                 )";
 
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+            using (SqlCommand cmd = new SqlCommand(query, con, trans))
+            {
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
-            object result = cmd.ExecuteScalar();
+                object result = cmd.ExecuteScalar();
 
-            return result == null ? (int?)null : Convert.ToInt32(result);
+                if (result == null || result == DBNull.Value)
+                    return null;
+
+                return Convert.ToInt32(result);
+            }
         }
 
         // ================= LOAD SESSION =================
         private void LoadSessions()
         {
             ddlSession.Items.Clear();
-
             ddlSession.Items.Add(new ListItem("2025", "2025"));
             ddlSession.Items.Add(new ListItem("2026", "2026"));
             ddlSession.Items.Add(new ListItem("2027", "2027"));
-
             ddlSession.SelectedValue = "2026";
         }
 
@@ -80,17 +83,19 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT
+                    SELECT 
                         c.CourseID,
                         c.CourseCode,
                         c.CourseName,
                         c.CreditHours
                     FROM CourseOfferings co
                     INNER JOIN Courses c ON co.CourseID = c.CourseID
-                    WHERE co.Session = @Session";
+                    WHERE co.Session = @Session
+                    AND co.Semester = @Semester";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                cmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -112,15 +117,12 @@ namespace EduCampus
 
                 try
                 {
-                    int? studentID = GetStudentID(con);
+                    int? studentID = GetStudentID(con, trans);
 
                     if (studentID == null)
-                    {
-                        lblMessage.Text = "Student not found.";
-                        return;
-                    }
+                        throw new Exception("Student record not found.");
 
-                    // INSERT MASTER
+                    // ================= INSERT MASTER =================
                     string insertMaster = @"
                         INSERT INTO EnrollmentMaster
                         (DateEnrolled, Status, Session, Semester, StudentID)
@@ -129,51 +131,74 @@ namespace EduCampus
 
                         SELECT SCOPE_IDENTITY();";
 
-                    SqlCommand cmd = new SqlCommand(insertMaster, con, trans);
-                    cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                    cmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
-                    cmd.Parameters.AddWithValue("@StudentID", studentID);
+                    int enrolmentID;
 
-                    int enrolmentID = Convert.ToInt32(cmd.ExecuteScalar());
+                    using (SqlCommand cmd = new SqlCommand(insertMaster, con, trans))
+                    {
+                        cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                        cmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
+                        cmd.Parameters.AddWithValue("@StudentID", studentID);
 
-                    // INSERT DETAILS
+                        object result = cmd.ExecuteScalar();
+
+                        if (result == null)
+                            throw new Exception("Failed to create EnrollmentMaster.");
+
+                        enrolmentID = Convert.ToInt32(result);
+                    }
+
+                    bool hasSelection = false;
+
+                    // ================= INSERT DETAILS =================
                     foreach (GridViewRow row in gvCourses.Rows)
                     {
                         CheckBox chk = row.FindControl("chkSelect") as CheckBox;
 
                         if (chk != null && chk.Checked)
                         {
+                            hasSelection = true;
+
                             int courseID = Convert.ToInt32(gvCourses.DataKeys[row.RowIndex].Value);
 
                             string getOffering = @"
                                 SELECT TOP 1 OfferingID
                                 FROM CourseOfferings
                                 WHERE CourseID = @CourseID
-                                AND Session = @Session";
+                                AND Session = @Session
+                                AND Semester = @Semester";
 
-                            SqlCommand offerCmd = new SqlCommand(getOffering, con, trans);
-                            offerCmd.Parameters.AddWithValue("@CourseID", courseID);
-                            offerCmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                            object offeringObj;
 
-                            object result = offerCmd.ExecuteScalar();
-
-                            if (result != null)
+                            using (SqlCommand offerCmd = new SqlCommand(getOffering, con, trans))
                             {
-                                int offeringID = Convert.ToInt32(result);
+                                offerCmd.Parameters.AddWithValue("@CourseID", courseID);
+                                offerCmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                                offerCmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
 
-                                string insertDetail = @"
-                                    INSERT INTO EnrollmentDetails
-                                    (EnrolmentID, OfferingID)
-                                    VALUES (@EnrolmentID, @OfferingID)";
+                                offeringObj = offerCmd.ExecuteScalar();
+                            }
 
-                                SqlCommand detailCmd = new SqlCommand(insertDetail, con, trans);
+                            if (offeringObj == null)
+                                throw new Exception("Course offering not found for CourseID: " + courseID);
+
+                            int offeringID = Convert.ToInt32(offeringObj);
+
+                            string insertDetail = @"
+                                INSERT INTO EnrollmentDetails
+                                (EnrolmentID, OfferingID)
+                                VALUES (@EnrolmentID, @OfferingID)";
+
+                            using (SqlCommand detailCmd = new SqlCommand(insertDetail, con, trans))
+                            {
                                 detailCmd.Parameters.AddWithValue("@EnrolmentID", enrolmentID);
                                 detailCmd.Parameters.AddWithValue("@OfferingID", offeringID);
-
                                 detailCmd.ExecuteNonQuery();
                             }
                         }
                     }
+
+                    if (!hasSelection)
+                        throw new Exception("Please select at least one course.");
 
                     trans.Commit();
 
@@ -198,7 +223,7 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT
+                    SELECT 
                         em.EnrolmentID,
                         c.CourseCode,
                         c.CourseName,
@@ -210,7 +235,8 @@ namespace EduCampus
                     INNER JOIN CourseOfferings co ON ed.OfferingID = co.OfferingID
                     INNER JOIN Courses c ON co.CourseID = c.CourseID
                     WHERE em.StudentID = (
-                        SELECT StudentID FROM Students
+                        SELECT StudentID 
+                        FROM Students 
                         WHERE UserID = (
                             SELECT UserID FROM Users WHERE Email = @Email
                         )
@@ -241,23 +267,13 @@ namespace EduCampus
 
                 try
                 {
-                    // DELETE DETAILS FIRST
-                    string deleteDetails = @"
-                        DELETE FROM EnrollmentDetails
-                        WHERE EnrolmentID = @ID";
+                    string deleteMaster = @"DELETE FROM EnrollmentMaster WHERE EnrolmentID = @ID";
 
-                    SqlCommand cmd1 = new SqlCommand(deleteDetails, con, trans);
-                    cmd1.Parameters.AddWithValue("@ID", enrolmentID);
-                    cmd1.ExecuteNonQuery();
-
-                    // DELETE MASTER
-                    string deleteMaster = @"
-                        DELETE FROM EnrollmentMaster
-                        WHERE EnrolmentID = @ID";
-
-                    SqlCommand cmd2 = new SqlCommand(deleteMaster, con, trans);
-                    cmd2.Parameters.AddWithValue("@ID", enrolmentID);
-                    cmd2.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand(deleteMaster, con, trans))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", enrolmentID);
+                        cmd.ExecuteNonQuery();
+                    }
 
                     trans.Commit();
 

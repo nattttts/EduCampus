@@ -129,3 +129,9 @@ VALUES
 ('Apr2026', '2026-05-01', '2026-05-01', 'Public Holiday: Labour Day'),
 
 ('Apr2026', '2026-05-18', '2026-05-24', 'Mid Semester Break');
+
+ALTER TABLE Attendance
+ADD CONSTRAINT FK_Attendance_Detail
+FOREIGN KEY (DetailID)
+REFERENCES EnrollmentDetails(DetailID)
+ON DELETE CASCADE;

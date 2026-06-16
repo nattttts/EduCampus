@@ -69,11 +69,13 @@ namespace EduCampus
                 con.Open();
 
                 string studentQuery = @"
-                    SELECT StudentID
-                    FROM Students
-                    WHERE UserID = (
-                        SELECT UserID FROM Users WHERE Email = @Email
-                    )";
+                SELECT StudentID
+                FROM Students
+                WHERE UserID = (
+                    SELECT UserID
+                    FROM Users
+                    WHERE Email = @Email
+                )";
 
                 SqlCommand studentCmd = new SqlCommand(studentQuery, con);
                 studentCmd.Parameters.AddWithValue("@Email", Session["Email"]);
@@ -87,39 +89,46 @@ namespace EduCampus
 
                 // TOTAL COURSES
                 string totalQuery = @"
-                    SELECT COUNT(*)
-                    FROM EnrollmentMaster
-                    WHERE StudentID = @StudentID";
+                SELECT COUNT(*)
+                FROM EnrollmentDetails ed
+                INNER JOIN EnrollmentMaster em
+                    ON ed.EnrolmentID = em.EnrolmentID
+                WHERE em.StudentID = @StudentID";
 
                 SqlCommand totalCmd = new SqlCommand(totalQuery, con);
                 totalCmd.Parameters.AddWithValue("@StudentID", studentID);
 
                 lblTotalCourses.Text = totalCmd.ExecuteScalar().ToString();
 
-                // APPROVED
+                // APPROVED COURSES
                 string approvedQuery = @"
-                    SELECT COUNT(*)
-                    FROM EnrollmentMaster
-                    WHERE StudentID = @StudentID
-                    AND Status = 'Approved'";
+                SELECT COUNT(*)
+                FROM EnrollmentDetails ed
+                INNER JOIN EnrollmentMaster em
+                    ON ed.EnrolmentID = em.EnrolmentID
+                WHERE em.StudentID = @StudentID
+                AND em.Status = 'Approved'";
 
                 SqlCommand approvedCmd = new SqlCommand(approvedQuery, con);
                 approvedCmd.Parameters.AddWithValue("@StudentID", studentID);
 
                 lblApproved.Text = approvedCmd.ExecuteScalar().ToString();
 
-                // PENDING
+                // PENDING COURSES
                 string pendingQuery = @"
-                    SELECT COUNT(*)
-                    FROM EnrollmentMaster
-                    WHERE StudentID = @StudentID
-                    AND Status = 'Pending'";
+                SELECT COUNT(*)
+                FROM EnrollmentDetails ed
+                INNER JOIN EnrollmentMaster em
+                    ON ed.EnrolmentID = em.EnrolmentID
+                WHERE em.StudentID = @StudentID
+                AND em.Status = 'Pending'";
 
                 SqlCommand pendingCmd = new SqlCommand(pendingQuery, con);
                 pendingCmd.Parameters.AddWithValue("@StudentID", studentID);
 
                 lblPending.Text = pendingCmd.ExecuteScalar().ToString();
             }
+
         }
 
         // LOGOUT

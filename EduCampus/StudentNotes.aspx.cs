@@ -9,132 +9,49 @@ namespace EduCampus
     {
         string cs = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
 
-        int courseID;
-        int studentID;
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 🔒 LOGIN CHECK
             if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");
                 return;
             }
 
-            lblMessage.Text = "";
-
-            // ⚠️ VALIDATE COURSE ID
-            if (!int.TryParse(Request.QueryString["CourseID"], out courseID))
-            {
-                lblMessage.Text = "⚠ Invalid Course ID.";
-                gvNotes.DataSource = null;
-                gvNotes.DataBind();
-                return;
-            }
-
-            // 🔎 GET STUDENT ID
-            if (!GetStudentID())
-            {
-                lblMessage.Text = "⚠ Student not found.";
-                return;
-            }
-
-            // 🔐 CHECK ENROLLMENT
-            if (!IsEnrolled())
-            {
-                lblMessage.Text = "⚠ You are not enrolled in this course.";
-                gvNotes.DataSource = null;
-                gvNotes.DataBind();
-                return;
-            }
-
             if (!IsPostBack)
             {
-                LoadCourseName();
                 LoadNotes();
             }
         }
 
-        // 🔎 GET STUDENT ID FROM EMAIL
-        bool GetStudentID()
-        {
-            string email = Session["Email"].ToString();
-
-            using (SqlConnection con = new SqlConnection(cs))
-            {
-                string query = "SELECT StudentID FROM Students WHERE Email = @Email";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Email", email);
-
-                con.Open();
-
-                object result = cmd.ExecuteScalar();
-
-                if (result == null)
-                    return false;
-
-                studentID = Convert.ToInt32(result);
-                return true;
-            }
-        }
-
-        // 🔐 CHECK IF STUDENT IS ENROLLED
-        bool IsEnrolled()
+        private void LoadNotes()
         {
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT COUNT(*)
-                    FROM Enrollments
-                    WHERE StudentID = @StudentID
-                    AND CourseID = @CourseID";
+                    SELECT
+                        c.CourseCode,
+                        c.CourseName,
+                        n.FileName,
+                        n.FilePath,
+                        n.UploadDate
+                    FROM Notes n
+                    INNER JOIN CourseOfferings co
+                        ON n.OfferingID = co.OfferingID
+                    INNER JOIN Courses c
+                        ON co.CourseID = c.CourseID
+                    INNER JOIN EnrollmentDetails ed
+                        ON co.OfferingID = ed.OfferingID
+                    INNER JOIN EnrollmentMaster em
+                        ON ed.EnrolmentID = em.EnrolmentID
+                    INNER JOIN Students s
+                        ON em.StudentID = s.StudentID
+                    INNER JOIN Users u
+                        ON s.UserID = u.UserID
+                    WHERE u.Email = @Email
+                    ORDER BY c.CourseCode";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@StudentID", studentID);
-                cmd.Parameters.AddWithValue("@CourseID", courseID);
-
-                con.Open();
-
-                int count = (int)cmd.ExecuteScalar();
-
-                return count > 0;
-            }
-        }
-
-        // 📘 LOAD COURSE NAME
-        void LoadCourseName()
-        {
-            using (SqlConnection con = new SqlConnection(cs))
-            {
-                string query = "SELECT CourseName FROM Courses WHERE CourseID = @CourseID";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@CourseID", courseID);
-
-                con.Open();
-
-                object result = cmd.ExecuteScalar();
-
-                lblCourseName.Text = result != null
-                    ? result.ToString()
-                    : "Course Not Found";
-            }
-        }
-
-        // 📄 LOAD NOTES
-        void LoadNotes()
-        {
-            using (SqlConnection con = new SqlConnection(cs))
-            {
-                string query = @"
-                    SELECT WeekNo, FileName, FilePath, UploadDate
-                    FROM Notes
-                    WHERE CourseID = @CourseID
-                    ORDER BY WeekNo";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@CourseID", courseID);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -146,12 +63,15 @@ namespace EduCampus
 
                 if (dt.Rows.Count == 0)
                 {
-                    lblMessage.Text = "ℹ No notes available for this course.";
+                    lblMessage.Text = "No notes available for your enrolled courses.";
+                }
+                else
+                {
+                    lblMessage.Text = "";
                 }
             }
         }
 
-        // 🚪 LOGOUT
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();

@@ -69,13 +69,15 @@
     <!-- SEM BUTTONS -->
     <div class="text-center mb-4">
 
-        <asp:Button ID="btnSem1" runat="server"
+        <asp:Button ID="btnSem1"
+            runat="server"
             Text="SEM 1"
-            CssClass="btn btn-primary mx-2"
+            CssClass="btn btn-secondary mx-2"
             OnClick="btnSem_Click"
             CommandArgument="Semester 1" />
 
-        <asp:Button ID="btnSem2" runat="server"
+        <asp:Button ID="btnSem2"
+            runat="server"
             Text="SEM 2"
             CssClass="btn btn-secondary mx-2"
             OnClick="btnSem_Click"
@@ -84,12 +86,13 @@
     </div>
 
     <!-- RESULTS -->
-    <asp:GridView ID="gvResults" runat="server"
-        CssClass="table table-bordered"
-        AutoGenerateColumns="true">
-    </asp:GridView>
-
-</div>
+    <div class="container">
+        <asp:GridView ID="gvResults"
+            runat="server"
+            CssClass="table table-bordered table-striped"
+            AutoGenerateColumns="true">
+        </asp:GridView>
+    </div>
 
 </form>
 

@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace EduCampus
 {
@@ -11,10 +12,19 @@ namespace EduCampus
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Email"] == null || Session["Role"].ToString() != "Student")
+            if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");
                 return;
+            }
+
+            if (!IsPostBack)
+            {
+                ViewState["Semester"] = "Semester 1";
+
+                SetActiveSemesterButton("Semester 1");
+
+                LoadResults("Semester 1");
             }
         }
 
@@ -25,8 +35,15 @@ namespace EduCampus
 
         protected void btnSem_Click(object sender, EventArgs e)
         {
-            string sem = ((System.Web.UI.WebControls.Button)sender).CommandArgument;
-            LoadResults(sem);
+            Button btn = (Button)sender;
+
+            string semester = btn.CommandArgument;
+
+            ViewState["Semester"] = semester;
+
+            SetActiveSemesterButton(semester);
+
+            LoadResults(semester);
         }
 
         void LoadResults(string semester)
@@ -73,5 +90,19 @@ namespace EduCampus
             Response.Redirect("Login.aspx");
         }
 
+        private void SetActiveSemesterButton(string semester)
+        {
+            btnSem1.CssClass = "btn btn-secondary mx-2";
+            btnSem2.CssClass = "btn btn-secondary mx-2";
+
+            if (semester == "Semester 1")
+            {
+                btnSem1.CssClass = "btn btn-primary mx-2";
+            }
+            else if (semester == "Semester 2")
+            {
+                btnSem2.CssClass = "btn btn-primary mx-2";
+            }
+        }
     }
 }

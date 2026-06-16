@@ -264,18 +264,62 @@ namespace EduCampus
 
                 try
                 {
+                    // Check if attendance exists
+                    string checkAttendance = @"
+                    SELECT COUNT(*)
+                    FROM Attendance a
+                    INNER JOIN EnrollmentDetails ed
+                        ON a.DetailID = ed.DetailID
+                    WHERE ed.EnrolmentID = @ID";
+
+                    SqlCommand checkCmd = new SqlCommand(checkAttendance, con, trans);
+                    checkCmd.Parameters.AddWithValue("@ID", enrolmentID);
+
+                    int attendanceCount = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                    if (attendanceCount > 0)
+                    {
+                        lblMessage.ForeColor = Color.Red;
+                        lblMessage.Text = "This course already has attendance records and cannot be dropped.";
+                        trans.Rollback();
+                        return;
+                    }
+
+                    // Delete CourseMarks first (if any)
+                    string deleteMarks = @"
+                    DELETE FROM CourseMarks
+                    WHERE DetailID IN (
+                        SELECT DetailID
+                        FROM EnrollmentDetails
+                        WHERE EnrolmentID = @ID
+                    )";
+
+                    SqlCommand cmdMarks = new SqlCommand(deleteMarks, con, trans);
+                    cmdMarks.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdMarks.ExecuteNonQuery();
+
+                    // Delete EnrollmentDetails
+                    string deleteDetails = @"
+                    DELETE FROM EnrollmentDetails
+                    WHERE EnrolmentID = @ID";
+
+                    SqlCommand cmdDetails = new SqlCommand(deleteDetails, con, trans);
+                    cmdDetails.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdDetails.ExecuteNonQuery();
+
+                    // Delete EnrollmentMaster
                     string deleteMaster = @"
                     DELETE FROM EnrollmentMaster
                     WHERE EnrolmentID = @ID";
 
-                    SqlCommand cmd = new SqlCommand(deleteMaster, con, trans);
-                    cmd.Parameters.AddWithValue("@ID", enrolmentID);
-                    cmd.ExecuteNonQuery();
+                    SqlCommand cmdMaster = new SqlCommand(deleteMaster, con, trans);
+                    cmdMaster.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdMaster.ExecuteNonQuery();
 
                     trans.Commit();
 
                     lblMessage.ForeColor = Color.Green;
-                    lblMessage.Text = "Course dropped successfully!";
+                    lblMessage.Text = "Course dropped successfully.";
 
                     LoadMyCourses();
                 }

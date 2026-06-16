@@ -67,35 +67,41 @@
 
         </div>
     </nav>
-    <asp:Label ID="lblMessage" runat="server" CssClass="text-danger fw-bold"></asp:Label>
 
-    <h2>
+    <div class="container mt-4">
 
-        Course Notes :
+    <div class="text-center mb-4">
+        <h2>Course Notes</h2>
 
-        <asp:Label ID="lblCourseName"
-            runat="server">
+        <asp:Label ID="lblMessage"
+            runat="server"
+            CssClass="text-danger fw-bold fs-5">
         </asp:Label>
-
-    </h2>
-
-    <!-- GRIDVIEW -->
+    </div>
 
     <asp:GridView ID="gvNotes"
         runat="server"
         AutoGenerateColumns="False"
-        Width="1000px">
+        CssClass="table table-bordered table-striped">
 
         <Columns>
 
-            <asp:BoundField DataField="WeekNo"
-                HeaderText="Week" />
+            <asp:BoundField
+                DataField="CourseCode"
+                HeaderText="Course Code" />
 
-            <asp:BoundField DataField="FileName"
+            <asp:BoundField
+                DataField="CourseName"
+                HeaderText="Course Name" />
+
+            <asp:BoundField
+                DataField="FileName"
                 HeaderText="File Name" />
 
-            <asp:BoundField DataField="UploadDate"
-                HeaderText="Upload Date" />
+            <asp:BoundField
+                DataField="UploadDate"
+                HeaderText="Upload Date"
+                DataFormatString="{0:dd/MM/yyyy HH:mm}" />
 
             <asp:HyperLinkField
                 HeaderText="Download"
@@ -105,6 +111,8 @@
         </Columns>
 
     </asp:GridView>
+
+</div>
 
 </form>
 

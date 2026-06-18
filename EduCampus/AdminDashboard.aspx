@@ -8,6 +8,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         .card h5
@@ -76,7 +77,7 @@
         <!-- Dashboard content -->
         <div class="px-4">
             <h3 class="text-center mt-4">Admin Dashboard</h3>
-            <h4 class="mb-4">Welcome Administrator</h4>
+            <h4 class="mb-4">Welcome, Admin</h4>
 
             <!-- 1st Row Statistics -->
             <div class="row">
@@ -147,124 +148,49 @@
 
             </div>
 
-            <!-- 2nd Row Statistics -->
-            <div class="row mt-4">
+            <!-- Charts Section -->
+            <div class="container mt-5">
 
-                <!-- Card 5 -->
-                <div class="col-md-3">
-                    <div class="card text-center border-primary">
-                        <div class="card-body">
+                <div class="row justify-content-center g-4">
 
-                            <h5>Total Enrollments 📝</h5>
-                            <asp:Label ID="lblTotalEnrollments"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
+                    <!-- Bar Chart -->
+                    <div class="col-lg-7 col-md-12 d-flex justify-content-center">
 
-                        </div>
-                    </div>
-                </div>
+                        <div class="card shadow-sm w-100" style="height: 420px; max-width: 700px;">
 
-                <!-- Card 6 -->
-                <div class="col-md-3">
-                    <div class="card text-center border-warning">
-                        <div class="card-body">
+                            <div class="card-header text-center">
+                                <h5>Students per Programme</h5>
+                            </div>
 
-                            <h5 class="text-warning">Pending Enrollments ⌛</h5>
-                            <asp:Label ID="lblPending"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+
+                                <canvas id="programmeChart"></canvas>
+
+                            </div>
 
                         </div>
+
                     </div>
-                </div>
 
-                <!-- Card 7 -->
-                <div class="col-md-3">
-                    <div class="card text-center border-success">
-                        <div class="card-body">
+                    <!-- Pie Chart -->
+                    <div class="col-lg-5 col-md-12 d-flex justify-content-center">
 
-                            <h5 class="text-success">Approved Enrollments ✅</h5>
-                            <asp:Label ID="lblApproved"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
+                        <div class="card shadow-sm w-100" style="height: 420px; max-width: 400px;">
+
+                            <div class="card-header text-center">
+                                <h5>Enrollment Status</h5>
+                            </div>
+
+                            <div class="card-body d-flex justify-content-center align-items-center">
+
+                                <canvas id="enrollmentChart"></canvas>
+
+                            </div>
 
                         </div>
+
                     </div>
-                </div>
 
-                <!-- Card 8 -->
-                <div class="col-md-3">
-                    <div class="card text-center border-danger">
-                        <div class="card-body">
-
-                            <h5 class="text-danger">Rejected Enrollments ❌</h5>
-                            <asp:Label ID="lblRejected"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- 3rd Row Statistics -->
-            <div class="row mt-4">
-
-                <!-- Card 9 -->
-                <div class="col-md-4">
-                    <div class="card text-center border-primary">
-                        <div class="card-body">
-
-                            <h5>Total Course Offerings 📖</h5>
-                            <asp:Label ID="lblCourseOfferings"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 10 -->
-                <div class="col-md-4">
-                    <div class="card text-center border-primary">
-                        <div class="card-body">
-
-                            <h5>Total Announcements 📢</h5>
-                            <asp:Label ID="lblTotalAnnouncements"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 11 -->
-                <div class="col-md-4">
-                    <div class="card text-center border-primary">
-                        <div class="card-body">
-
-                            <h5>Total Academic Events 📅</h5>
-                            <asp:Label ID="lblTotalAcademicEvents"
-                                runat="server"
-                                Font-Size="25px"
-                                Font-Bold="True">
-                            </asp:Label>
-
-                        </div>
-                    </div>
                 </div>
 
             </div>
@@ -272,5 +198,135 @@
         </div>
         
     </form>
+
+    <script>
+
+    // Students per Programme
+    new Chart(document.getElementById('programmeChart'),
+    {
+
+        type: 'bar',
+
+        data: {
+
+            labels: [<%= ProgrammeLabels %>],
+
+            datasets: [{
+
+                label: 'Students',
+
+                data: [<%= ProgrammeCounts %>],
+
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+
+                borderColor: 'rgba(255, 99, 132, 1)',
+
+                borderWidth: 1
+
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                title: {
+
+                    display: true,
+
+                    text: 'Student Distribution by Programme'
+
+                },
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        precision: 0
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+    // Enrollment Status
+    new Chart(document.getElementById('enrollmentChart'),
+    {
+
+        type: 'pie',
+
+        data: {
+
+            labels: [<%= EnrollmentLabels %>],
+
+            datasets: [{
+
+                data: [<%= EnrollmentCounts %>],
+
+                backgroundColor: [
+
+                    'rgba(255, 206, 86, 0.7)',   // Pending
+
+                    'rgba(75, 192, 192, 0.7)',   // Approved
+
+                    'rgba(255, 99, 132, 0.7)'    // Rejected
+
+                ],
+
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                title: {
+
+                    display: true,
+
+                    text: 'Enrollment Status Overview'
+
+                },
+
+                legend: {
+
+                    position: 'bottom'
+
+                }
+
+            }
+
+        }
+
+    });
+
+    </script>
 </body>
 </html>

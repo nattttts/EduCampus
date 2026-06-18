@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace EduCampus
 {
     public partial class AdminDashboard : System.Web.UI.Page
     {
-        string cs = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
+        string connStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
+        
+        public string ProgrammeLabels = "";
+        public string ProgrammeCounts = "";
+
+        public string EnrollmentLabels = "";
+        public string EnrollmentCounts = "";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             // Protect page (must login first)
@@ -37,70 +45,102 @@ namespace EduCampus
 
         private void LoadDashboard()
         {
-            SqlConnection con = new SqlConnection(cs);
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
 
-            con.Open();
+                // Total Programmes
+                string totalProgrammesQuery = "SELECT COUNT(*) FROM Programmes";
+                lblTotalProgrammes.Text =
+                    new SqlCommand(totalProgrammesQuery, conn).ExecuteScalar().ToString();
 
-            // Total Programme
-            string totalProgrammesQuery = "SELECT COUNT(*) FROM Programmes";
-            SqlCommand totalProgrammesCmd = new SqlCommand(totalProgrammesQuery, con);
-            lblTotalProgrammes.Text = totalProgrammesCmd.ExecuteScalar().ToString();
+                // Total Courses
+                string totalCoursesQuery = "SELECT COUNT(*) FROM Courses";
+                lblTotalCourses.Text =
+                    new SqlCommand(totalCoursesQuery, conn).ExecuteScalar().ToString();
 
-            // Total Course
-            string totalCoursesQuery = "SELECT COUNT(*) FROM Courses";
-            SqlCommand totalCoursesCmd = new SqlCommand(totalCoursesQuery, con);
-            lblTotalCourses.Text = totalCoursesCmd.ExecuteScalar().ToString();
+                // Total Lecturers
+                string totalLecturersQuery = "SELECT COUNT(*) FROM Lecturers";
+                lblTotalLecturers.Text =
+                    new SqlCommand(totalLecturersQuery, conn).ExecuteScalar().ToString();
 
-            // Total Lecturer
-            string totalLecturersQuery = "SELECT COUNT(*) FROM Lecturers";
-            SqlCommand totalLecturersCmd = new SqlCommand(totalLecturersQuery, con);
-            lblTotalLecturers.Text = totalLecturersCmd.ExecuteScalar().ToString();
+                // Total Students
+                string totalStudentsQuery = "SELECT COUNT(*) FROM Students";
+                lblTotalStudents.Text =
+                    new SqlCommand(totalStudentsQuery, conn).ExecuteScalar().ToString();
 
-            // Total Student
-            string totalStudentsQuery = "SELECT COUNT(*) FROM Students";
-            SqlCommand totalStudentsCmd = new SqlCommand(totalStudentsQuery, con);
-            lblTotalStudents.Text = totalStudentsCmd.ExecuteScalar().ToString();
+                // Charts
+                LoadProgrammeChart(conn);
 
-            // Total Enrollment
-            string totalEnrollmentsQuery = "SELECT COUNT(*) FROM EnrollmentMaster";
-            SqlCommand totalEnrollmentsCmd = new SqlCommand(totalEnrollmentsQuery, con);
-            lblTotalEnrollments.Text = totalEnrollmentsCmd.ExecuteScalar().ToString();
+                LoadEnrollmentChart(conn);
+            }
+        }
 
-            // Pending
-            string pendingQuery = @"SELECT COUNT(*) FROM EnrollmentMaster 
-                                    WHERE Status='Pending'";
-            SqlCommand pendingCmd = new SqlCommand(pendingQuery, con);
-            lblPending.Text = pendingCmd.ExecuteScalar().ToString();
+        private void LoadProgrammeChart(SqlConnection conn)
+        {
+            string query = @"
+                SELECT p.ProgrammeName,
+                       COUNT(s.StudentID) AS TotalStudents
+                FROM Programmes p
+                LEFT JOIN Students s
+                ON p.ProgrammeID = s.ProgrammeID
+                GROUP BY p.ProgrammeName
+                ORDER BY p.ProgrammeName";
 
-            // Approved
-            string approvedQuery = @"SELECT COUNT(*) FROM EnrollmentMaster
-                                     WHERE Status='Approved'";
-            SqlCommand approvedCmd = new SqlCommand(approvedQuery, con);
-            lblApproved.Text = approvedCmd.ExecuteScalar().ToString();
+            SqlCommand cmd = new SqlCommand(query, conn);
 
-            // Rejected
-            string rejectedQuery = @"SELECT COUNT(*) FROM EnrollmentMaster
-                                     WHERE Status='Rejected'";
-            SqlCommand rejectedCmd = new SqlCommand(rejectedQuery, con);
-            lblRejected.Text = rejectedCmd.ExecuteScalar().ToString();
+            SqlDataReader dr = cmd.ExecuteReader();
 
-            // Total Course Offerings
-            string courseOfferingsQuery = "SELECT COUNT(*) FROM CourseOfferings";
-            SqlCommand courseOfferingsCmd = new SqlCommand(courseOfferingsQuery, con);
-            lblCourseOfferings.Text = courseOfferingsCmd.ExecuteScalar().ToString();
+            List<string> labels = new List<string>();
 
-            // Total Announcements
-            string totalAnnouncementsQuery = @"SELECT COUNT(*) FROM Announcements
-                                               WHERE OfferingID IS NULL";
-            SqlCommand totalAnnouncementsCmd = new SqlCommand(totalAnnouncementsQuery, con);
-            lblTotalAnnouncements.Text = totalAnnouncementsCmd.ExecuteScalar().ToString();
+            List<int> counts = new List<int>();
 
-            // Total Academic Events
-            string totalAcademicEventsQuery = "SELECT COUNT(*) FROM AcademicCalendar";
-            SqlCommand totalAcademicEventsCmd = new SqlCommand(totalAcademicEventsQuery, con);
-            lblTotalAcademicEvents.Text = totalAcademicEventsCmd.ExecuteScalar().ToString();
+            while (dr.Read())
+            {
+                labels.Add("'" + dr["ProgrammeName"].ToString() + "'");
 
-            con.Close();
+                counts.Add(
+                    Convert.ToInt32(dr["TotalStudents"])
+                );
+            }
+
+            dr.Close();
+
+            ProgrammeLabels = string.Join(",", labels);
+
+            ProgrammeCounts = string.Join(",", counts);
+        }
+
+        private void LoadEnrollmentChart(SqlConnection con)
+        {
+            string query = @"
+                SELECT Status,
+                       COUNT(*) AS Total
+                FROM EnrollmentMaster
+                GROUP BY Status";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            List<string> labels = new List<string>();
+
+            List<int> counts = new List<int>();
+
+            while (dr.Read())
+            {
+                labels.Add("'" + dr["Status"].ToString() + "'");
+
+                counts.Add(
+                    Convert.ToInt32(dr["Total"])
+                );
+            }
+
+            dr.Close();
+
+            EnrollmentLabels = string.Join(",", labels);
+
+            EnrollmentCounts = string.Join(",", counts);
         }
     }
 }

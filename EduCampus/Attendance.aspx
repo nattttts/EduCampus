@@ -65,44 +65,83 @@
     </nav>
 
 <!-- CONTENT -->
+<div class="container mt-4">
 
-    <!-- FILTER -->
-    <div class="row mb-3">
-        <div class="col-md-4">
+    <div class="card shadow-sm border-0">
 
-            <asp:DropDownList ID="ddlCourse"
-                runat="server"
-                CssClass="form-select"
-                AutoPostBack="true"
-                OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-            </asp:DropDownList>
+        <div class="card-body">
+
+            <h2 class="text-center mb-4">
+                Attendance Records
+            </h2>
+
+            <!-- Course Filter -->
+            <div class="row justify-content-center mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-bold">
+                        Select Course
+                    </label>
+
+                    <asp:DropDownList ID="ddlCourse"
+                        runat="server"
+                        CssClass="form-select"
+                        AutoPostBack="true"
+                        OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+                    </asp:DropDownList>
+
+                </div>
+
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="card">
+
+                <div class="card-header bg-primary text-white">
+                    Attendance Details
+                </div>
+
+                <div class="card-body">
+
+                    <asp:GridView ID="gvAttendance"
+                        runat="server"
+                        AutoGenerateColumns="false"
+                        CssClass="table table-hover table-bordered">
+
+                        <Columns>
+
+                            <asp:BoundField DataField="CourseName" HeaderText="Course" />
+
+                            <asp:BoundField DataField="AttendanceDate"
+                                HeaderText="Date" />
+
+                            <asp:TemplateField HeaderText="Status">
+
+                                <ItemTemplate>
+
+                                    <span class='<%# Eval("Status").ToString() == "Present" ? "present" : "absent" %>'>
+                                        <%# Eval("Status") %>
+                                    </span>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+                            <asp:BoundField DataField="Remarks"
+                                HeaderText="Remarks" />
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
+
+            </div>
 
         </div>
+
     </div>
-
-    <!-- GRID -->
-    <asp:GridView ID="gvAttendance" runat="server"
-        AutoGenerateColumns="false"
-        CssClass="table table-bordered">
-
-        <Columns>
-
-            <asp:BoundField DataField="CourseName" HeaderText="Course" />
-            <asp:BoundField DataField="AttendanceDate" HeaderText="Date" />
-
-            <asp:TemplateField HeaderText="Status">
-                <ItemTemplate>
-                    <span class='<%# Eval("Status").ToString() == "Present" ? "present" : "absent" %>'>
-                        <%# Eval("Status") %>
-                    </span>
-                </ItemTemplate>
-            </asp:TemplateField>
-
-            <asp:BoundField DataField="Remarks" HeaderText="Remarks" />
-
-        </Columns>
-
-    </asp:GridView>
 
 </div>
 

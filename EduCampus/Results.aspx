@@ -66,33 +66,45 @@
          </div>
      </nav>
 
-    <!-- SEM BUTTONS -->
-    <div class="text-center mb-4">
+    <div class="container mt-4">
 
-        <asp:Button ID="btnSem1"
-            runat="server"
-            Text="SEM 1"
-            CssClass="btn btn-secondary mx-2"
-            OnClick="btnSem_Click"
-            CommandArgument="Semester 1" />
+    <div class="card shadow-sm border-0">
 
-        <asp:Button ID="btnSem2"
-            runat="server"
-            Text="SEM 2"
-            CssClass="btn btn-secondary mx-2"
-            OnClick="btnSem_Click"
-            CommandArgument="Semester 2" />
+        <div class="card-body">
+
+            <h2 class="text-center mb-4">
+                Academic Results
+            </h2>
+
+            <div class="text-center mb-4">
+
+                <asp:Button ID="btnSem1"
+                    runat="server"
+                    Text="Semester 1"
+                    CssClass="btn btn-primary mx-2"
+                    OnClick="btnSem_Click"
+                    CommandArgument="Semester 1" />
+
+                <asp:Button ID="btnSem2"
+                    runat="server"
+                    Text="Semester 2"
+                    CssClass="btn btn-outline-primary mx-2"
+                    OnClick="btnSem_Click"
+                    CommandArgument="Semester 2" />
+
+            </div>
+
+            <asp:GridView ID="gvResults"
+                runat="server"
+                CssClass="table table-bordered table-hover"
+                AutoGenerateColumns="true">
+            </asp:GridView>
+
+        </div>
 
     </div>
 
-    <!-- RESULTS -->
-    <div class="container">
-        <asp:GridView ID="gvResults"
-            runat="server"
-            CssClass="table table-bordered table-striped"
-            AutoGenerateColumns="true">
-        </asp:GridView>
-    </div>
+</div>
 
 </form>
 

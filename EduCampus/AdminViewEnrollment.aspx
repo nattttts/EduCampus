@@ -67,11 +67,24 @@
         </nav>
 
         <!--Student enrollment list -->
-        <div class="container-fluid mt-4 px-4">
-            
-            <h3 class="text-center mb-2">Student Enrollment List</h3>
+        <div class="container-fluid mt-4 px-4 px-lg-5">
 
-            <div class="d-flex align-items-end gap-3 mb-3">
+            <div class="position-relative mb-4">
+            
+                <h3 class="text-center mb-0">Student Enrollments</h3>
+
+                <!-- View Statistics Button -->
+                <div class="position-absolute top-0 end-0">
+                     <asp:Button ID="btnStatistics"
+                        runat="server"
+                        Text="View Statistics"
+                        CssClass="btn btn-primary"
+                        OnClick="btnStatistics_Click"/>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-center align-items-end gap-3 mb-4">
 
                 <div>
                     <!-- Session dropdown -->
@@ -108,7 +121,10 @@
 
             </div>
 
-            <asp:Label ID="lblMessage" runat="server" CssClass="text-muted d-block mb-2"></asp:Label>
+            <asp:Label ID="lblMessage" 
+                runat="server" 
+                CssClass="text-center text-muted d-block mb-2">
+            </asp:Label>
 
             <!-- Main Grid -->
             <asp:GridView ID="gvEnrollment"
@@ -120,7 +136,13 @@
                 OnRowDataBound="gvEnrollment_RowDataBound">
 
                 <Columns>
-                    <asp:BoundField DataField="EnrolmentID" HeaderText="ID" />
+
+                    <asp:TemplateField HeaderText="No.">
+                        <ItemTemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                     <asp:BoundField DataField="FullName" HeaderText="Student Name" />
                     <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
                     <asp:BoundField DataField="Session" HeaderText="Session" />

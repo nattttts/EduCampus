@@ -11,7 +11,7 @@ namespace EduCampus
 {
 
 
-    public partial class AdminViewEnrollment
+    public partial class EnrollmentStatistics
     {
 
         /// <summary>
@@ -24,22 +24,13 @@ namespace EduCampus
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// btnLogout control.
+        /// btnBack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLogout;
-
-        /// <summary>
-        /// btnStatistics control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnStatistics;
+        protected global::System.Web.UI.WebControls.Button btnBack;
 
         /// <summary>
         /// ddlSession control.
@@ -51,30 +42,21 @@ namespace EduCampus
         protected global::System.Web.UI.WebControls.DropDownList ddlSession;
 
         /// <summary>
-        /// ddlStatus control.
+        /// gvStatistics control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.GridView gvStatistics;
 
         /// <summary>
-        /// lblMessage control.
+        /// btnPDF control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMessage;
-
-        /// <summary>
-        /// gvEnrollment control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvEnrollment;
+        protected global::System.Web.UI.WebControls.Button btnPDF;
     }
 }

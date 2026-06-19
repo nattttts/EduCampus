@@ -8,7 +8,7 @@ namespace EduCampus
 {
     public partial class AdminViewEnrollment : System.Web.UI.Page
     {
-        string cs = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
+        string connStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
             // Protect page (must login first)
@@ -27,7 +27,6 @@ namespace EduCampus
             if (!IsPostBack)
             {
                 LoadSession();
-                LoadEnrollment();
             }
         }
 
@@ -39,29 +38,30 @@ namespace EduCampus
         }
 
         // Load session
-        void LoadSession()
+        private void LoadSession()
         {
-            // Create SQL connection using connection string
-            SqlConnection con = new SqlConnection(cs);
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Get session from EnrollmentMaster
+                string query = @"SELECT DISTINCT Session
+                                 FROM EnrollmentMaster
+                                 ORDER BY Session";
 
-            // Get session from EnrollmentMaster
-            string query = @"SELECT DISTINCT Session
-                             FROM EnrollmentMaster
-                             ORDER BY Session";
+                SqlDataAdapter sda = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
 
-            SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataTable dt = new DataTable();
-            sda.Fill(dt);
+                ddlSession.DataSource = dt;
+                ddlSession.DataTextField = "Session";
+                ddlSession.DataValueField = "Session";
+                ddlSession.DataBind();
 
-            ddlSession.DataSource = dt;
-            ddlSession.DataTextField = "Session";
-            ddlSession.DataValueField = "Session";
-            ddlSession.DataBind();
-            ddlSession.Items.Insert(0, new ListItem("-- Select Session --", ""));
+                ddlSession.Items.Insert(0, new ListItem("-- Select Session --", ""));
+            }
         }
 
         // Load enrollment master
-        void LoadEnrollment()
+        private void LoadEnrollment()
         {
             lblMessage.Text = "";
 
@@ -75,41 +75,44 @@ namespace EduCampus
 
             gvEnrollment.Visible = true;
 
-            SqlConnection con = new SqlConnection(cs);
+            using (SqlConnection conn = new SqlConnection(connStr)) 
+            {
+                conn.Open();
 
-            // Get enrollment records based on selected session
-            string query = @"
-                SELECT 
-                    em.EnrolmentID, 
-                    em.StudentID, 
-                    u.FullName, 
-                    em.Session, 
-                    em.Semester, 
-                    em.Status
-                FROM EnrollmentMaster em
-                INNER JOIN Students s 
-                    ON em.StudentID = s.StudentID
-                INNER JOIN Users u
-                    ON s.UserID = u.UserID
-                WHERE em.Session = @Session 
-                AND (@Status = '' OR em.Status = @Status)";
+                // Get enrollment records based on selected session
+                string query = @"
+                    SELECT 
+                        em.EnrolmentID, 
+                        em.StudentID, 
+                        u.FullName, 
+                        em.Session, 
+                        em.Semester, 
+                        em.Status
+                    FROM EnrollmentMaster em
+                    INNER JOIN Students s 
+                        ON em.StudentID = s.StudentID
+                    INNER JOIN Users u
+                        ON s.UserID = u.UserID
+                    WHERE em.Session = @Session 
+                    AND (@Status = '' OR em.Status = @Status)";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand(query, conn);
 
-            // Pass selected session and status to SQL query
-            cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-            cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
+                // Pass selected session and status to SQL query
+                cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
 
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
 
-            DataTable dt = new DataTable();
+                DataTable dt = new DataTable();
 
-            // Fill data table with query result
-            sda.Fill(dt);
+                // Fill data table with query result
+                sda.Fill(dt);
 
-            // Bind data to GrindView
-            gvEnrollment.DataSource = dt;
-            gvEnrollment.DataBind();
+                // Bind data to GrindView
+                gvEnrollment.DataSource = dt;
+                gvEnrollment.DataBind();
+            }
         }
 
         // Load course details
@@ -123,7 +126,7 @@ namespace EduCampus
 
                 GridView gvCourses = (GridView)e.Row.FindControl("gvCourses");
 
-                SqlConnection con = new SqlConnection(cs);
+                SqlConnection conn = new SqlConnection(connStr);
 
                 // Get all course for this enrollment
                 string query = @"
@@ -138,7 +141,7 @@ namespace EduCampus
                         ON co.CourseID = c.CourseID
                     WHERE ed.EnrolmentID = @EnrolmentID";
 
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@EnrolmentID", enrolmentID);
 
@@ -173,22 +176,22 @@ namespace EduCampus
             // Get enrollment ID from button
             int enrolmentID = Convert.ToInt32(btn.CommandArgument);
 
-            SqlConnection con = new SqlConnection(cs);
+            SqlConnection conn = new SqlConnection(connStr);
 
             // Update enrollment status to Approved
             string query = @"UPDATE EnrollmentMaster
                              SET Status='Approved'
                              WHERE EnrolmentID=@EnrolmentID";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+            SqlCommand cmd = new SqlCommand(query, conn);
 
             cmd.Parameters.AddWithValue("@EnrolmentID", enrolmentID);
 
-            con.Open();
+            conn.Open();
 
             cmd.ExecuteNonQuery();
 
-            con.Close();
+            conn.Close();
 
             LoadEnrollment();
         }
@@ -202,24 +205,29 @@ namespace EduCampus
             // Get enrollment ID from button
             int enrolmentID = Convert.ToInt32(btn.CommandArgument);
 
-            SqlConnection con = new SqlConnection(cs);
+            SqlConnection conn = new SqlConnection(connStr);
 
             // Update enrollment status to Rejected
             string query = @"UPDATE EnrollmentMaster
                              SET Status='Rejected'
                              WHERE EnrolmentID=@EnrolmentID";
 
-            SqlCommand cmd = new SqlCommand(query, con);
+            SqlCommand cmd = new SqlCommand(query, conn);
 
             cmd.Parameters.AddWithValue("@EnrolmentID", enrolmentID);
 
-            con.Open();
+            conn.Open();
 
             cmd.ExecuteNonQuery();
 
-            con.Close();
+            conn.Close();
 
             LoadEnrollment();
+        }
+
+        protected void btnStatistics_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("EnrollmentStatistics.aspx");
         }
     }
 }

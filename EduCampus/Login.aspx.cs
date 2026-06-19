@@ -43,8 +43,6 @@ namespace EduCampus
 
             string email = txtEmail.Text.Trim();
             string hashedPassword = HashPassword(txtPassword.Text.Trim());
-            
-            lblMessage.Text = hashedPassword;
 
             // Get connection string from Web.config
             string connectionString =

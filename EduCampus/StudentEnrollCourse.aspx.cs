@@ -35,14 +35,14 @@ namespace EduCampus
         }
 
         // ================= GET STUDENT ID =================
-        private int? GetStudentID(SqlConnection con, SqlTransaction trans)
+        private string GetStudentID(SqlConnection con, SqlTransaction trans)
         {
             string query = @"
-                SELECT StudentID 
-                FROM Students 
-                WHERE UserID = (
-                    SELECT UserID FROM Users WHERE Email = @Email
-                )";
+        SELECT StudentID
+        FROM Students
+        WHERE UserID = (
+            SELECT UserID FROM Users WHERE Email = @Email
+        )";
 
             using (SqlCommand cmd = new SqlCommand(query, con, trans))
             {
@@ -53,18 +53,38 @@ namespace EduCampus
                 if (result == null || result == DBNull.Value)
                     return null;
 
-                return Convert.ToInt32(result);
+                return result.ToString();
             }
         }
 
         // ================= LOAD SESSION =================
         private void LoadSessions()
         {
-            ddlSession.Items.Clear();
-            ddlSession.Items.Add(new ListItem("2025", "2025"));
-            ddlSession.Items.Add(new ListItem("2026", "2026"));
-            ddlSession.Items.Add(new ListItem("2027", "2027"));
-            ddlSession.SelectedValue = "2026";
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                SELECT DISTINCT Session
+                FROM CourseOfferings
+                ORDER BY Session";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                con.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                ddlSession.Items.Clear();
+
+                while (dr.Read())
+                {
+                    ddlSession.Items.Add(
+                        new ListItem(
+                            dr["Session"].ToString(),
+                            dr["Session"].ToString()
+                        )
+                    );
+                }
+            }
         }
 
         protected void ddlSession_SelectedIndexChanged(object sender, EventArgs e)
@@ -83,17 +103,40 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                SELECT 
+                SELECT
                     c.CourseID,
                     c.CourseCode,
                     c.CourseName,
                     c.CreditHours
                 FROM CourseOfferings co
-                INNER JOIN Courses c ON co.CourseID = c.CourseID
-                WHERE co.Session = @Session";
+                INNER JOIN Courses c
+                    ON co.CourseID = c.CourseID
+                WHERE co.Session = @Session
+
+                AND c.CourseID NOT IN
+                (
+                    SELECT co2.CourseID
+                    FROM EnrollmentMaster em
+                    INNER JOIN EnrollmentDetails ed
+                        ON em.EnrolmentID = ed.EnrolmentID
+                    INNER JOIN CourseOfferings co2
+                        ON ed.OfferingID = co2.OfferingID
+                    WHERE em.StudentID =
+                    (
+                        SELECT StudentID
+                        FROM Students
+                        WHERE UserID =
+                        (
+                            SELECT UserID
+                            FROM Users
+                            WHERE Email = @Email
+                        )
+                    )
+                )";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -115,9 +158,9 @@ namespace EduCampus
 
                 try
                 {
-                    int? studentID = GetStudentID(con, trans);
+                    string studentID = GetStudentID(con, trans);
 
-                    if (studentID == null)
+                    if (string.IsNullOrEmpty(studentID))
                         throw new Exception("Student record not found.");
 
                     // ================= INSERT MASTER =================
@@ -209,7 +252,7 @@ namespace EduCampus
                     trans.Rollback();
 
                     lblMessage.ForeColor = Color.Red;
-                    lblMessage.Text = ex.Message;
+                    lblMessage.Text = ex.ToString();
                 }
             }
         }

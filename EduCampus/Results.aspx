@@ -52,7 +52,7 @@
 
             width:100%;
 
-            white-space:nowrap;
+            table-layout:fixed;
 
         }
 
@@ -69,6 +69,129 @@
             font-size:20px;
 
             font-weight:bold;
+
+        }
+
+        .table th,
+        .table td{
+
+            word-wrap:break-word;
+
+            white-space:normal;
+
+            text-align:center;
+
+            font-size:14px;
+
+        }
+
+        /* Result Table Design */
+
+        .result-table{
+
+            border-radius:10px;
+
+            overflow:hidden;
+
+            font-size:14px;
+
+        }
+
+
+        /* Table Header */
+
+        .result-table th{
+
+            background:#f1f5f9;
+
+            color:#334155;
+
+            font-weight:600;
+
+            text-align:center;
+
+            padding:12px 8px;
+
+            letter-spacing:0.3px;
+
+        }
+
+
+        /* Table Body */
+
+        .result-table td{
+
+            text-align:center;
+
+            padding:10px 8px;
+
+            color:#475569;
+
+        }
+
+
+        /* Course Code */
+
+        .result-table td:nth-child(1),
+        .result-table th:nth-child(1){
+
+            width:90px;
+
+            font-weight:600;
+
+        }
+
+
+        /* Course Name */
+
+        .result-table td:nth-child(2),
+        .result-table th:nth-child(2){
+
+            width:220px;
+
+            text-align:left;
+
+        }
+
+
+        /* Credit Hours */
+
+        .result-table td:nth-child(3),
+        .result-table th:nth-child(3){
+
+            width:90px;
+
+        }
+
+
+        /* Marks columns */
+
+        .result-table td:nth-child(n+4),
+        .result-table th:nth-child(n+4){
+
+            width:90px;
+
+        }
+
+
+        /* Grade */
+
+        .result-table td:nth-child(9),
+        .result-table th:nth-child(9){
+
+            width:80px;
+
+            font-weight:bold;
+
+        }
+
+
+        /* Grade Point */
+
+        .result-table td:nth-child(10),
+        .result-table th:nth-child(10){
+
+            width:90px;
 
         }
 
@@ -188,17 +311,17 @@
         <asp:Panel ID="pnlResult" runat="server">
 
 
-            <asp:GridView ID="gvResults"
-                runat="server"
-                CssClass="table table-bordered table-hover"
-                AutoGenerateColumns="true">
+            <div class="table-responsive">
 
-            </asp:GridView>
+                <asp:GridView ID="gvResults"
+                    runat="server"
+                    CssClass="table table-bordered table-hover result-table"
+                    AutoGenerateColumns="true">
+                </asp:GridView>
 
-
+            </div>
 
             <div class="result-summary">
-
 
                 <asp:Label ID="lblGPA"
                     runat="server">
@@ -208,7 +331,6 @@
                 <asp:Label ID="lblCGPA"
                     runat="server">
                 </asp:Label>
-
 
             </div>
 

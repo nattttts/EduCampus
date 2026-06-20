@@ -27,10 +27,10 @@
                             <a class="nav-link" href="#">Courses</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Attendance</a>
+                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
                         </li>
                          <li class="nav-item">
-                            <a class="nav-link" href="#">Marks</a>
+                            <a class="nav-link" href="Markspage.aspx">Marks</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>

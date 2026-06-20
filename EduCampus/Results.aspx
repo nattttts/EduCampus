@@ -9,193 +9,202 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 
-    <style>
+ <style>
 
-        .result-paper{
+    .result-paper{
 
-            background:white;
+        background:white;
 
-            width:90%;
+        width:95%;
 
-            max-width:1100px;
+        max-width:1200px;
 
-            margin:auto;
+        margin:auto;
 
-            padding:40px;
+        padding:35px;
 
-            border-radius:10px;
+        border-radius:10px;
 
-            box-shadow:
-            0 5px 20px rgba(0,0,0,0.15);
+        box-shadow:
+        0 5px 20px rgba(0,0,0,0.15);
 
-        }
+        overflow:hidden;
 
-        .student-info{
+    }
 
-            display:flex;
 
-            justify-content:space-between;
+    .student-info{
 
-            margin-bottom:30px;
+        display:flex;
 
-            font-size:16px;
+        justify-content:space-between;
 
-        }
+        margin-bottom:30px;
 
-        .table-responsive{
+        font-size:16px;
 
-            overflow-x:auto;
+    }
 
-        }
 
-        .table{
+    /* Result Table */
 
-            width:100%;
+    .result-table{
 
-            table-layout:fixed;
+        width:100%;
 
-        }
+        table-layout:auto;
 
-        .result-summary{
+        border-radius:10px;
 
-            margin-top:30px;
+        overflow:hidden;
 
-            display:flex;
+        font-size:13px;
 
-            justify-content:flex-end;
+    }
 
-            gap:40px;
 
-            font-size:20px;
+    /* Header */
 
-            font-weight:bold;
+    .result-table th{
 
-        }
+        background:#f1f5f9;
 
-        .table th,
-        .table td{
+        color:#334155;
 
-            word-wrap:break-word;
+        font-weight:600;
 
-            white-space:normal;
+        text-align:center;
 
-            text-align:center;
+        padding:10px 6px;
 
-            font-size:14px;
+        letter-spacing:0.2px;
 
-        }
+        font-size:12px;
 
-        /* Result Table Design */
+    }
 
-        .result-table{
 
-            border-radius:10px;
+    /* Body */
 
-            overflow:hidden;
+    .result-table td{
 
-            font-size:14px;
+        text-align:center;
 
-        }
+        padding:8px 6px;
 
+        color:#475569;
 
-        /* Table Header */
+        font-size:13px;
 
-        .result-table th{
+        word-wrap:break-word;
 
-            background:#f1f5f9;
+        white-space:normal;
 
-            color:#334155;
+    }
 
-            font-weight:600;
 
-            text-align:center;
+    /* Course Code */
 
-            padding:12px 8px;
+    .result-table th:nth-child(1),
+    .result-table td:nth-child(1){
 
-            letter-spacing:0.3px;
+        width:90px;
 
-        }
+        font-weight:600;
 
+    }
 
-        /* Table Body */
 
-        .result-table td{
+    /* Course Name */
 
-            text-align:center;
+    .result-table th:nth-child(2),
+    .result-table td:nth-child(2){
 
-            padding:10px 8px;
+        width:220px;
 
-            color:#475569;
+        max-width:220px;
 
-        }
+        text-align:left;
 
+        white-space:normal;
 
-        /* Course Code */
+        word-wrap:break-word;
 
-        .result-table td:nth-child(1),
-        .result-table th:nth-child(1){
+    }
 
-            width:90px;
 
-            font-weight:600;
+    /* Credit Hours */
 
-        }
+    .result-table th:nth-child(3),
+    .result-table td:nth-child(3){
 
+        width:70px;
 
-        /* Course Name */
+    }
 
-        .result-table td:nth-child(2),
-        .result-table th:nth-child(2){
 
-            width:220px;
+    /* Marks */
 
-            text-align:left;
+    .result-table th:nth-child(4),
+    .result-table td:nth-child(4),
+    .result-table th:nth-child(5),
+    .result-table td:nth-child(5),
+    .result-table th:nth-child(6),
+    .result-table td:nth-child(6),
+    .result-table th:nth-child(7),
+    .result-table td:nth-child(7),
+    .result-table th:nth-child(8),
+    .result-table td:nth-child(8){
 
-        }
+        width:85px;
 
+    }
 
-        /* Credit Hours */
 
-        .result-table td:nth-child(3),
-        .result-table th:nth-child(3){
+    /* Grade */
 
-            width:90px;
+    .result-table th:nth-child(9),
+    .result-table td:nth-child(9){
 
-        }
+        width:70px;
 
+        font-weight:bold;
 
-        /* Marks columns */
+    }
 
-        .result-table td:nth-child(n+4),
-        .result-table th:nth-child(n+4){
 
-            width:90px;
+    /* Grade Point */
 
-        }
+    .result-table th:nth-child(10),
+    .result-table td:nth-child(10){
 
+        width:80px;
 
-        /* Grade */
+    }
 
-        .result-table td:nth-child(9),
-        .result-table th:nth-child(9){
 
-            width:80px;
+    /* GPA CGPA */
 
-            font-weight:bold;
+    .result-summary{
 
-        }
+        margin-top:30px;
 
+        display:flex;
 
-        /* Grade Point */
+        justify-content:center;
 
-        .result-table td:nth-child(10),
-        .result-table th:nth-child(10){
+        gap:50px;
 
-            width:90px;
+        font-size:18px;
 
-        }
+        font-weight:bold;
 
-        </style>
+        flex-wrap:wrap;
+
+    }
+
+
+    </style>
 </head>
 
 <body>
@@ -310,14 +319,11 @@
 
         <asp:Panel ID="pnlResult" runat="server">
 
-
-            <div class="table-responsive">
-
-                <asp:GridView ID="gvResults"
-                    runat="server"
-                    CssClass="table table-bordered table-hover result-table"
-                    AutoGenerateColumns="true">
-                </asp:GridView>
+            <asp:GridView ID="gvResults"
+                runat="server"
+                CssClass="table table-bordered table-hover result-table"
+                AutoGenerateColumns="true">
+            </asp:GridView>
 
             </div>
 

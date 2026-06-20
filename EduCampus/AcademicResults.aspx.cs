@@ -35,12 +35,12 @@ namespace EduCampus
 
         protected void btnCourseResults_Click(object sender, EventArgs e)
         {
-            Response.Redirect("AdminCourseResults.aspx");
+            Response.Redirect("CourseResults.aspx");
         }
 
         protected void btnStudentTranscript_Click(object sender, EventArgs e)
         {
-            Response.Redirect("AdminStudentGradeReport.aspx");
+            Response.Redirect("StudentTranscript.aspx");
         }
     }
 }

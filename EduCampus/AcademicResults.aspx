@@ -82,7 +82,7 @@
                     runat="server"
                     Text="Student Transcript"
                     CssClass="btn btn-success btn-lg m-2"
-                    OnClick="btnCourseResults_Click"/>
+                    OnClick="btnStudentTranscript_Click"/>
 
             </div>
 

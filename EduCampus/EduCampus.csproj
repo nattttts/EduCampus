@@ -131,6 +131,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="CourseResults.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="EnrollmentStatistics.aspx" />
     <Content Include="favicon.ico" />
@@ -269,6 +270,13 @@
     </Compile>
     <Compile Include="Contact.aspx.designer.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CourseResults.aspx.cs">
+      <DependentUpon>CourseResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourseResults.aspx.designer.cs">
+      <DependentUpon>CourseResults.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>

@@ -329,18 +329,16 @@ namespace EduCampus
             {
                 string query = @"
                 SELECT
-                    c.CourseCode,
-                    c.CourseName,
-                    c.CreditHours,
-
-                    cm.AssignmentMark,
-                    cm.QuizMark,
-                    cm.MidTestMark,
-                    cm.FinalExamMark,
-
-                    cm.FinalMark,
-                    cm.FinalGrade,
-                    cm.GradePoint
+                    c.CourseCode AS [Course Code],
+                    c.CourseName AS [Course Name],
+                    c.CreditHours AS [Credit Hours],
+                    cm.AssignmentMark AS [Assignment],
+                    cm.QuizMark AS [Quiz],
+                    cm.MidTestMark AS [Mid Test],
+                    cm.FinalExamMark AS [Final Exam],
+                    cm.FinalMark AS [Final Mark],
+                    cm.FinalGrade AS [Grade],
+                    cm.GradePoint AS [Point]
 
                 FROM CourseMarks cm
 

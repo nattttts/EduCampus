@@ -8,6 +8,71 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+
+    <style>
+
+        .result-paper{
+
+            background:white;
+
+            width:90%;
+
+            max-width:1100px;
+
+            margin:auto;
+
+            padding:40px;
+
+            border-radius:10px;
+
+            box-shadow:
+            0 5px 20px rgba(0,0,0,0.15);
+
+        }
+
+        .student-info{
+
+            display:flex;
+
+            justify-content:space-between;
+
+            margin-bottom:30px;
+
+            font-size:16px;
+
+        }
+
+        .table-responsive{
+
+            overflow-x:auto;
+
+        }
+
+        .table{
+
+            width:100%;
+
+            white-space:nowrap;
+
+        }
+
+        .result-summary{
+
+            margin-top:30px;
+
+            display:flex;
+
+            justify-content:flex-end;
+
+            gap:40px;
+
+            font-size:20px;
+
+            font-weight:bold;
+
+        }
+
+        </style>
 </head>
 
 <body>
@@ -66,43 +131,105 @@
          </div>
      </nav>
 
-    <div class="container mt-4">
+<div class="container mt-4">
 
-    <div class="card shadow-sm border-0">
+    <div class="result-paper">
 
-        <div class="card-body">
+        <h2 class="text-center mb-4">
+            Academic Results
+        </h2>
 
-            <h2 class="text-center mb-4">
-                Academic Results
-            </h2>
+        <!-- Semester Buttons -->
+        <div class="text-center mb-4">
 
-            <div class="text-center mb-4">
-
-                <asp:Button ID="btnSem1"
-                    runat="server"
-                    Text="Semester 1"
-                    CssClass="btn btn-primary mx-2"
-                    OnClick="btnSem_Click"
-                    CommandArgument="Semester 1" />
-
-                <asp:Button ID="btnSem2"
-                    runat="server"
-                    Text="Semester 2"
-                    CssClass="btn btn-outline-primary mx-2"
-                    OnClick="btnSem_Click"
-                    CommandArgument="Semester 2" />
-
-            </div>
-
-            <asp:GridView ID="gvResults"
+            <asp:Button ID="btnSem1"
                 runat="server"
-                CssClass="table table-bordered table-hover"
-                AutoGenerateColumns="true">
-            </asp:GridView>
+                Text="Semester 1"
+                CssClass="btn btn-primary mx-2"
+                OnClick="btnSem_Click"
+                CommandArgument="Semester 1" />
+
+            <asp:Button ID="btnSem2"
+                runat="server"
+                Text="Semester 2"
+                CssClass="btn btn-outline-primary mx-2"
+                OnClick="btnSem_Click"
+                CommandArgument="Semester 2" />
 
         </div>
 
+        <!-- Student Information -->
+        <div class="student-info">
+
+            <div>
+                <asp:Label ID="lblStudentName" runat="server"/>
+                <br />
+
+                <asp:Label ID="lblStudentID" runat="server"/>
+                <br />
+
+                <asp:Label ID="lblProgramme" runat="server"/>
+            </div>
+
+            <div>
+
+                <asp:Label ID="lblSession" runat="server"/>
+                <br />
+
+                <asp:Label ID="lblSemester" runat="server"/>
+                <br />
+
+                <asp:Label ID="lblDate" runat="server"/>
+
+            </div>
+
+        </div>
+
+        <asp:Panel ID="pnlResult" runat="server">
+
+            <div class="table-responsive">
+
+            <asp:GridView ID="gvResults"
+                runat="server"
+                CssClass="table table-bordered text-center"
+                AutoGenerateColumns="true">
+            </asp:GridView>
+
+            </div>
+
+            <!-- GPA CGPA -->
+            <div class="result-summary">
+
+                <asp:Label ID="lblGPA"
+                    runat="server">
+                </asp:Label>
+
+
+                <asp:Label ID="lblCGPA"
+                    runat="server">
+                </asp:Label>
+
+        </div>
+
+        </asp:Panel>
+
+        <!-- No Result Message -->
+
+        <asp:Panel ID="pnlNoResult"
+            runat="server"
+            Visible="false">
+
+            <h4 class="text-center text-muted mt-5">
+
+                No results available for this semester.
+
+            </h4>
+
+        </asp:Panel>
+
     </div>
+
+</div>
 
 </div>
 

@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="AcademicResults.aspx" />
     <Content Include="AccessDenied.aspx" />
     <Content Include="AdminAttendance.aspx" />
     <Content Include="AdminDashboard.aspx" />
@@ -204,6 +205,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcademicResults.aspx.cs">
+      <DependentUpon>AcademicResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AcademicResults.aspx.designer.cs">
+      <DependentUpon>AcademicResults.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AccessDenied.aspx.cs">
       <DependentUpon>AccessDenied.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

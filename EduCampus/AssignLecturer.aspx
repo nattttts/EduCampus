@@ -53,7 +53,7 @@
                     <a class="nav-link" href="AdminAttendance.aspx">Attendance</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Report</a>
+                    <a class="nav-link" href="AcademicResults.aspx">Results</a>
                 </li>
             </ul>
 

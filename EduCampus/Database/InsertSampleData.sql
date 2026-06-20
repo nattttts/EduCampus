@@ -137,20 +137,20 @@ VALUES
 
 -- DATA STRUCTURES NOTES
 ('Week1_OOD_Design.pdf',
- '~/Uploads/DataStructures/Week1_OOD_Design.pdf',
+ '~/Uploads/DataStructures/Apr2026/Week1_OOD_Design.pdf',
 2),
 
 ('Week2_OOD_Design_Part2.pdf',
- '~/Uploads/DataStructures/Week2_OOD_Design_Part2.pdf',
+ '~/Uploads/DataStructures/Apr2026/Week2_OOD_Design_Part2.pdf',
 2),
 
 -- INTRO TO STATS AND ANALYTICS NOTES
 ('DCS1104_Chapter1.pdf',
- '~/Uploads/IntroToStatisticsAndAnalytics/DCS1104_Chapter1.pdf',
+ '~/Uploads/IntroductionToStatisticsAndAnalytics/Apr2026/DCS1104_Chapter1.pdf',
 1),
 
 ('DCS1104_Chapter2.pdf',
- '~/Uploads/IntroToStatisticsAndAnalytics/DCS1104_Chapter2.pdf',
+ '~/Uploads/IntroductionToStatisticsAndAnalytics/Apr2026/DCS1104_Chapter2.pdf',
 1);
 
 SELECT * FROM Notes;

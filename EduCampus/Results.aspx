@@ -187,18 +187,18 @@
 
         <asp:Panel ID="pnlResult" runat="server">
 
-            <div class="table-responsive">
 
             <asp:GridView ID="gvResults"
                 runat="server"
-                CssClass="table table-bordered text-center"
+                CssClass="table table-bordered table-hover"
                 AutoGenerateColumns="true">
+
             </asp:GridView>
 
-            </div>
 
-            <!-- GPA CGPA -->
+
             <div class="result-summary">
+
 
                 <asp:Label ID="lblGPA"
                     runat="server">
@@ -209,9 +209,12 @@
                     runat="server">
                 </asp:Label>
 
-        </div>
+
+            </div>
+
 
         </asp:Panel>
+
 
         <!-- No Result Message -->
 
@@ -228,8 +231,6 @@
         </asp:Panel>
 
     </div>
-
-</div>
 
 </div>
 

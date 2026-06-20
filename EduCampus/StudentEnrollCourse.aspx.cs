@@ -57,6 +57,34 @@ namespace EduCampus
             }
         }
 
+        private int GetStudentProgrammeID()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                SELECT ProgrammeID
+                FROM Students
+                WHERE UserID =
+                (
+                    SELECT UserID
+                    FROM Users
+                    WHERE Email = @Email
+                )";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                con.Open();
+
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                    return 0;
+
+                return Convert.ToInt32(result);
+            }
+        }
+
         // ================= LOAD SESSION =================
         private void LoadSessions()
         {
@@ -111,7 +139,20 @@ namespace EduCampus
                 FROM CourseOfferings co
                 INNER JOIN Courses c
                     ON co.CourseID = c.CourseID
+
                 WHERE co.Session = @Session
+
+                AND c.ProgrammeID =
+                (
+                    SELECT ProgrammeID
+                    FROM Students
+                    WHERE UserID =
+                    (
+                        SELECT UserID
+                        FROM Users
+                        WHERE Email = @Email
+                    )
+                )
 
                 AND c.CourseID NOT IN
                 (
@@ -132,17 +173,23 @@ namespace EduCampus
                             WHERE Email = @Email
                         )
                     )
-                )";
+                )
+
+                ORDER BY c.CourseCode";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                cmd.Parameters.AddWithValue("@Session",
+                    ddlSession.SelectedValue);
+
+                cmd.Parameters.AddWithValue("@Email",
+                    Session["Email"].ToString());
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
+
                 da.Fill(dt);
 
-                gvCourses.DataKeyNames = new string[] { "CourseID" };
                 gvCourses.DataSource = dt;
                 gvCourses.DataBind();
             }
@@ -154,106 +201,220 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
+
                 SqlTransaction trans = con.BeginTransaction();
 
                 try
                 {
-                    string studentID = GetStudentID(con, trans);
 
-                    if (string.IsNullOrEmpty(studentID))
-                        throw new Exception("Student record not found.");
-
-                    // ================= INSERT MASTER =================
-                    string insertMaster = @"
-                        INSERT INTO EnrollmentMaster
-                        (DateEnrolled, Status, Session, Semester, StudentID)
-                        VALUES
-                        (GETDATE(), 'Pending', @Session, @Semester, @StudentID);
-
-                        SELECT SCOPE_IDENTITY();";
-
-                    int enrolmentID;
-
-                    using (SqlCommand cmd = new SqlCommand(insertMaster, con, trans))
-                    {
-                        cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                        cmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
-                        cmd.Parameters.AddWithValue("@StudentID", studentID);
-
-                        object result = cmd.ExecuteScalar();
-
-                        if (result == null)
-                            throw new Exception("Failed to create EnrollmentMaster.");
-
-                        enrolmentID = Convert.ToInt32(result);
-                    }
+                    // ================= CHECK COURSE SELECTION FIRST =================
 
                     bool hasSelection = false;
 
-                    // ================= INSERT DETAILS =================
                     foreach (GridViewRow row in gvCourses.Rows)
                     {
+
                         CheckBox chk = row.FindControl("chkSelect") as CheckBox;
 
                         if (chk != null && chk.Checked)
                         {
                             hasSelection = true;
-
-                            int courseID = Convert.ToInt32(gvCourses.DataKeys[row.RowIndex].Value);
-
-                            string getOffering = @"
-                                SELECT TOP 1 OfferingID
-                                FROM CourseOfferings
-                                WHERE CourseID = @CourseID
-                                AND Session = @Session";
-
-                            object offeringObj;
-
-                            using (SqlCommand offerCmd = new SqlCommand(getOffering, con, trans))
-                            {
-                                offerCmd.Parameters.AddWithValue("@CourseID", courseID);
-                                offerCmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                                offerCmd.Parameters.AddWithValue("@Semester", ddlSemester.SelectedValue);
-
-                                offeringObj = offerCmd.ExecuteScalar();
-                            }
-
-                            if (offeringObj == null)
-                                throw new Exception("Course offering not found for CourseID: " + courseID);
-
-                            int offeringID = Convert.ToInt32(offeringObj);
-
-                            string insertDetail = @"
-                                INSERT INTO EnrollmentDetails
-                                (EnrolmentID, OfferingID)
-                                VALUES (@EnrolmentID, @OfferingID)";
-
-                            using (SqlCommand detailCmd = new SqlCommand(insertDetail, con, trans))
-                            {
-                                detailCmd.Parameters.AddWithValue("@EnrolmentID", enrolmentID);
-                                detailCmd.Parameters.AddWithValue("@OfferingID", offeringID);
-                                detailCmd.ExecuteNonQuery();
-                            }
+                            break;
                         }
+
                     }
 
                     if (!hasSelection)
+                    {
                         throw new Exception("Please select at least one course.");
+                    }
+
+                    // ================= GET STUDENT ID =================
+
+                    string studentID = GetStudentID(con, trans);
+
+                    if (string.IsNullOrEmpty(studentID))
+                    {
+                        throw new Exception("Student record not found.");
+                    }
+
+                    // ================= CREATE ENROLLMENT MASTER =================
+
+                    string insertMaster = @"
+
+                    INSERT INTO EnrollmentMaster
+                    (
+                        DateEnrolled,
+                        Status,
+                        Session,
+                        Semester,
+                        StudentID
+                    )
+
+                    VALUES
+                    (
+                        GETDATE(),
+                        'Pending',
+                        @Session,
+                        @Semester,
+                        @StudentID
+                    );
+
+
+                    SELECT SCOPE_IDENTITY();
+
+                ";
+                    int enrolmentID;
+
+                    using (SqlCommand cmd = new SqlCommand(insertMaster, con, trans))
+                    {
+
+                        cmd.Parameters.AddWithValue(
+                            "@Session",
+                            ddlSession.SelectedValue);
+
+                        cmd.Parameters.AddWithValue(
+                            "@Semester",
+                            ddlSemester.SelectedValue);
+
+                        cmd.Parameters.AddWithValue(
+                            "@StudentID",
+                            studentID);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result == null)
+                        {
+                            throw new Exception(
+                                "Failed to create enrollment.");
+                        }
+
+                        enrolmentID = Convert.ToInt32(result);
+
+                    }
+
+                    // ================= INSERT SELECTED COURSES =================
+
+                    foreach (GridViewRow row in gvCourses.Rows)
+                    {
+
+                        CheckBox chk =
+                            row.FindControl("chkSelect") as CheckBox;
+
+                        if (chk != null && chk.Checked)
+                        {
+
+                            int courseID =
+                                Convert.ToInt32(
+                                    gvCourses.DataKeys[row.RowIndex].Value);
+
+                            // Get OfferingID
+
+                            string getOffering = @"
+
+                            SELECT TOP 1 OfferingID
+
+                            FROM CourseOfferings
+
+                            WHERE CourseID=@CourseID
+
+                            AND Session=@Session
+
+                            ";
+                            int offeringID;
+
+                            using (SqlCommand cmd =
+                                new SqlCommand(getOffering, con, trans))
+                            {
+
+                                cmd.Parameters.AddWithValue(
+                                    "@CourseID",
+                                    courseID);
+
+                                cmd.Parameters.AddWithValue(
+                                    "@Session",
+                                    ddlSession.SelectedValue);
+
+                                object result =
+                                    cmd.ExecuteScalar();
+
+                                if (result == null)
+                                {
+                                    throw new Exception(
+                                    "Course offering not found.");
+                                }
+
+                                offeringID =
+                                    Convert.ToInt32(result);
+
+                            }
+
+                            // Insert Enrollment Details
+
+                            string insertDetail = @"
+
+                            INSERT INTO EnrollmentDetails
+
+                            (
+                                EnrolmentID,
+                                OfferingID
+                            )
+
+                            VALUES
+
+                            (
+                                @EnrolmentID,
+                                @OfferingID
+                            )
+
+                            ";
+
+                            using (SqlCommand cmd =
+                                new SqlCommand(insertDetail, con, trans))
+                            {
+
+                                cmd.Parameters.AddWithValue(
+                                    "@EnrolmentID",
+                                    enrolmentID);
+
+                                cmd.Parameters.AddWithValue(
+                                    "@OfferingID",
+                                    offeringID);
+
+                                cmd.ExecuteNonQuery();
+
+                            }
+
+                        }
+
+                    }
+
+                    // ================= SUCCESS =================
 
                     trans.Commit();
 
                     lblMessage.ForeColor = Color.Green;
-                    lblMessage.Text = "Enrollment successful!";
+
+                    lblMessage.Text =
+                        "Enrollment successful!";
+
+                    LoadCourses();
 
                     LoadMyCourses();
+
                 }
+
                 catch (Exception ex)
                 {
                     trans.Rollback();
 
                     lblMessage.ForeColor = Color.Red;
-                    lblMessage.Text = ex.ToString();
+
+                    lblMessage.Text =
+                        ex.Message;
+
                 }
+
             }
         }
 

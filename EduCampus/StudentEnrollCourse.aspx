@@ -127,9 +127,10 @@
                 <div class="card-body">
 
                     <asp:GridView ID="gvCourses"
-                        runat="server"
-                        AutoGenerateColumns="False"
-                        CssClass="table table-hover table-bordered">
+                    runat="server"
+                    AutoGenerateColumns="False"
+                    DataKeyNames="CourseID"
+                    CssClass="table table-hover table-bordered">
 
                         <Columns>
 
@@ -139,9 +140,6 @@
                                         runat="server" />
                                 </ItemTemplate>
                             </asp:TemplateField>
-
-                            <asp:BoundField DataField="CourseID"
-                                HeaderText="Course ID" />
 
                             <asp:BoundField DataField="CourseCode"
                                 HeaderText="Course Code" />

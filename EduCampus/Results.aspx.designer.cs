@@ -42,6 +42,10 @@
         /// </summary>
         protected global::System.Web.UI.WebControls.GridView gvResults;
 
+        protected global::System.Web.UI.WebControls.Panel pnlResult;
+
+        protected global::System.Web.UI.WebControls.Panel pnlNoResult;
+
         /// <summary>
         /// btnLogout control.
         /// </summary>

@@ -33,13 +33,13 @@
 
             <h3 class="text-center mb-2">Course Results</h3>
 
-            <!-- Filter section: Session, Course, and Date selection -->
+            <!-- Filter section: Session and Course selection -->
             <div class="w-75 mx-auto">
 
+                <!-- Session dropdown -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Session</label>
 
-                    <!-- Session dropdown -->
                     <asp:DropDownList ID="ddlSession"
                         runat="server"
                         CssClass="form-select"

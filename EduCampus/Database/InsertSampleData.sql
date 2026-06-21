@@ -27,43 +27,61 @@ INSERT INTO Courses (CourseCode, CourseName, CreditHours, ProgrammeID)
 VALUES
 ('DCS1104', 'Introduction to Statistics and Analytics', 4, 1),
 ('STA1101', 'Quantitative Methods', 4, 2),
-('DCS2101', 'Data Structures', 4, 1);
+('DCS2101', 'Data Structures', 4, 1),
+('DCS1102', 'Rapid Application Development', 4, 1),
+('DCS1105', 'High-Level Programming', 4, 1);
 
 INSERT INTO CourseOfferings (Session, CourseID, LecturerID)
 VALUES
 ('Apr2026', 1, 1),
 ('Apr2026', 3, 1),
-('Apr2026', 2, 2);
+('Apr2026', 2, 2),
+('Aug2026', 4, 1),
+('Aug2026', 5, 2);
 
 SELECT * FROM EnrollmentMaster;
 
 INSERT INTO EnrollmentMaster (Session, Semester, StudentID)
 VALUES
-('Apr2026', 'Semester 1', 'P260001'), ('Apr2026', 'Semester 1', 'P260002'), ('Apr2026', 'Semester 2', 'P260003');
+('Apr2026', 'Semester 1', 'P260001'), 
+('Apr2026', 'Semester 1', 'P260002'), 
+('Apr2026', 'Semester 2', 'P260003'),
+('Aug2026', 'Semester 2', 'P260001'), 
+('Aug2026', 'Semester 2', 'P260002');
 
 INSERT INTO EnrollmentDetails (EnrolmentID, OfferingID)
 VALUES
-(1, 1), (1, 2), (2, 1), (3, 3);
+(1, 1), (1, 2), (2, 1), (3, 3),(4, 4), (4, 5), (5, 4), (5, 5);
 
-INSERT INTO Attendance (Status, Remarks, DetailID)
+INSERT INTO Attendance (AttendanceDate, Status, Remarks, DetailID)
 VALUES
-('Present', NULL, 1),
-('Present', NULL, 1),
-('Absent', 'Medical Leave', 1),
+('2026-06-10','Present', NULL, 1),
+('2026-06-18','Present', NULL, 1),
+('2026-06-19','Present', NULL, 1),
+('2026-06-20','Absent', 'Medical Leave', 1),
 
-('Present', NULL, 2),
-('Present', NULL, 2),
+('2026-06-15','Present', NULL, 2),
+('2026-06-19','Present', NULL, 2),
 
-('Present', NULL, 3),
-('Absent', 'No Show', 3);
+('2026-06-10','Present', NULL, 3),
+('2026-06-18','Absent', NULL, 3),
+('2026-06-19','Absent', 'No Show', 3),
+('2026-06-20','Absent', NULL, 3),
+
+('2026-06-11','Present', NULL, 4),
+('2026-06-16','Absent', NULL, 4);
 
 INSERT INTO CourseMarks 
 (AssignmentMark, QuizMark, MidTestMark, FinalExamMark, FinalMark, FinalGrade, GradePoint, DetailID)
 VALUES
-(85, 80, 90, 88, 86.50, 'A', 4.00, 1),
-(75, 70, 80, 78, 76.50, 'A-', 3.67, 2);
-
-SELECT * FROM CourseMarks;
+(30, 10, 20, 36, 96, 'A+', 4.00, 1),
+(25, 8, 18, 32, 83, 'A', 4.00, 2),
+(25, 7, 19, 21, 72, 'B+', 3.33, 3),
+(25, 7, 17, 21, 70, 'B+', 3.33, 4),
+(27, 8, 20, 32, 87, 'A', 4.00, 5),
+(21, 8, 16, 30, 75, 'A-', 3.67, 6),
+(25, 7, 18, 20, 70, 'B+', 3.33, 7),
+(11, 5, 10, 12, 38, 'F', 0.00, 8);
 
 INSERT INTO Announcements
 (Title, Message, OfferingID)

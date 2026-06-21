@@ -142,6 +142,8 @@ namespace EduCampus
 
                 WHERE co.Session = @Session
 
+                AND co.Semester = @Semester
+
                 AND c.ProgrammeID =
                 (
                     SELECT ProgrammeID
@@ -184,6 +186,10 @@ namespace EduCampus
 
                 cmd.Parameters.AddWithValue("@Email",
                     Session["Email"].ToString());
+
+                cmd.Parameters.AddWithValue(
+                "@Semester",
+                ddlSemester.SelectedValue);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();

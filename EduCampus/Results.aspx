@@ -274,19 +274,16 @@
         <!-- Semester Buttons -->
         <div class="text-center mb-4">
 
-            <asp:Button ID="btnSem1"
-                runat="server"
-                Text="Semester 1"
-                CssClass="btn btn-primary mx-2"
-                OnClick="btnSem_Click"
-                CommandArgument="Semester 1" />
+            <div class="text-center mb-4">
 
-            <asp:Button ID="btnSem2"
-                runat="server"
-                Text="Semester 2"
-                CssClass="btn btn-outline-primary mx-2"
-                OnClick="btnSem_Click"
-                CommandArgument="Semester 2" />
+                <asp:DropDownList ID="ddlSemester"
+                    runat="server"
+                    CssClass="form-select w-25 mx-auto"
+                    AutoPostBack="true"
+                    OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
+                </asp:DropDownList>
+
+            </div>
 
         </div>
 
@@ -325,7 +322,6 @@
                 AutoGenerateColumns="true">
             </asp:GridView>
 
-            </div>
 
             <div class="result-summary">
 
@@ -360,7 +356,7 @@
 
     </div>
 
-</div>
+    </div>
 
 </form>
 

@@ -20,14 +20,16 @@ namespace EduCampus
 
             if (!IsPostBack)
             {
-                ViewState["Semester"] = "Semester 1";
+                LoadSemesters();
 
-                SetActiveSemesterButton("Semester 1");
+                if (ddlSemester.Items.Count > 0)
+                {
+                    string semester = ddlSemester.SelectedValue;
 
-                LoadStudentInfo("Semester 1");
-                LoadResults("Semester 1");
-
-                CalculateGPA("Semester 1");
+                    LoadStudentInfo(semester);
+                    LoadResults(semester);
+                    CalculateGPA(semester);
+                }
             }
         }
 
@@ -36,19 +38,12 @@ namespace EduCampus
             Response.Redirect("StudentDashboard.aspx");
         }
 
-        protected void btnSem_Click(object sender, EventArgs e)
+        protected void ddlSemester_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-
-            string semester = btn.CommandArgument;
-
-            ViewState["Semester"] = semester;
-
-            SetActiveSemesterButton(semester);
+            string semester = ddlSemester.SelectedValue;
 
             LoadStudentInfo(semester);
             LoadResults(semester);
-
             CalculateGPA(semester);
         }
 
@@ -400,6 +395,46 @@ namespace EduCampus
                 }
             }
         }
+        private void LoadSemesters()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                SELECT DISTINCT Semester
+                FROM EnrollmentMaster
+                WHERE StudentID =
+                (
+                    SELECT StudentID
+                    FROM Students
+                    WHERE UserID =
+                    (
+                        SELECT UserID
+                        FROM Users
+                        WHERE Email = @Email
+                    )
+                )
+                ORDER BY Semester";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"]);
+
+                con.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                ddlSemester.Items.Clear();
+
+                while (dr.Read())
+                {
+                    ddlSemester.Items.Add(
+                        new ListItem(
+                            dr["Semester"].ToString(),
+                            dr["Semester"].ToString()
+                        ));
+                }
+            }
+        }
+
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();
@@ -407,19 +442,5 @@ namespace EduCampus
             Response.Redirect("Login.aspx");
         }
 
-        private void SetActiveSemesterButton(string semester)
-        {
-            btnSem1.CssClass = "btn btn-secondary mx-2";
-            btnSem2.CssClass = "btn btn-secondary mx-2";
-
-            if (semester == "Semester 1")
-            {
-                btnSem1.CssClass = "btn btn-primary mx-2";
-            }
-            else if (semester == "Semester 2")
-            {
-                btnSem2.CssClass = "btn btn-primary mx-2";
-            }
-        }
     }
 }

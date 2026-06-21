@@ -150,13 +150,3 @@ CREATE TABLE CourseMarks (
 
     FOREIGN KEY (DetailID) REFERENCES EnrollmentDetails(DetailID)
 );
-
--- RESULTS TABLE
-CREATE TABLE Results (
-    ResultID INT IDENTITY(1,1) PRIMARY KEY,
-    GPA DECIMAL(3,2),
-    CGPA DECIMAL(3,2),
-    EnrolmentID INT NOT NULL,
-
-    FOREIGN KEY (EnrolmentID) REFERENCES EnrollmentMaster(EnrolmentID),
-);

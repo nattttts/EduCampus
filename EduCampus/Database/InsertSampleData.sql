@@ -63,11 +63,6 @@ VALUES
 (85, 80, 90, 88, 86.50, 'A', 4.00, 1),
 (75, 70, 80, 78, 76.50, 'A-', 3.67, 2);
 
-INSERT INTO Results (GPA, CGPA, EnrolmentID)
-VALUES
-(3.75, 3.75, 1),
-(3.10, 3.10, 2);
-
 SELECT * FROM CourseMarks;
 
 INSERT INTO Announcements

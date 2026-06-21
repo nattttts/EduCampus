@@ -24,13 +24,13 @@ namespace lecturer
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// ddlSemester control.
+        /// ddlSession control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSemester;
+        protected global::System.Web.UI.WebControls.DropDownList ddlSession;
 
         /// <summary>
         /// ddlCourse control.
@@ -42,13 +42,13 @@ namespace lecturer
         protected global::System.Web.UI.WebControls.DropDownList ddlCourse;
 
         /// <summary>
-        /// ddlClass control.
+        /// txtAttendanceDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlClass;
+        protected global::System.Web.UI.WebControls.TextBox txtAttendanceDate;
 
         /// <summary>
         /// btnFilter control.

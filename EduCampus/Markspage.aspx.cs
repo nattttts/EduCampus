@@ -16,11 +16,11 @@ namespace lecturer
         {
             if (!IsPostBack)
             {
-                LoadSemester();
+                LoadSession();
             }
         }
 
-        private void LoadSemester()
+        private void LoadSession()
         {
             using (SqlConnection conn =
                 new SqlConnection(connStr))
@@ -29,27 +29,28 @@ namespace lecturer
 
                 SqlCommand cmd =
                     new SqlCommand(
-                    @"SELECT DISTINCT Semester
-                      FROM CourseOfferings",
+                    @"SELECT DISTINCT Session
+              FROM EnrollmentMaster
+              ORDER BY Session",
                     conn);
 
-                ddlSemester.DataSource =
+                ddlSession.DataSource =
                     cmd.ExecuteReader();
 
-                ddlSemester.DataTextField = "Semester";
-                ddlSemester.DataValueField = "Semester";
-                ddlSemester.DataBind();
+                ddlSession.DataTextField = "Session";
+                ddlSession.DataValueField = "Session";
+                ddlSession.DataBind();
 
-                ddlSemester.Items.Insert(
+                ddlSession.Items.Insert(
                     0,
-                    new ListItem("--Select Semester--", ""));
+                    new ListItem("--Select Session--", ""));
             }
         }
 
-        protected void ddlSemester_SelectedIndexChanged(
-            object sender,
+        protected void ddlSession_SelectedIndexChanged(
+        object sender,
             EventArgs e)
-        {
+               {
             using (SqlConnection conn =
                 new SqlConnection(connStr))
             {
@@ -57,14 +58,21 @@ namespace lecturer
 
                 SqlCommand cmd =
                     new SqlCommand(
-                    @"SELECT DISTINCT CourseCode
-                      FROM CourseOfferings
-                      WHERE Semester=@Semester",
+                    @"
+            SELECT DISTINCT
+                C.CourseCode
+            FROM Courses C
+
+            INNER JOIN CourseOfferings CO
+                ON C.CourseID = CO.CourseID
+
+            WHERE CO.Session = @Session
+            ",
                     conn);
 
                 cmd.Parameters.AddWithValue(
-                    "@Semester",
-                    ddlSemester.SelectedValue);
+                    "@Session",
+                    ddlSession.SelectedValue);
 
                 ddlCourse.DataSource =
                     cmd.ExecuteReader();
@@ -72,40 +80,10 @@ namespace lecturer
                 ddlCourse.DataTextField = "CourseCode";
                 ddlCourse.DataValueField = "CourseCode";
                 ddlCourse.DataBind();
-            }
-        }
 
-        protected void ddlCourse_SelectedIndexChanged(
-            object sender,
-            EventArgs e)
-        {
-            using (SqlConnection conn =
-                new SqlConnection(connStr))
-            {
-                conn.Open();
-
-                SqlCommand cmd =
-                    new SqlCommand(
-                    @"SELECT DISTINCT ClassName
-                      FROM CourseOfferings
-                      WHERE Semester=@Semester
-                      AND CourseCode=@Course",
-                    conn);
-
-                cmd.Parameters.AddWithValue(
-                    "@Semester",
-                    ddlSemester.SelectedValue);
-
-                cmd.Parameters.AddWithValue(
-                    "@Course",
-                    ddlCourse.SelectedValue);
-
-                ddlClass.DataSource =
-                    cmd.ExecuteReader();
-
-                ddlClass.DataTextField = "ClassName";
-                ddlClass.DataValueField = "ClassName";
-                ddlClass.DataBind();
+                ddlCourse.Items.Insert(
+                    0,
+                    new ListItem("--Select Course--", ""));
             }
         }
 
@@ -127,39 +105,53 @@ namespace lecturer
                     new SqlCommand(
                     @"
                     SELECT
-                        R.ResultID,
+                        CM.MarkID,
                         S.StudentID,
-                        S.StudentName,
-                        R.Mark,
-                        R.Grade
-                    FROM Results R
+                        U.FullName AS StudentName,
+
+                        CM.AssignmentMark,
+                        CM.QuizMark,
+                        CM.MidTestMark,
+                        CM.FinalExamMark,
+
+                        CM.FinalMark,
+                        CM.FinalGrade,
+                        CM.GradePoint
+
+                    FROM CourseMarks CM
+
+                    INNER JOIN EnrollmentDetails ED
+                        ON CM.DetailID = ED.DetailID
+
+                    INNER JOIN EnrollmentMaster EM
+                        ON ED.EnrolmentID = EM.EnrolmentID
 
                     INNER JOIN Students S
-                        ON R.StudentID = S.StudentID
+                        ON EM.StudentID = S.StudentID
 
-                    INNER JOIN Enrolments E
-                        ON R.EnrolmentID = E.EnrolmentID
+                    INNER JOIN Users U
+                        ON S.UserID = U.UserId
 
-                    INNER JOIN CourseOfferings C
-                        ON E.OfferingID = C.OfferingID
+                    INNER JOIN CourseOfferings CO
+                        ON ED.OfferingID = CO.OfferingID
 
-                    WHERE C.Semester=@Semester
-                    AND C.CourseCode=@Course
-                    AND C.ClassName=@Class
+                    INNER JOIN Courses C
+                        ON CO.CourseID = C.CourseID
+
+                    WHERE CO.Session = @Session
+                    AND C.CourseCode = @Course
+
+                    ORDER BY S.StudentID
                     ",
                     conn);
 
-                cmd.Parameters.AddWithValue(
-                    "@Semester",
-                    ddlSemester.SelectedValue);
+                    cmd.Parameters.AddWithValue(
+                    "@Session",
+                    ddlSession.SelectedValue);
 
-                cmd.Parameters.AddWithValue(
+                    cmd.Parameters.AddWithValue(
                     "@Course",
                     ddlCourse.SelectedValue);
-
-                cmd.Parameters.AddWithValue(
-                    "@Class",
-                    ddlClass.SelectedValue);
 
                 SqlDataAdapter da =
                     new SqlDataAdapter(cmd);
@@ -180,28 +172,47 @@ namespace lecturer
         {
             foreach (GridViewRow row in gvMarks.Rows)
             {
-                TextBox txtMark =
-                    (TextBox)row.FindControl("txtMark");
-
-                txtMark.Enabled = true;
+                ((TextBox)row.FindControl("txtAssignment")).Enabled = true;
+                ((TextBox)row.FindControl("txtQuiz")).Enabled = true;
+                ((TextBox)row.FindControl("txtMidTest")).Enabled = true;
+                ((TextBox)row.FindControl("txtFinalExam")).Enabled = true;
             }
         }
 
-        private string CalculateGrade(decimal mark)
+        private (string grade, decimal gradePoint)
+            CalculateGrade(decimal mark)
         {
+            if (mark >= 90)
+                return ("A+", 4.00m);
+
             if (mark >= 80)
-                return "A";
+                return ("A", 4.00m);
+
+            if (mark >= 75)
+                return ("A-", 3.67m);
 
             if (mark >= 70)
-                return "B";
+                return ("B+", 3.33m);
+
+            if (mark >= 65)
+                return ("B", 3.00m);
 
             if (mark >= 60)
-                return "C";
+                return ("B-", 2.67m);
+
+            if (mark >= 55)
+                return ("C+", 2.33m);
 
             if (mark >= 50)
-                return "D";
+                return ("C", 2.00m);
 
-            return "F";
+            if (mark >= 45)
+                return ("C-", 1.50m);
+
+            if (mark >= 40)
+                return ("D", 1.00m);
+
+            return ("F", 0.00m);
         }
 
         protected void btnSave_Click(
@@ -213,46 +224,103 @@ namespace lecturer
             {
                 conn.Open();
 
-                foreach (GridViewRow row
-                    in gvMarks.Rows)
+                foreach (GridViewRow row in gvMarks.Rows)
                 {
-                    int resultID =
+                    int markID =
                         Convert.ToInt32(
                         row.Cells[0].Text);
 
-                    TextBox txtMark =
-                        (TextBox)row.FindControl("txtMark");
+                    decimal assignment =
+                        string.IsNullOrEmpty(
+                        ((TextBox)row.FindControl("txtAssignment")).Text)
+                        ? 0
+                        : Convert.ToDecimal(
+                        ((TextBox)row.FindControl("txtAssignment")).Text);
 
-                    decimal mark =
-                        Convert.ToDecimal(
-                        txtMark.Text);
+                    decimal quiz =
+                        string.IsNullOrEmpty(
+                        ((TextBox)row.FindControl("txtQuiz")).Text)
+                        ? 0
+                        : Convert.ToDecimal(
+                        ((TextBox)row.FindControl("txtQuiz")).Text);
+
+                    decimal midTest =
+                        string.IsNullOrEmpty(
+                        ((TextBox)row.FindControl("txtMidTest")).Text)
+                        ? 0
+                        : Convert.ToDecimal(
+                        ((TextBox)row.FindControl("txtMidTest")).Text);
+
+                    decimal finalExam =
+                        string.IsNullOrEmpty(
+                        ((TextBox)row.FindControl("txtFinalExam")).Text)
+                        ? 0
+                        : Convert.ToDecimal(
+                        ((TextBox)row.FindControl("txtFinalExam")).Text);
+
+                    decimal finalMark =
+                        assignment +
+                        quiz +
+                        midTest +
+                        finalExam;
+
+                    var result =
+                        CalculateGrade(finalMark);
 
                     string grade =
-                        CalculateGrade(mark);
+                        result.grade;
+
+                    decimal gradePoint =
+                        result.gradePoint;
 
                     SqlCommand cmd =
                         new SqlCommand(
-                        @"UPDATE Results
-                          SET Mark=@Mark,
-                              Grade=@Grade
-                          WHERE ResultID=@ResultID",
+                        @"
+                        UPDATE CourseMarks
+                        SET AssignmentMark = @Assignment,
+                            QuizMark = @Quiz,
+                            MidTestMark = @MidTest,
+                            FinalExamMark = @FinalExam,
+                            FinalMark = @FinalMark,
+                            FinalGrade = @Grade,
+                            GradePoint = @GradePoint
+                        WHERE MarkID = @MarkID
+                        ",
                         conn);
 
                     cmd.Parameters.AddWithValue(
-                        "@Mark",
-                        mark);
+                        "@Assignment",
+                        assignment);
+
+                    cmd.Parameters.AddWithValue(
+                        "@Quiz",
+                        quiz);
+
+                    cmd.Parameters.AddWithValue(
+                        "@MidTest",
+                        midTest);
+
+                    cmd.Parameters.AddWithValue(
+                        "@FinalExam",
+                        finalExam);
+
+                    cmd.Parameters.AddWithValue(
+                        "@FinalMark",
+                        finalMark);
 
                     cmd.Parameters.AddWithValue(
                         "@Grade",
                         grade);
 
                     cmd.Parameters.AddWithValue(
-                        "@ResultID",
-                        resultID);
+                        "@GradePoint",
+                        gradePoint);
+
+                    cmd.Parameters.AddWithValue(
+                        "@MarkID",
+                        markID);
 
                     cmd.ExecuteNonQuery();
-
-                    txtMark.Enabled = false;
                 }
             }
 

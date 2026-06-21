@@ -6,7 +6,6 @@
 
 <html>
 <head runat="server">
-
     <title>Marks Management</title>
 
     <style>
@@ -17,7 +16,7 @@
         }
 
         .container {
-            width: 1000px;
+            width: 1200px;
             margin: 20px auto;
             background: white;
             padding: 20px;
@@ -41,8 +40,11 @@
             height: 40px;
         }
 
-    </style>
+        .markBox {
+            width: 70px;
+        }
 
+    </style>
 </head>
 
 <body>
@@ -56,21 +58,14 @@
     <div class="filter-row">
 
         <asp:DropDownList
-            ID="ddlSemester"
+            ID="ddlSession"
             runat="server"
             AutoPostBack="true"
-            OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
+            OnSelectedIndexChanged="ddlSession_SelectedIndexChanged">
         </asp:DropDownList>
 
         <asp:DropDownList
             ID="ddlCourse"
-            runat="server"
-            AutoPostBack="true"
-            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-        </asp:DropDownList>
-
-        <asp:DropDownList
-            ID="ddlClass"
             runat="server">
         </asp:DropDownList>
 
@@ -85,42 +80,58 @@
     <asp:GridView
         ID="gvMarks"
         runat="server"
-        Width="100%"
-        AutoGenerateColumns="False">
+        AutoGenerateColumns="False"
+        Width="100%">
 
         <Columns>
 
-            <asp:BoundField
-                DataField="ResultID"
-                HeaderText="Result ID" />
+            <asp:BoundField DataField="MarkID" HeaderText="Mark ID" />
+            <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
+            <asp:BoundField DataField="StudentName" HeaderText="Student Name" />
 
-            <asp:BoundField
-                DataField="StudentID"
-                HeaderText="Student ID" />
-
-            <asp:BoundField
-                DataField="StudentName"
-                HeaderText="Student Name" />
-
-            <asp:TemplateField HeaderText="Mark">
-
+            <asp:TemplateField HeaderText="Assignment">
                 <ItemTemplate>
-
-                    <asp:TextBox
-                        ID="txtMark"
+                    <asp:TextBox ID="txtAssignment"
                         runat="server"
-                        Text='<%# Eval("Mark") %>'
-                        Enabled="false"
-                        Width="80">
-                    </asp:TextBox>
-
+                        CssClass="markBox"
+                        Text='<%# Eval("AssignmentMark") %>'
+                        Enabled="false" />
                 </ItemTemplate>
-
             </asp:TemplateField>
 
-            <asp:BoundField
-                DataField="Grade"
-                HeaderText="Grade" />
+            <asp:TemplateField HeaderText="Quiz">
+                <ItemTemplate>
+                    <asp:TextBox ID="txtQuiz"
+                        runat="server"
+                        CssClass="markBox"
+                        Text='<%# Eval("QuizMark") %>'
+                        Enabled="false" />
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="Mid Test">
+                <ItemTemplate>
+                    <asp:TextBox ID="txtMidTest"
+                        runat="server"
+                        CssClass="markBox"
+                        Text='<%# Eval("MidTestMark") %>'
+                        Enabled="false" />
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="Final Exam">
+                <ItemTemplate>
+                    <asp:TextBox ID="txtFinalExam"
+                        runat="server"
+                        CssClass="markBox"
+                        Text='<%# Eval("FinalExamMark") %>'
+                        Enabled="false" />
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:BoundField DataField="FinalMark" HeaderText="Final Mark" />
+            <asp:BoundField DataField="FinalGrade" HeaderText="Grade" />
+            <asp:BoundField DataField="GradePoint" HeaderText="Grade Point" />
 
         </Columns>
 

@@ -11,7 +11,7 @@ namespace lecturer
 {
 
 
-    public partial class Marks
+    public partial class CourseMaterials
     {
 
         /// <summary>
@@ -24,15 +24,6 @@ namespace lecturer
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// ddlSession control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSession;
-
-        /// <summary>
         /// ddlCourse control.
         /// </summary>
         /// <remarks>
@@ -42,39 +33,48 @@ namespace lecturer
         protected global::System.Web.UI.WebControls.DropDownList ddlCourse;
 
         /// <summary>
-        /// btnFilter control.
+        /// fileUploadNotes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFilter;
+        protected global::System.Web.UI.WebControls.FileUpload fileUploadNotes;
 
         /// <summary>
-        /// gvMarks control.
+        /// btnUpload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvMarks;
+        protected global::System.Web.UI.WebControls.Button btnUpload;
 
         /// <summary>
-        /// btnEdit control.
+        /// lblMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEdit;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
 
         /// <summary>
-        /// btnSave control.
+        /// gvNotes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.GridView gvNotes;
+
+        /// <summary>
+        /// gvStudents control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvStudents;
     }
 }

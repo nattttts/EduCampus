@@ -9,7 +9,6 @@
     <title>Attendance</title>
 
     <style>
-
         body {
             background-color: #A4D8FF;
             font-family: Arial;
@@ -39,9 +38,7 @@
             width: 100px;
             height: 40px;
         }
-
     </style>
-
 </head>
 
 <body>
@@ -55,23 +52,22 @@
     <div class="filter-row">
 
         <asp:DropDownList
-            ID="ddlSemester"
+            ID="ddlSession"
             runat="server"
             AutoPostBack="true"
-            OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
+            OnSelectedIndexChanged="ddlSession_SelectedIndexChanged">
         </asp:DropDownList>
 
         <asp:DropDownList
             ID="ddlCourse"
-            runat="server"
-            AutoPostBack="true"
-            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-        </asp:DropDownList>
-
-        <asp:DropDownList
-            ID="ddlClass"
             runat="server">
         </asp:DropDownList>
+
+        <asp:TextBox
+            ID="txtAttendanceDate"
+            runat="server"
+            TextMode="Date">
+        </asp:TextBox>
 
         <asp:Button
             ID="btnFilter"

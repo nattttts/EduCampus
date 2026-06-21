@@ -108,8 +108,12 @@
                         AutoPostBack="True"
                         OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
 
-                        <asp:ListItem>Semester 1</asp:ListItem>
-                        <asp:ListItem>Semester 2</asp:ListItem>
+                        <asp:ListItem Text="Semester 1" Value="1"></asp:ListItem>
+                        <asp:ListItem Text="Semester 2" Value="2"></asp:ListItem>
+                        <asp:ListItem Text="Semester 3" Value="3"></asp:ListItem>
+                        <asp:ListItem Text="Semester 4" Value="4"></asp:ListItem>
+                        <asp:ListItem Text="Semester 5" Value="5"></asp:ListItem>
+                        <asp:ListItem Text="Semester 6" Value="6"></asp:ListItem>
 
                     </asp:DropDownList>
 

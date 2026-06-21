@@ -78,9 +78,17 @@ namespace EduCampus
                 // Get courses based on selected session
                 string query = @"
                     SELECT DISTINCT c.CourseID, c.CourseCode + ' ' + c.CourseName AS CourseDisplay
-                    FROM Courses c
+                    FROM Attendance a
+                    
+                    INNER JOIN EnrollmentDetails ed
+                        ON a.DetailID = ed.DetailID
+               
                     INNER JOIN CourseOfferings co 
-                        ON c.CourseID = co.CourseID
+                        ON ed.OfferingID = co.OfferingID
+    
+                    INNER JOIN Courses c
+                        ON co.CourseID = c.CourseID
+
                     WHERE co.Session = @Session
                     ORDER BY CourseDisplay";
 
@@ -103,6 +111,9 @@ namespace EduCampus
 
         protected void ddlRecordSession_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Hide results when filter changes
+            pnlSearchResult.Visible = false;
+
             // If no session is selected, reset course dropdown and stop loading
             if (ddlRecordSession.SelectedValue == "")
             {

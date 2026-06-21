@@ -338,11 +338,13 @@ namespace EduCampus
 
         protected void ddlStudent_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Hide results when filter changes
             pnlReport.Visible = false;
         }
 
         protected void ddlSemester_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Hide results when filter changes
             pnlReport.Visible = false;
         }
 

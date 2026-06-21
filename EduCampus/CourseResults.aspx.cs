@@ -241,6 +241,7 @@ namespace EduCampus
 
         protected void ddlSession_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Hide results when filter changes
             pnlSearchResult.Visible = false;
 
             // If no session is selected, reset course dropdown and stop loading
@@ -256,6 +257,7 @@ namespace EduCampus
 
         protected void ddlCourse_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Hide results when filter changes
             pnlSearchResult.Visible = false;
         }
 

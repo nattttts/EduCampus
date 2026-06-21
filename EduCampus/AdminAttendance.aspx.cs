@@ -51,10 +51,17 @@ namespace EduCampus
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Load available sessions for filtering from CourseOfferings
-                string query = @"SELECT DISTINCT Session
-                                 FROM CourseOfferings
-                                 ORDER BY Session";
+                // Load available sessions for filtering from attendance
+                string query = @"SELECT DISTINCT co.Session
+                                 FROM Attendance a
+
+                                 INNER JOIN EnrollmentDetails ed 
+                                    ON a.DetailID = ed.DetailID
+                                
+                                 INNER JOIN CourseOfferings co 
+                                    ON ed.OfferingID = co.OfferingID
+                                 
+                                 ORDER BY co.Session";
 
                 SqlDataAdapter sda = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();

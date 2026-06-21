@@ -29,40 +29,21 @@ namespace lecturer
             }
         }
 
-        private int GetLecturerID()
+        private int GetLecturerId()
         {
-            if (Session["LecturerID"] != null)
-                return Convert.ToInt32(Session["LecturerID"]);
-
-            if (Session["Email"] == null)
-            {
-                Response.Redirect("Login.aspx");
-                return 0;
-            }
-
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                string query = @"
+                    SELECT l.LecturerID
+                    FROM Lecturers l
+                    INNER JOIN Users u ON l.UserID = u.UserID
+                    WHERE u.Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
                 conn.Open();
-
-                SqlCommand cmd = new SqlCommand(@"
-            SELECT L.LecturerID
-            FROM Lecturers L
-            INNER JOIN Users U ON L.UserID = U.UserId
-            WHERE U.Email = @Email", conn);
-
-                cmd.Parameters.AddWithValue("@Email",
-                    Session["Email"].ToString());
-
-                object result = cmd.ExecuteScalar();
-
-                if (result == null)
-                {
-                    lblMessage.Text = "Lecturer record not found.";
-                    return 0;
-                }
-
-                Session["LecturerID"] = Convert.ToInt32(result);
-                return Convert.ToInt32(result);
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 

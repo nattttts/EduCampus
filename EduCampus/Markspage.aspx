@@ -1,6 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="Marks.aspx.cs"
-    Inherits="lecturer.Marks" %>
+<%@ Page Language="C#" AutoEventWireup="true"
+    CodeFile="Markspage.aspx.cs"
+    Inherits="lecturer.Markspage" %>
 
 <!DOCTYPE html>
 
@@ -9,7 +9,6 @@
     <title>Marks Management</title>
 
     <style>
-
         body {
             background-color: #A4D8FF;
             font-family: Arial;
@@ -27,6 +26,7 @@
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
+            align-items: center;
         }
 
         .button-row {
@@ -36,7 +36,7 @@
         }
 
         .btn {
-            width: 100px;
+            width: 130px;
             height: 40px;
         }
 
@@ -44,6 +44,12 @@
             width: 70px;
         }
 
+        .message {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #b00020;
+        }
     </style>
 </head>
 
@@ -70,12 +76,17 @@
         </asp:DropDownList>
 
         <asp:Button
-            ID="btnFilter"
+            ID="btnLoadStudents"
             runat="server"
-            Text="Filter"
-            OnClick="btnFilter_Click" />
+            Text="Load Students"
+            OnClick="btnLoadStudents_Click" />
 
     </div>
+
+    <asp:Label
+        ID="lblMessage"
+        runat="server"
+        CssClass="message" />
 
     <asp:GridView
         ID="gvMarks"
@@ -85,7 +96,19 @@
 
         <Columns>
 
-            <asp:BoundField DataField="MarkID" HeaderText="Mark ID" />
+            <asp:TemplateField HeaderText="Mark ID">
+                <ItemTemplate>
+                    <asp:HiddenField ID="hfMarkID" runat="server" Value='<%# Eval("MarkID") %>' />
+                    <asp:Label ID="lblMarkID" runat="server" Text='<%# Eval("MarkID") %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="Detail ID" Visible="false">
+                <ItemTemplate>
+                    <asp:HiddenField ID="hfDetailID" runat="server" Value='<%# Eval("DetailID") %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
+
             <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
             <asp:BoundField DataField="StudentName" HeaderText="Student Name" />
 
@@ -142,15 +165,17 @@
         <asp:Button
             ID="btnEdit"
             runat="server"
-            Text="Edit"
+            Text="Give Marks"
             CssClass="btn"
+            Enabled="false"
             OnClick="btnEdit_Click" />
 
         <asp:Button
             ID="btnSave"
             runat="server"
-            Text="Save"
+            Text="Save Marks"
             CssClass="btn"
+            Enabled="false"
             OnClick="btnSave_Click" />
 
     </div>

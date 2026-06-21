@@ -23,14 +23,20 @@ namespace lecturer
 
         private int GetLecturerID()
         {
-            if (Session["LecturerID"] == null)
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Change this if your login uses another session name.
-                // For testing only, you may temporarily return a fixed ID.
-                throw new Exception("LecturerID session not found. Please login as lecturer.");
-            }
+                string query = @"
+                    SELECT l.LecturerID
+                    FROM Lecturers l
+                    INNER JOIN Users u ON l.UserID = u.UserID
+                    WHERE u.Email = @Email";
 
-            return Convert.ToInt32(Session["LecturerID"]);
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
         }
 
         private void LoadAssignedCourses()

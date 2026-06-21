@@ -1,27 +1,58 @@
-﻿using System;
+using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.Web.UI.WebControls;
 
 namespace lecturer
 {
     public partial class Attendance : System.Web.UI.Page
     {
-        string connStr =
-            ConfigurationManager.ConnectionStrings["EduCampusDB"]
-            .ConnectionString;
+        private readonly string connStr =
+            ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                txtAttendanceDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
                 LoadSession();
+            }
+        }
+
+        private int GetLecturerID()
+        {
+            if (Session["LecturerID"] != null)
+                return Convert.ToInt32(Session["LecturerID"]);
+
+            if (Session["UserId"] == null)
+                Response.Redirect("Login.aspx");
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand(
+                    @"SELECT LecturerID
+                      FROM Lecturers
+                      WHERE UserID = @UserID", conn);
+
+                cmd.Parameters.AddWithValue("@UserID", Convert.ToInt32(Session["UserId"]));
+
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                    Response.Redirect("Login.aspx");
+
+                Session["LecturerID"] = Convert.ToInt32(result);
+                return Convert.ToInt32(result);
             }
         }
 
         private void LoadSession()
         {
+            int lecturerID = GetLecturerID();
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
@@ -29,90 +60,129 @@ namespace lecturer
                 SqlCommand cmd = new SqlCommand(
                     @"SELECT DISTINCT Session
                       FROM CourseOfferings
-                      ORDER BY Session",
-                    conn);
+                      WHERE LecturerID = @LecturerID
+                      ORDER BY Session", conn);
+
+                cmd.Parameters.AddWithValue("@LecturerID", lecturerID);
 
                 ddlSession.DataSource = cmd.ExecuteReader();
                 ddlSession.DataTextField = "Session";
                 ddlSession.DataValueField = "Session";
                 ddlSession.DataBind();
-
-                ddlSession.Items.Insert(0, new ListItem("--Select Session--", ""));
             }
+
+            ddlSession.Items.Insert(0, new ListItem("--Select Session--", ""));
+            ddlCourse.Items.Clear();
+            ddlCourse.Items.Insert(0, new ListItem("--Select Course--", ""));
         }
 
         protected void ddlSession_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ddlCourse.Items.Clear();
+            ddlCourse.Items.Insert(0, new ListItem("--Select Course--", ""));
+            gvAttendance.DataSource = null;
+            gvAttendance.DataBind();
+            btnEdit.Enabled = false;
+            btnSave.Enabled = false;
+            lblMessage.Text = "";
+
+            if (string.IsNullOrEmpty(ddlSession.SelectedValue))
+                return;
+
+            int lecturerID = GetLecturerID();
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
 
                 SqlCommand cmd = new SqlCommand(
-                    @"
-                    SELECT DISTINCT C.CourseCode
-                    FROM Courses C
-                    INNER JOIN CourseOfferings CO
-                        ON C.CourseID = CO.CourseID
-                    WHERE CO.Session = @Session",
-                    conn);
+                    @"SELECT CO.OfferingID,
+                             C.CourseCode + ' - ' + C.CourseName AS CourseDisplay
+                      FROM CourseOfferings CO
+                      INNER JOIN Courses C ON CO.CourseID = C.CourseID
+                      WHERE CO.Session = @Session
+                      AND CO.LecturerID = @LecturerID
+                      ORDER BY C.CourseCode", conn);
 
                 cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
+                cmd.Parameters.AddWithValue("@LecturerID", lecturerID);
 
                 ddlCourse.DataSource = cmd.ExecuteReader();
-                ddlCourse.DataTextField = "CourseCode";
-                ddlCourse.DataValueField = "CourseCode";
+                ddlCourse.DataTextField = "CourseDisplay";
+                ddlCourse.DataValueField = "OfferingID";
                 ddlCourse.DataBind();
-
-                ddlCourse.Items.Insert(0, new ListItem("--Select Course--", ""));
             }
+
+            ddlCourse.Items.Insert(0, new ListItem("--Select Course--", ""));
         }
 
-        protected void btnFilter_Click(object sender, EventArgs e)
+        protected void btnLoadStudents_Click(object sender, EventArgs e)
         {
-            LoadAttendance();
+            LoadStudents();
         }
 
-        private void LoadAttendance()
+        private bool IsFilterValid()
         {
+            lblMessage.Text = "";
+
+            if (string.IsNullOrEmpty(ddlSession.SelectedValue))
+            {
+                lblMessage.Text = "Please select a session.";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(ddlCourse.SelectedValue))
+            {
+                lblMessage.Text = "Please select a course.";
+                return false;
+            }
+
+            DateTime attendanceDate;
+            if (!DateTime.TryParse(txtAttendanceDate.Text, out attendanceDate))
+            {
+                lblMessage.Text = "Please select an attendance date.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private void LoadStudents()
+        {
+            if (!IsFilterValid())
+                return;
+
+            int offeringID = Convert.ToInt32(ddlCourse.SelectedValue);
+            DateTime attendanceDate = Convert.ToDateTime(txtAttendanceDate.Text).Date;
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
 
                 SqlCommand cmd = new SqlCommand(
-                    @"
-                    SELECT
-                        A.AttendanceID,
-                        S.StudentID,
-                        U.FullName AS StudentName,
-                        A.AttendanceDate,
-                        A.Status,
-                        A.Remarks
-                    FROM Attendance A
-                    INNER JOIN EnrollmentDetails ED
-                        ON A.DetailID = ED.DetailID
-                    INNER JOIN EnrollmentMaster EM
-                        ON ED.EnrolmentID = EM.EnrolmentID
-                    INNER JOIN Students S
-                        ON EM.StudentID = S.StudentID
-                    INNER JOIN Users U
-                        ON S.UserID = U.UserId
-                    INNER JOIN CourseOfferings CO
-                        ON ED.OfferingID = CO.OfferingID
-                    INNER JOIN Courses C
-                        ON CO.CourseID = C.CourseID
-                    WHERE CO.Session = @Session
-                    AND C.CourseCode = @Course
-                    AND A.AttendanceDate = @AttendanceDate
-                    ORDER BY S.StudentID",
-                    conn);
+                    @"SELECT
+                          ISNULL(A.AttendanceID, 0) AS AttendanceID,
+                          ED.DetailID,
+                          S.StudentID,
+                          U.FullName AS StudentName,
+                          @AttendanceDate AS AttendanceDate,
+                          ISNULL(A.Status, 'Present') AS Status,
+                          ISNULL(A.Remarks, '') AS Remarks
+                      FROM EnrollmentDetails ED
+                      INNER JOIN EnrollmentMaster EM ON ED.EnrolmentID = EM.EnrolmentID
+                      INNER JOIN Students S ON EM.StudentID = S.StudentID
+                      INNER JOIN Users U ON S.UserID = U.UserId
+                      LEFT JOIN Attendance A
+                          ON A.DetailID = ED.DetailID
+                          AND CONVERT(date, A.AttendanceDate) = @AttendanceDate
+                      WHERE ED.OfferingID = @OfferingID
+                      ORDER BY S.StudentID", conn);
 
-                cmd.Parameters.AddWithValue("@Session", ddlSession.SelectedValue);
-                cmd.Parameters.AddWithValue("@Course", ddlCourse.SelectedValue);
-                cmd.Parameters.AddWithValue("@AttendanceDate", Convert.ToDateTime(txtAttendanceDate.Text));
+                cmd.Parameters.AddWithValue("@OfferingID", offeringID);
+                cmd.Parameters.AddWithValue("@AttendanceDate", attendanceDate);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-
                 da.Fill(dt);
 
                 gvAttendance.DataSource = dt;
@@ -124,22 +194,30 @@ namespace lecturer
                         (DropDownList)gvAttendance.Rows[i].FindControl("ddlStatus");
 
                     if (ddlStatus != null)
-                    {
                         ddlStatus.SelectedValue = dt.Rows[i]["Status"].ToString();
-                    }
                 }
+
+                btnEdit.Enabled = dt.Rows.Count > 0;
+                btnSave.Enabled = false;
+
+                lblMessage.Text = dt.Rows.Count > 0
+                    ? "Students loaded. Click Take Attendance to edit status."
+                    : "No students found for this course.";
             }
         }
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {
+            if (gvAttendance.Rows.Count == 0)
+            {
+                lblMessage.Text = "Please load students first.";
+                return;
+            }
+
             foreach (GridViewRow row in gvAttendance.Rows)
             {
-                DropDownList ddlStatus =
-                    (DropDownList)row.FindControl("ddlStatus");
-
-                TextBox txtRemarks =
-                    (TextBox)row.FindControl("txtRemarks");
+                DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
+                TextBox txtRemarks = (TextBox)row.FindControl("txtRemarks");
 
                 if (ddlStatus != null)
                     ddlStatus.Enabled = true;
@@ -147,40 +225,77 @@ namespace lecturer
                 if (txtRemarks != null)
                     txtRemarks.Enabled = true;
             }
+
+            btnSave.Enabled = true;
+            lblMessage.Text = "You can now take attendance.";
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
+            if (gvAttendance.Rows.Count == 0)
+            {
+                lblMessage.Text = "Please load students first.";
+                return;
+            }
+
+            DateTime attendanceDate = Convert.ToDateTime(txtAttendanceDate.Text).Date;
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
 
                 foreach (GridViewRow row in gvAttendance.Rows)
                 {
-                    int attendanceID = Convert.ToInt32(row.Cells[0].Text);
+                    HiddenField hfAttendanceID = (HiddenField)row.FindControl("hfAttendanceID");
+                    HiddenField hfDetailID = (HiddenField)row.FindControl("hfDetailID");
+                    DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
+                    TextBox txtRemarks = (TextBox)row.FindControl("txtRemarks");
 
-                    DropDownList ddlStatus =
-                        (DropDownList)row.FindControl("ddlStatus");
-
-                    TextBox txtRemarks =
-                        (TextBox)row.FindControl("txtRemarks");
+                    int attendanceID = Convert.ToInt32(hfAttendanceID.Value);
+                    int detailID = Convert.ToInt32(hfDetailID.Value);
 
                     SqlCommand cmd = new SqlCommand(
-                        @"UPDATE Attendance
-                          SET Status = @Status,
-                              Remarks = @Remarks
-                          WHERE AttendanceID = @AttendanceID",
-                        conn);
+                        @"IF EXISTS (
+                              SELECT 1
+                              FROM Attendance
+                              WHERE DetailID = @DetailID
+                              AND CONVERT(date, AttendanceDate) = @AttendanceDate
+                          )
+                          BEGIN
+                              UPDATE Attendance
+                              SET Status = @Status,
+                                  Remarks = @Remarks
+                              WHERE DetailID = @DetailID
+                              AND CONVERT(date, AttendanceDate) = @AttendanceDate
+                          END
+                          ELSE
+                          BEGIN
+                              INSERT INTO Attendance
+                                  (DetailID, AttendanceDate, Status, Remarks)
+                              VALUES
+                                  (@DetailID, @AttendanceDate, @Status, @Remarks)
+                          END", conn);
 
+                    cmd.Parameters.AddWithValue("@DetailID", detailID);
+                    cmd.Parameters.AddWithValue("@AttendanceDate", attendanceDate);
                     cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
-                    cmd.Parameters.AddWithValue("@Remarks", txtRemarks.Text);
-                    cmd.Parameters.AddWithValue("@AttendanceID", attendanceID);
+                    cmd.Parameters.AddWithValue("@Remarks", txtRemarks.Text.Trim());
 
                     cmd.ExecuteNonQuery();
                 }
             }
 
-            LoadAttendance();
+            LoadStudents();
+            lblMessage.Text = "Attendance saved successfully.";
         }
+
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("Login.aspx");
+        }
+
     }
 }

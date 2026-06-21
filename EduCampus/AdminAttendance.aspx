@@ -218,7 +218,17 @@
                         <asp:BoundField DataField="FullName" HeaderText="Student Name" />
                         <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
                         <asp:BoundField DataField="AttendanceDate" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}" />
-                        <asp:BoundField DataField="Status" HeaderText="Status" />
+                        
+                        <asp:TemplateField HeaderText="Status">
+
+                            <ItemTemplate>
+                                <span class='<%# Eval("Status").ToString() == "Present" ? "present" : "absent" %>'>
+                                    <%# Eval("Status") %>
+                                </span>
+                            </ItemTemplate>
+
+                        </asp:TemplateField>
+
                         <asp:BoundField DataField="Remarks" HeaderText="Remarks" />
 
                     </Columns>

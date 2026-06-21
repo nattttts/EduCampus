@@ -18,3 +18,19 @@
 .cblCourses label {
     margin-left: 8px;
 }
+
+.present {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.absent {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}

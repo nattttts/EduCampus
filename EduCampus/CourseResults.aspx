@@ -155,14 +155,14 @@
 
                     <Columns>
 
-                        <asp:BoundField DataField="Student Name" HeaderText="Student Name" />
-                        <asp:BoundField DataField="Student ID" HeaderText="Student ID" />
-                        <asp:BoundField DataField="Assignment" HeaderText="Assignment" />
-                        <asp:BoundField DataField="Quiz" HeaderText="Quiz" />
-                        <asp:BoundField DataField="Mid Test" HeaderText="Mid Test" />
-                        <asp:BoundField DataField="Final Exam" HeaderText="Final Exam" />
-                        <asp:BoundField DataField="Final Mark" HeaderText="Final Mark" />
-                        <asp:BoundField DataField="Grade" HeaderText="Grade" />
+                        <asp:BoundField DataField="FullName" HeaderText="Student Name" />
+                        <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
+                        <asp:BoundField DataField="AssignmentMark" HeaderText="Assignment" />
+                        <asp:BoundField DataField="QuizMark" HeaderText="Quiz" />
+                        <asp:BoundField DataField="MidTestMark" HeaderText="Mid Test" />
+                        <asp:BoundField DataField="FinalExamMark" HeaderText="Final Exam" />
+                        <asp:BoundField DataField="FinalMark" HeaderText="Final Mark" />
+                        <asp:BoundField DataField="FinalGrade" HeaderText="Grade" />
 
                     </Columns>
 

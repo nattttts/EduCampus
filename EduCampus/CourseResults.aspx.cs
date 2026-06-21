@@ -49,13 +49,13 @@ namespace EduCampus
                 // Load available sessions that have recorded course results
                 string query = @"
                     SELECT DISTINCT co.Session
-                    FROM CourseOfferings co
+                    FROM CourseMarks cm
 
                     INNER JOIN EnrollmentDetails ed
-                    ON co.OfferingID = ed.OfferingID
+                        ON ed.DetailID = cm.DetailID
 
-                    INNER JOIN CourseMarks cm
-                    ON ed.DetailID = cm.DetailID
+                    INNER JOIN CourseOfferings co
+                        ON ed.OfferingID = co.OfferingID
 
                     ORDER BY co.Session";
 
@@ -82,16 +82,16 @@ namespace EduCampus
                 // Only courses that have existing student marks are displayed
                 string query = @"
                     SELECT DISTINCT c.CourseID, c.CourseCode + ' ' + c.CourseName AS CourseDisplay
-                    FROM Courses c
-
-                    INNER JOIN CourseOfferings co 
-                        ON c.CourseID = co.CourseID
+                    FROM CourseMarks cm
 
                     INNER JOIN EnrollmentDetails ed
-                    ON co.OfferingID = ed.OfferingID
+                        ON cm.DetailID = ed.DetailID
+                
+                    INNER JOIN CourseOfferings co
+                        ON ed.OfferingID = co.OfferingID
 
-                    INNER JOIN CourseMarks cm
-                    ON ed.DetailID = cm.DetailID
+                    INNER JOIN Courses c
+                        ON co.CourseID = c.CourseID
 
                     WHERE co.Session = @Session
                     ORDER BY CourseDisplay";
@@ -188,14 +188,14 @@ namespace EduCampus
                 // Get results records based on selected session and course
                 string query = @"
                     SELECT 
-                        u.FullName AS [Student Name],
-                        em.StudentID AS [Student ID],
-                        cm.AssignmentMark AS Assignment, 
-                        cm.QuizMark AS Quiz, 
-                        cm.MidTestMark AS [Mid Test], 
-                        cm.FinalExamMark AS [Final Exam], 
-                        cm.FinalMark AS [Final Mark], 
-                        cm.FinalGrade AS Grade
+                        u.FullName,
+                        em.StudentID,
+                        cm.AssignmentMark, 
+                        cm.QuizMark, 
+                        cm.MidTestMark, 
+                        cm.FinalExamMark, 
+                        cm.FinalMark, 
+                        cm.FinalGrade
 
                     FROM CourseMarks cm
 
@@ -214,7 +214,7 @@ namespace EduCampus
                     INNER JOIN Users u
                         ON s.UserID = u.UserID
 
-                    WHERE em.Session = @Session 
+                    WHERE co.Session = @Session 
                     AND co.CourseID = @Course";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -315,10 +315,36 @@ namespace EduCampus
 
             table.SetWidths(widths);
 
-            // Add table header to PDF
+            // Customize column headers
             foreach (DataColumn col in dt.Columns)
             {
-                table.AddCell(new Phrase(col.ColumnName));
+                string header = col.ColumnName;
+
+                if (header == "FullName")
+                    header = "Student Name";
+
+                else if (header == "StudentID")
+                    header = "Student ID";
+
+                else if (header == "AssignmentMark")
+                    header = "Assignment";
+
+                else if (header == "QuizMark")
+                    header = "Quiz";
+
+                else if (header == "MidTestMark")
+                    header = "Mid Test";
+
+                else if (header == "FinalExamMark")
+                    header = "Final Exam";
+
+                else if (header == "FinalMark")
+                    header = "Final Mark";
+
+                else if (header == "FinalGrade")
+                    header = "Grade";
+
+                table.AddCell(new Phrase(header));
             }
 
             // Add result records to PDF

@@ -75,8 +75,8 @@
         </nav>
 
         <!-- Dashboard content -->
-        <div class="px-4">
-            <h3 class="text-center mt-4">Admin Dashboard</h3>
+        <div class="container mt-4">
+            <h3 class="text-center">Admin Dashboard</h3>
             <h4 class="mb-4">Welcome, Admin</h4>
 
             <!-- 1st Row Statistics -->
@@ -149,7 +149,7 @@
             </div>
 
             <!-- Charts Section -->
-            <div class="container mt-5">
+            <div class="container mt-5 mb-4">
 
                 <div class="row justify-content-center g-4">
 

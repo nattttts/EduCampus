@@ -33,7 +33,9 @@
 
                     <asp:DropDownList ID="ddlStudent"
                         runat="server"
-                        CssClass="form-select">
+                        CssClass="form-select"
+                        AutoPostBack="True"
+                        OnSelectedIndexChanged="ddlStudent_SelectedIndexChanged">
                     </asp:DropDownList>
 
                 </div>
@@ -44,7 +46,9 @@
 
                     <asp:DropDownList ID="ddlSemester"
                         runat="server"
-                        CssClass="form-select">
+                        CssClass="form-select"
+                        AutoPostBack="True"
+                        OnSelectedIndexChanged="ddlSemester_SelectedIndexChanged">
                     </asp:DropDownList>
 
                 </div>

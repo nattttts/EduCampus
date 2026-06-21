@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Web.UI.WebControls;
 
 namespace EduCampus
 {
@@ -43,6 +42,7 @@ namespace EduCampus
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                // Load students for selection with student ID and name display
                 string query = @"
                     SELECT DISTINCT
                         s.StudentID, 
@@ -82,6 +82,7 @@ namespace EduCampus
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                // Load semesters from EnrollmentMaster for the semester dropdown
                 string query = @"
                     SELECT DISTINCT Semester
                     FROM EnrollmentMaster
@@ -106,20 +107,28 @@ namespace EduCampus
             if (ddlStudent.SelectedValue == "" || ddlSemester.SelectedValue == "")
                 return;
 
-            gvGradeReport.DataSource = null;
-            gvGradeReport.DataBind();
-
             // Reset UI
             pnlReport.Visible = false;
 
-            LoadStudentInfo();
+            // Load course result first
             LoadEachCourseResult();
-            CalculateGPA();
-            CalculateCGPA();
 
-            lblDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
+            // Get results data from ViewState
+            DataTable dt = ViewState["Grades"] as DataTable;
 
-            pnlReport.Visible = true;
+            // Ensure there is at least one record for selected semester
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                LoadStudentInfo();
+                CalculateGPA();
+                CalculateCGPA();
+
+                // Set report date
+                lblDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
+
+                // Show result panel only when valid data exists
+                pnlReport.Visible = true;
+            }
         }
 
         private void LoadStudentInfo()
@@ -133,16 +142,22 @@ namespace EduCampus
                         p.ProgrammeName,
                         em.Session
 
-                    FROM Students s
+                    FROM CourseMarks cm
+                    
+                    INNER JOIN EnrollmentDetails ed 
+                        ON cm.DetailID = ed.DetailID
+
+                    INNER JOIN EnrollmentMaster em 
+                        ON ed.EnrolmentID = em.EnrolmentID
+
+                    INNER JOIN Students s 
+                        ON em.StudentID = s.StudentID
 
                     INNER JOIN Users u 
                         ON s.UserID = u.UserID
 
                     INNER JOIN Programmes p 
                         ON s.ProgrammeID = p.ProgrammeID
-
-                    INNER JOIN EnrollmentMaster em
-                        ON s.StudentID = em.StudentID
 
                     WHERE s.StudentID = @StudentID
                     AND em.Semester = @Semester";
@@ -161,6 +176,14 @@ namespace EduCampus
                     lblProgramme.Text = dr["ProgrammeName"].ToString();
                     lblSession.Text = dr["Session"].ToString();
                     lblSemester.Text = ddlSemester.SelectedValue;
+                }
+                else 
+                {
+                    lblStudentName.Text = "";
+                    lblStudentID.Text = "";
+                    lblProgramme.Text = "";
+                    lblSession.Text = "";
+                    lblSemester.Text = "";
                 }
             }
         }
@@ -311,6 +334,16 @@ namespace EduCampus
 
                 lblCGPA.Text = cgpa.ToString("0.00");
             }
+        }
+
+        protected void ddlStudent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pnlReport.Visible = false;
+        }
+
+        protected void ddlSemester_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pnlReport.Visible = false;
         }
 
         // Download grade report as PDF

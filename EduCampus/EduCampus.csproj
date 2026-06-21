@@ -208,6 +208,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Attendance.aspx.cs">
       <DependentUpon>Attendance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Attendance.aspx.designer.cs">
       <DependentUpon>Attendance.aspx</DependentUpon>
@@ -245,6 +246,7 @@
     </Compile>
     <Compile Include="Markspage.aspx.cs">
       <DependentUpon>Markspage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Markspage.aspx.designer.cs">
       <DependentUpon>Markspage.aspx</DependentUpon>

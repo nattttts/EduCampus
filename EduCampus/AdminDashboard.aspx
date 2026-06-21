@@ -29,7 +29,7 @@
                     <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                             <a class="nav-link active" href="AdminDashboard.aspx">Home</a>
+                             <a class="nav-link active" href="AdminDashboard.aspx">Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="ManageProgramme.aspx">Programme</a>

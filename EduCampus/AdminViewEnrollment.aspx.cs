@@ -85,6 +85,7 @@ namespace EduCampus
                         em.EnrolmentID, 
                         em.StudentID, 
                         u.FullName, 
+                        em.DateEnrolled,
                         em.Session, 
                         em.Semester, 
                         em.Status

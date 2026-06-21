@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>View Enrollemnt</title>
+    <title>View Enrollment</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -145,6 +145,11 @@
 
                     <asp:BoundField DataField="FullName" HeaderText="Student Name" />
                     <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
+
+                    <asp:BoundField DataField="DateEnrolled" 
+                        HeaderText="Date Enrolled" 
+                        DataFormatString="{0:dd-MM-yyyy}" />
+
                     <asp:BoundField DataField="Session" HeaderText="Session" />
                     <asp:BoundField DataField="Semester" HeaderText="Semester" />
                     <asp:BoundField DataField="Status" HeaderText="Status" />

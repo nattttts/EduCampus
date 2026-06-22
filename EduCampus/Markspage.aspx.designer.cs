@@ -7,9 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace lecturer
+namespace EduCampus
 {
-
 
     public partial class Markspage
     {

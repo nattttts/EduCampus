@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
+using System.Drawing;
 
 namespace EduCampus
 {
@@ -10,70 +11,140 @@ namespace EduCampus
     {
         string cs = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
 
+        // ================= PAGE LOAD =================
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Email"] == null || Session["Role"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
             if (Session["Role"].ToString() != "Student")
             {
                 Response.Redirect("AccessDenied.aspx");
                 return;
             }
 
-            if (Session["Email"] == null)
-            {
-                Response.Redirect("Login.aspx");
-            }
-
             if (!IsPostBack)
             {
+                LoadSessions();
                 LoadCourses();
                 LoadMyCourses();
             }
         }
 
-        // LOAD ALL AVAILABLE COURSES
-        void LoadCourses()
+        // ================= GET STUDENT ID =================
+        private string GetStudentID(SqlConnection con, SqlTransaction trans)
+        {
+            string query = @"
+        SELECT StudentID
+        FROM Students
+        WHERE UserID = (
+            SELECT UserID FROM Users WHERE Email = @Email
+        )";
+
+            using (SqlCommand cmd = new SqlCommand(query, con, trans))
+            {
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                object result = cmd.ExecuteScalar();
+
+                if (result == null || result == DBNull.Value)
+                    return null;
+
+                return result.ToString();
+            }
+        }
+
+        private int GetStudentProgrammeID()
         {
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
-                    SELECT 
-                        o.OfferingID,
-                        c.CourseCode,
-                        c.CourseName,
-                        c.CreditHours
-                    FROM CourseOfferings o
-                    INNER JOIN Courses c ON o.CourseID = c.CourseID";
+                SELECT ProgrammeID
+                FROM Students
+                WHERE UserID =
+                (
+                    SELECT UserID
+                    FROM Users
+                    WHERE Email = @Email
+                )";
 
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
-                gvCourses.DataSource = dt;
-                gvCourses.DataBind();
+                con.Open();
+
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                    return 0;
+
+                return Convert.ToInt32(result);
             }
         }
 
-        // LOAD STUDENT ENROLLED COURSES
-        void LoadMyCourses()
+        // ================= LOAD SESSION =================
+        private void LoadSessions()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                SELECT DISTINCT Session
+                FROM CourseOfferings
+                ORDER BY Session";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                con.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                ddlSession.Items.Clear();
+
+                while (dr.Read())
+                {
+                    ddlSession.Items.Add(
+                        new ListItem(
+                            dr["Session"].ToString(),
+                            dr["Session"].ToString()
+                        )
+                    );
+                }
+            }
+        }
+
+        protected void ddlSession_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadCourses();
+        }
+
+        protected void ddlSemester_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadCourses();
+        }
+
+        // ================= LOAD COURSES =================
+        private void LoadCourses()
         {
             using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"
                 SELECT
-                    em.EnrolmentID,
+                    c.CourseID,
                     c.CourseCode,
                     c.CourseName,
-                    em.Status
-                FROM EnrollmentMaster em
-                INNER JOIN EnrollmentDetails ed
-                    ON em.EnrolmentID = ed.EnrolmentID
-                INNER JOIN CourseOfferings co
-                    ON ed.OfferingID = co.OfferingID
+                    c.CreditHours
+                FROM CourseOfferings co
                 INNER JOIN Courses c
                     ON co.CourseID = c.CourseID
-                WHERE em.StudentID =
+
+                WHERE co.Session = @Session
+
+                AND c.ProgrammeID =
                 (
-                    SELECT StudentID
+                    SELECT ProgrammeID
                     FROM Students
                     WHERE UserID =
                     (
@@ -81,14 +152,302 @@ namespace EduCampus
                         FROM Users
                         WHERE Email = @Email
                     )
-                )";
+                )
+
+                AND c.CourseID NOT IN
+                (
+                    SELECT co2.CourseID
+                    FROM EnrollmentMaster em
+                    INNER JOIN EnrollmentDetails ed
+                        ON em.EnrolmentID = ed.EnrolmentID
+                    INNER JOIN CourseOfferings co2
+                        ON ed.OfferingID = co2.OfferingID
+                    WHERE em.StudentID =
+                    (
+                        SELECT StudentID
+                        FROM Students
+                        WHERE UserID =
+                        (
+                            SELECT UserID
+                            FROM Users
+                            WHERE Email = @Email
+                        )
+                    )
+                )
+
+                ORDER BY c.CourseCode";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Email", Session["Email"]);
+
+                cmd.Parameters.AddWithValue("@Session",
+                    ddlSession.SelectedValue);
+
+                cmd.Parameters.AddWithValue("@Email",
+                    Session["Email"].ToString());
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
 
+                da.Fill(dt);
+
+                gvCourses.DataSource = dt;
+                gvCourses.DataBind();
+            }
+        }
+
+        // ================= ENROLL =================
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+
+                SqlTransaction trans = con.BeginTransaction();
+
+                try
+                {
+
+                    // ================= CHECK COURSE SELECTION FIRST =================
+
+                    bool hasSelection = false;
+
+                    foreach (GridViewRow row in gvCourses.Rows)
+                    {
+
+                        CheckBox chk = row.FindControl("chkSelect") as CheckBox;
+
+                        if (chk != null && chk.Checked)
+                        {
+                            hasSelection = true;
+                            break;
+                        }
+
+                    }
+
+                    if (!hasSelection)
+                    {
+                        throw new Exception("Please select at least one course.");
+                    }
+
+                    // ================= GET STUDENT ID =================
+
+                    string studentID = GetStudentID(con, trans);
+
+                    if (string.IsNullOrEmpty(studentID))
+                    {
+                        throw new Exception("Student record not found.");
+                    }
+
+                    // ================= CREATE ENROLLMENT MASTER =================
+
+                    string insertMaster = @"
+
+                    INSERT INTO EnrollmentMaster
+                    (
+                        DateEnrolled,
+                        Status,
+                        Session,
+                        Semester,
+                        StudentID
+                    )
+
+                    VALUES
+                    (
+                        GETDATE(),
+                        'Pending',
+                        @Session,
+                        @Semester,
+                        @StudentID
+                    );
+
+
+                    SELECT SCOPE_IDENTITY();
+
+                ";
+                    int enrolmentID;
+
+                    using (SqlCommand cmd = new SqlCommand(insertMaster, con, trans))
+                    {
+
+                        cmd.Parameters.AddWithValue(
+                            "@Session",
+                            ddlSession.SelectedValue);
+
+                        cmd.Parameters.AddWithValue(
+                            "@Semester",
+                            ddlSemester.SelectedValue);
+
+                        cmd.Parameters.AddWithValue(
+                            "@StudentID",
+                            studentID);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result == null)
+                        {
+                            throw new Exception(
+                                "Failed to create enrollment.");
+                        }
+
+                        enrolmentID = Convert.ToInt32(result);
+
+                    }
+
+                    // ================= INSERT SELECTED COURSES =================
+
+                    foreach (GridViewRow row in gvCourses.Rows)
+                    {
+
+                        CheckBox chk =
+                            row.FindControl("chkSelect") as CheckBox;
+
+                        if (chk != null && chk.Checked)
+                        {
+
+                            int courseID =
+                                Convert.ToInt32(
+                                    gvCourses.DataKeys[row.RowIndex].Value);
+
+                            // Get OfferingID
+
+                            string getOffering = @"
+
+                            SELECT TOP 1 OfferingID
+
+                            FROM CourseOfferings
+
+                            WHERE CourseID=@CourseID
+
+                            AND Session=@Session
+
+                            ";
+                            int offeringID;
+
+                            using (SqlCommand cmd =
+                                new SqlCommand(getOffering, con, trans))
+                            {
+
+                                cmd.Parameters.AddWithValue(
+                                    "@CourseID",
+                                    courseID);
+
+                                cmd.Parameters.AddWithValue(
+                                    "@Session",
+                                    ddlSession.SelectedValue);
+
+                                object result =
+                                    cmd.ExecuteScalar();
+
+                                if (result == null)
+                                {
+                                    throw new Exception(
+                                    "Course offering not found.");
+                                }
+
+                                offeringID =
+                                    Convert.ToInt32(result);
+
+                            }
+
+                            // Insert Enrollment Details
+
+                            string insertDetail = @"
+
+                            INSERT INTO EnrollmentDetails
+
+                            (
+                                EnrolmentID,
+                                OfferingID
+                            )
+
+                            VALUES
+
+                            (
+                                @EnrolmentID,
+                                @OfferingID
+                            )
+
+                            ";
+
+                            using (SqlCommand cmd =
+                                new SqlCommand(insertDetail, con, trans))
+                            {
+
+                                cmd.Parameters.AddWithValue(
+                                    "@EnrolmentID",
+                                    enrolmentID);
+
+                                cmd.Parameters.AddWithValue(
+                                    "@OfferingID",
+                                    offeringID);
+
+                                cmd.ExecuteNonQuery();
+
+                            }
+
+                        }
+
+                    }
+
+                    // ================= SUCCESS =================
+
+                    trans.Commit();
+
+                    lblMessage.ForeColor = Color.Green;
+
+                    lblMessage.Text =
+                        "Enrollment successful!";
+
+                    LoadCourses();
+
+                    LoadMyCourses();
+
+                }
+
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+
+                    lblMessage.ForeColor = Color.Red;
+
+                    lblMessage.Text =
+                        ex.Message;
+
+                }
+
+            }
+        }
+
+        // ================= LOAD MY COURSES =================
+        private void LoadMyCourses()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                    SELECT 
+                        em.EnrolmentID,
+                        c.CourseCode,
+                        c.CourseName,
+                        em.Status,
+                        em.Session,
+                        em.Semester
+                    FROM EnrollmentMaster em
+                    INNER JOIN EnrollmentDetails ed ON em.EnrolmentID = ed.EnrolmentID
+                    INNER JOIN CourseOfferings co ON ed.OfferingID = co.OfferingID
+                    INNER JOIN Courses c ON co.CourseID = c.CourseID
+                    WHERE em.StudentID = (
+                        SELECT StudentID 
+                        FROM Students 
+                        WHERE UserID = (
+                            SELECT UserID FROM Users WHERE Email = @Email
+                        )
+                    )";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
                 da.Fill(dt);
 
                 gvEnrollment.DataSource = dt;
@@ -96,68 +455,94 @@ namespace EduCampus
             }
         }
 
-        // ENROLL COURSE
-        protected void btnEnroll_Click(object sender, EventArgs e)
-        {
-            Button btn = (Button)sender;
-            int offeringID = Convert.ToInt32(btn.CommandArgument);
-
-            using (SqlConnection con = new SqlConnection(cs))
-            {
-                con.Open();
-
-                // GET STUDENT ID
-                string studentQuery = @"
-                    SELECT StudentID FROM Students
-                    WHERE UserID = (
-                        SELECT UserId FROM Users WHERE Email = @Email
-                    )";
-
-                SqlCommand studentCmd = new SqlCommand(studentQuery, con);
-                studentCmd.Parameters.AddWithValue("@Email", Session["Email"]);
-
-                string studentID = studentCmd.ExecuteScalar().ToString();
-
-                // INSERT ENROLMENT
-                string insertQuery = @"
-                    INSERT INTO EnrollmentMaster
-                    (DateEnrolled, Status, StudentID, OfferingID)
-                    VALUES
-                    (GETDATE(), 'Pending', @StudentID, @OfferingID)";
-
-                SqlCommand cmd = new SqlCommand(insertQuery, con);
-                cmd.Parameters.AddWithValue("@StudentID", studentID);
-                cmd.Parameters.AddWithValue("@CourseOfferingID", offeringID);
-
-                cmd.ExecuteNonQuery();
-            }
-
-            lblMessage.Text = "Course Enrolled Successfully!";
-            LoadMyCourses();
-        }
-
-        // DROP COURSE
+        // ================= DROP COURSE =================
         protected void btnDrop_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            int enrollmentID = Convert.ToInt32(btn.CommandArgument);
+            int enrolmentID = Convert.ToInt32(btn.CommandArgument);
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
+                SqlTransaction trans = con.BeginTransaction();
 
-                string query = @"
-            DELETE FROM EnrollmentMaster
-            WHERE EnrollmentID = @EnrollmentID";
+                try
+                {
+                    // Check if attendance exists
+                    string checkAttendance = @"
+                    SELECT COUNT(*)
+                    FROM Attendance a
+                    INNER JOIN EnrollmentDetails ed
+                        ON a.DetailID = ed.DetailID
+                    WHERE ed.EnrolmentID = @ID";
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@EnrollmentID", enrollmentID);
+                    SqlCommand checkCmd = new SqlCommand(checkAttendance, con, trans);
+                    checkCmd.Parameters.AddWithValue("@ID", enrolmentID);
 
-                cmd.ExecuteNonQuery();
+                    int attendanceCount = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                    if (attendanceCount > 0)
+                    {
+                        lblMessage.ForeColor = Color.Red;
+                        lblMessage.Text = "This course already has attendance records and cannot be dropped.";
+                        trans.Rollback();
+                        return;
+                    }
+
+                    // Delete CourseMarks first (if any)
+                    string deleteMarks = @"
+                    DELETE FROM CourseMarks
+                    WHERE DetailID IN (
+                        SELECT DetailID
+                        FROM EnrollmentDetails
+                        WHERE EnrolmentID = @ID
+                    )";
+
+                    SqlCommand cmdMarks = new SqlCommand(deleteMarks, con, trans);
+                    cmdMarks.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdMarks.ExecuteNonQuery();
+
+                    // Delete EnrollmentDetails
+                    string deleteDetails = @"
+                    DELETE FROM EnrollmentDetails
+                    WHERE EnrolmentID = @ID";
+
+                    SqlCommand cmdDetails = new SqlCommand(deleteDetails, con, trans);
+                    cmdDetails.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdDetails.ExecuteNonQuery();
+
+                    // Delete EnrollmentMaster
+                    string deleteMaster = @"
+                    DELETE FROM EnrollmentMaster
+                    WHERE EnrolmentID = @ID";
+
+                    SqlCommand cmdMaster = new SqlCommand(deleteMaster, con, trans);
+                    cmdMaster.Parameters.AddWithValue("@ID", enrolmentID);
+                    cmdMaster.ExecuteNonQuery();
+
+                    trans.Commit();
+
+                    lblMessage.ForeColor = Color.Green;
+                    lblMessage.Text = "Course dropped successfully.";
+
+                    LoadMyCourses();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+
+                    lblMessage.ForeColor = Color.Red;
+                    lblMessage.Text = ex.Message;
+                }
             }
+        }
 
-            lblMessage.Text = "Course dropped successfully!";
-            LoadMyCourses();
+        // ================= LOGOUT =================
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("Login.aspx");
         }
     }
 }

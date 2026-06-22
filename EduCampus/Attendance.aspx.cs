@@ -4,7 +4,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
+<<<<<<< HEAD
 namespace EduCampus
+=======
+namespace lecturer
+>>>>>>> parent of d9a0264 (newchanges)
 {
     public partial class Attendance : System.Web.UI.Page
     {

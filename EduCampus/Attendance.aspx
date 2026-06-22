@@ -1,6 +1,6 @@
 <%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="Attendance.aspx.cs"
-    Inherits="EduCampus.Attendance" %>
+    Inherits="lecturer.Attendance" %>
 
 <!DOCTYPE html>
 <html>

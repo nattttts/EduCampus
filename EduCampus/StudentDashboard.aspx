@@ -41,7 +41,7 @@
 <body>
     <form id="form1" runat="server">
 
-        <!-- NAVBAR (NOT CENTERED) -->
+        <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg bg-white shadow-sm">
             <div class="container-fluid">
 
@@ -94,7 +94,7 @@
             </div>
         </nav>
 
-        <!-- DASHBOARD CONTENT (CENTERED) -->
+        <!-- DASHBOARD CONTENT -->
         <div class="dashboard">
 
             <h1 class="mb-3">Student Dashboard</h1>

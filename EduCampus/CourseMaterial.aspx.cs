@@ -5,8 +5,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Web.UI.WebControls;
 
-namespace lecturer
-
+namespace EduCampus
 {
     public partial class CourseMaterial : System.Web.UI.Page
     {

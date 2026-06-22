@@ -1,18 +1,18 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="CourseMaterial.aspx.cs"
-    Inherits="lecturer.CourseMaterial" %>
+    Inherits="EduCampus.CourseMaterial" %>
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
     <title>View Course</title>
 
-            <!-- Bootstrap -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 
-    <body>
+<body>
     <form id="form1" runat="server">
         <!-- Navigation bar -->
         <nav class="navbar navbar-expand-lg bg-white">
@@ -52,10 +52,6 @@
 
             </div>
         </nav>
-</form>
-<body>
-
-<form id="form1" runat="server">
 
     <div class="page-title">View Course</div>
 

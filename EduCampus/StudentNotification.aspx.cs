@@ -124,7 +124,7 @@ namespace EduCampus
                     studentId = result.ToString();
                 }
 
-                // GET ANNOUNCEMENTS (BASED ON ENROLLED COURSES)
+                // GET ANNOUNCEMENTS
                 string query = @"
                     SELECT DISTINCT a.Title, a.Message, a.PostedDateTime
                     FROM Announcements a
@@ -149,7 +149,7 @@ namespace EduCampus
             }
         }
 
-        // 🚪 LOGOUT (UNCHANGED)
+        // 🚪 LOGOUT
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();

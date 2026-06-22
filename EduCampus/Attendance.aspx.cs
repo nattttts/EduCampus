@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
-namespace lecturer
+namespace EduCampus
 {
     public partial class Attendance : System.Web.UI.Page
     {

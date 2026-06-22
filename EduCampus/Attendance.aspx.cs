@@ -20,38 +20,27 @@ namespace lecturer
             }
         }
 
-        private int GetLecturerID()
+        private int GetLecturerId()
         {
-            if (Session["LecturerID"] != null)
-                return Convert.ToInt32(Session["LecturerID"]);
-
-            if (Session["UserId"] == null)
-                Response.Redirect("Login.aspx");
-
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                string query = @"
+                    SELECT l.LecturerID
+                    FROM Lecturers l
+                    INNER JOIN Users u ON l.UserID = u.UserID
+                    WHERE u.Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
                 conn.Open();
-
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT LecturerID
-                      FROM Lecturers
-                      WHERE UserID = @UserID", conn);
-
-                cmd.Parameters.AddWithValue("@UserID", Convert.ToInt32(Session["UserId"]));
-
-                object result = cmd.ExecuteScalar();
-
-                if (result == null)
-                    Response.Redirect("Login.aspx");
-
-                Session["LecturerID"] = Convert.ToInt32(result);
-                return Convert.ToInt32(result);
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
         private void LoadSession()
         {
-            int lecturerID = GetLecturerID();
+            int lecturerID = GetLecturerId();
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -89,7 +78,7 @@ namespace lecturer
             if (string.IsNullOrEmpty(ddlSession.SelectedValue))
                 return;
 
-            int lecturerID = GetLecturerID();
+            int lecturerID = GetLecturerId();
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {

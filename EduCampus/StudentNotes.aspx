@@ -82,7 +82,8 @@
     <asp:GridView ID="gvNotes"
         runat="server"
         AutoGenerateColumns="False"
-        CssClass="table table-bordered table-striped">
+        CssClass="table table-bordered table-striped"
+        EmptyDataText="You have not enrolled in any courses. Course notes are only available for your enrolled courses.">
 
         <Columns>
 
@@ -103,10 +104,17 @@
                 HeaderText="Upload Date"
                 DataFormatString="{0:dd/MM/yyyy HH:mm}" />
 
-            <asp:HyperLinkField
-                HeaderText="Download"
-                Text="Download"
-                DataNavigateUrlFields="FilePath" />
+            <asp:TemplateField HeaderText="Download">
+                <ItemTemplate>
+                    <asp:HyperLink 
+                        ID="lnkDownload"
+                        runat="server"
+                        Text="Download"
+                        NavigateUrl='<%# Eval("FilePath") %>'
+                        Target="_blank">
+                    </asp:HyperLink>
+                </ItemTemplate>
+            </asp:TemplateField>
 
         </Columns>
 

@@ -1,55 +1,60 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="CourseMaterial.aspx.cs"
-    Inherits="lecturer.CourseMaterials" %>
+    Inherits="lecturer.CourseMaterial" %>
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
     <title>View Course</title>
 
-    <style>
-        body {
-            background-color: #F8DDDD;
-            font-family: Arial;
-        }
-
-        .page-title {
-            color: #999;
-            margin-left: 10px;
-        }
-
-        .container {
-            width: 1000px;
-            margin: 10px auto;
-            background-color: #A4D8FF;
-            padding: 35px;
-        }
-
-        .box {
-            background: white;
-            padding: 25px;
-            margin: 25px auto;
-            width: 85%;
-            text-align: center;
-        }
-
-        .filter-row {
-            margin-bottom: 20px;
-        }
-
-        .grid {
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .btn {
-            padding: 8px 18px;
-            margin: 5px;
-        }
-    </style>
+            <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
+    <body>
+    <form id="form1" runat="server">
+        <!-- Navigation bar -->
+        <nav class="navbar navbar-expand-lg bg-white">
+            <div class="container-fluid">
+                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
+
+                <div class="collapse navbar-collapse">
+                    <!-- Menu -->
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="Markspage.aspx">Marks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Profile</a>
+                        </li>
+                    </ul>
+
+                    <!-- Logout button -->
+                    <asp:Button ID="btnLogout" runat="server"
+                        Text="Logout"
+                        CssClass="btn btn-danger"
+                        OnClick="btnLogout_Click" />
+
+                </div>
+
+            </div>
+        </nav>
+</form>
 <body>
+
 <form id="form1" runat="server">
 
     <div class="page-title">View Course</div>

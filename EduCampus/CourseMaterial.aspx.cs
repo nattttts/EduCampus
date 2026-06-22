@@ -6,8 +6,9 @@ using System.IO;
 using System.Web.UI.WebControls;
 
 namespace lecturer
+
 {
-    public partial class CourseMaterials : System.Web.UI.Page
+    public partial class CourseMaterial : System.Web.UI.Page
     {
         string connStr =
             ConfigurationManager.ConnectionStrings["EduCampusDB"]
@@ -21,21 +22,35 @@ namespace lecturer
             }
         }
 
-        private int GetLecturerID()
+        private int GetLecturerId()
         {
+            if (Session["Email"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return 0;
+            }
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
                     SELECT l.LecturerID
                     FROM Lecturers l
-                    INNER JOIN Users u ON l.UserID = u.UserID
+                    INNER JOIN Users u ON l.UserID = u.UserId
                     WHERE u.Email = @Email";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
                 conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    Response.Redirect("Login.aspx");
+                    return 0;
+                }
+
+                return Convert.ToInt32(result);
             }
         }
 
@@ -266,6 +281,13 @@ namespace lecturer
                 gvStudents.DataSource = dt;
                 gvStudents.DataBind();
             }
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("Login.aspx");
         }
     }
 }

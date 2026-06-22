@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="Dashboard.aspx.cs"
-    Inherits="lecturer.Dashboard" %>
+    Inherits="EduCampus.Dashboard" %>
 
 <%@ Register Assembly="System.Web.DataVisualization"
     Namespace="System.Web.UI.DataVisualization.Charting"
@@ -10,6 +10,52 @@
 <html>
 <head runat="server">
     <title>Dashboard</title>
+
+            <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+    <body>
+    <form id="form1" runat="server">
+        <!-- Navigation bar -->
+        <nav class="navbar navbar-expand-lg bg-white">
+            <div class="container-fluid">
+                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
+
+                <div class="collapse navbar-collapse">
+                    <!-- Menu -->
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="Dashboard.aspx">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="Markspage.aspx">Marks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Profile</a>
+                        </li>
+                    </ul>
+
+                    <!-- Logout button -->
+                    <asp:Button ID="btnLogout" runat="server"
+                        Text="Logout"
+                        CssClass="btn btn-danger"
+                        OnClick="btnLogout_Click" />
+
+                </div>
+
+            </div>
+        </nav>
 
     <style>
         body {
@@ -37,30 +83,71 @@
 
         .grid {
             width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grid th {
+            background-color: #007bff;
+            color: white;
+            padding: 8px;
+        }
+
+        .grid td {
+            padding: 8px;
+            text-align: center;
         }
 
         h2, h3 {
             text-align: center;
         }
-    </style>
-</head>
 
-<body>
-<form id="form1" runat="server">
+        .message {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
 
 <div class="container">
 
-    <h2>Dashboard</h2>
+    <h2>Lecturer Dashboard</h2>
 
-    <div class="filter-row">
+    <asp:Label
+        ID="lblMessage"
+        runat="server"
+        CssClass="message">
+    </asp:Label>
 
-        <asp:DropDownList
-            ID="ddlCourse"
+    <div class="section">
+        <h3>View Assigned Courses</h3>
+
+        <asp:GridView
+            ID="gvAssignedCourses"
             runat="server"
-            AutoPostBack="true"
-            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-        </asp:DropDownList>
+            AutoGenerateColumns="False"
+            CssClass="grid">
 
+            <Columns>
+                <asp:BoundField DataField="OfferingID" HeaderText="Offering ID" />
+                <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
+                <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
+                <asp:BoundField DataField="SessionName" HeaderText="Session" />
+            </Columns>
+
+        </asp:GridView>
+    </div>
+
+    <div class="section">
+        <h3>Select Course</h3>
+
+        <div class="filter-row">
+            <asp:DropDownList
+                ID="ddlCourse"
+                runat="server"
+                AutoPostBack="true"
+                OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+            </asp:DropDownList>
+        </div>
     </div>
 
     <div class="section">

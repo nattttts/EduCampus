@@ -21,10 +21,10 @@
                     <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Home</a>
+                            <a class="nav-link" href="Dashboard.aspx">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Courses</a>
+                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Attendance.aspx">Attendance</a>
@@ -36,7 +36,7 @@
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Profile</a>
+                            <a class="nav-link" href="lecturerprofile.aspx">Profile</a>
                         </li>
                     </ul>
 

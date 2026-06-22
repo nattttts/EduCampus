@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace lecturer
+namespace EduCampus
 {
 
 

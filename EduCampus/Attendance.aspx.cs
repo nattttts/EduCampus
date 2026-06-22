@@ -22,19 +22,33 @@ namespace lecturer
 
         private int GetLecturerId()
         {
+            if (Session["Email"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return 0;
+            }
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                    SELECT l.LecturerID
-                    FROM Lecturers l
-                    INNER JOIN Users u ON l.UserID = u.UserID
-                    WHERE u.Email = @Email";
+            SELECT l.LecturerID
+            FROM Lecturers l
+            INNER JOIN Users u ON l.UserID = u.UserID
+            WHERE u.Email = @Email";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
 
                 conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    Response.Redirect("Login.aspx");
+                    return 0;
+                }
+
+                return Convert.ToInt32(result);
             }
         }
 
@@ -227,7 +241,12 @@ namespace lecturer
                 return;
             }
 
-            DateTime attendanceDate = Convert.ToDateTime(txtAttendanceDate.Text).Date;
+            DateTime attendanceDate;
+            if (!DateTime.TryParse(txtAttendanceDate.Text, out attendanceDate))
+            {
+                lblMessage.Text = "Invalid attendance date.";
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -235,40 +254,43 @@ namespace lecturer
 
                 foreach (GridViewRow row in gvAttendance.Rows)
                 {
-                    HiddenField hfAttendanceID = (HiddenField)row.FindControl("hfAttendanceID");
                     HiddenField hfDetailID = (HiddenField)row.FindControl("hfDetailID");
                     DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
                     TextBox txtRemarks = (TextBox)row.FindControl("txtRemarks");
 
-                    int attendanceID = Convert.ToInt32(hfAttendanceID.Value);
+                    if (hfDetailID == null || string.IsNullOrWhiteSpace(hfDetailID.Value))
+                        continue;
+
+                    if (ddlStatus == null)
+                        continue;
+
                     int detailID = Convert.ToInt32(hfDetailID.Value);
 
                     SqlCommand cmd = new SqlCommand(
                         @"IF EXISTS (
-                              SELECT 1
-                              FROM Attendance
-                              WHERE DetailID = @DetailID
-                              AND CONVERT(date, AttendanceDate) = @AttendanceDate
-                          )
-                          BEGIN
-                              UPDATE Attendance
-                              SET Status = @Status,
-                                  Remarks = @Remarks
-                              WHERE DetailID = @DetailID
-                              AND CONVERT(date, AttendanceDate) = @AttendanceDate
-                          END
-                          ELSE
-                          BEGIN
-                              INSERT INTO Attendance
-                                  (DetailID, AttendanceDate, Status, Remarks)
-                              VALUES
-                                  (@DetailID, @AttendanceDate, @Status, @Remarks)
-                          END", conn);
+                      SELECT 1 FROM Attendance
+                      WHERE DetailID = @DetailID
+                      AND CONVERT(date, AttendanceDate) = @AttendanceDate
+                  )
+                  BEGIN
+                      UPDATE Attendance
+                      SET Status = @Status,
+                          Remarks = @Remarks
+                      WHERE DetailID = @DetailID
+                      AND CONVERT(date, AttendanceDate) = @AttendanceDate
+                  END
+                  ELSE
+                  BEGIN
+                      INSERT INTO Attendance
+                          (DetailID, AttendanceDate, Status, Remarks)
+                      VALUES
+                          (@DetailID, @AttendanceDate, @Status, @Remarks)
+                  END", conn);
 
                     cmd.Parameters.AddWithValue("@DetailID", detailID);
-                    cmd.Parameters.AddWithValue("@AttendanceDate", attendanceDate);
+                    cmd.Parameters.AddWithValue("@AttendanceDate", attendanceDate.Date);
                     cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
-                    cmd.Parameters.AddWithValue("@Remarks", txtRemarks.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Remarks", txtRemarks == null ? "" : txtRemarks.Text.Trim());
 
                     cmd.ExecuteNonQuery();
                 }

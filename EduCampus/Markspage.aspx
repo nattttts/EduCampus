@@ -85,10 +85,11 @@
         runat="server"
         CssClass="message" />
 
-    <asp:GridView
+   <asp:GridView
         ID="gvMarks"
         runat="server"
         AutoGenerateColumns="False"
+        EnableViewState="true"
         Width="100%">
 
         <Columns>
@@ -100,7 +101,9 @@
                 </ItemTemplate>
             </asp:TemplateField>
 
-            <asp:TemplateField HeaderText="Detail ID" Visible="false">
+            <asp:TemplateField HeaderText="Detail ID">
+                <ItemStyle CssClass="d-none" />
+                    <HeaderStyle CssClass="d-none" />
                 <ItemTemplate>
                     <asp:HiddenField ID="hfDetailID" runat="server" Value='<%# Eval("DetailID") %>' />
                 </ItemTemplate>
@@ -173,6 +176,7 @@
             Text="Save Marks"
             CssClass="btn"
             Enabled="false"
+            CausesValidation="false"
             OnClick="btnSave_Click" />
 
     </div>

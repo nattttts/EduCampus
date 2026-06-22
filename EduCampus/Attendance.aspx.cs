@@ -24,7 +24,7 @@ namespace EduCampus
             }
         }
 
-        // GET STUDENT ID (STRING, NOT INT!)
+        // GET STUDENT ID
         private string GetStudentID(SqlConnection con)
         {
             string query = @"
@@ -40,7 +40,7 @@ namespace EduCampus
             return (result == null || result == DBNull.Value) ? "" : result.ToString();
         }
 
-        // LOAD COURSES (via Enrollment flow)
+        // LOAD COURSES
         void LoadCourses()
         {
             using (SqlConnection con = new SqlConnection(cs))

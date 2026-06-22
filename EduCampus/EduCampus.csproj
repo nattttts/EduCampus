@@ -123,7 +123,10 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+<<<<<<< Updated upstream
     <Content Include="LecturerAnnouncements.aspx" />
+=======
+>>>>>>> Stashed changes
     <Content Include="Login.aspx" />
     <Content Include="Logo.jpeg" />
     <Content Include="Markspage.aspx" />
@@ -230,6 +233,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+<<<<<<< Updated upstream
     <Compile Include="LecturerAnnouncements.aspx.cs">
       <DependentUpon>LecturerAnnouncements.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -237,6 +241,8 @@
     <Compile Include="LecturerAnnouncements.aspx.designer.cs">
       <DependentUpon>LecturerAnnouncements.aspx</DependentUpon>
     </Compile>
+=======
+>>>>>>> Stashed changes
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

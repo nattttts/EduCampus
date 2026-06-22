@@ -7,22 +7,47 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EduCampus
+namespace lecturer
 {
+
+
     public partial class Dashboard
     {
+
+        /// <summary>
+        /// form1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
-        protected global::System.Web.UI.WebControls.Label lblMessage;
-
-        protected global::System.Web.UI.WebControls.GridView gvAssignedCourses;
-
+        /// <summary>
+        /// ddlCourse control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCourse;
 
+        /// <summary>
+        /// gvPoorAttendance control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvPoorAttendance;
 
+        /// <summary>
+        /// chartGrades control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.DataVisualization.Charting.Chart chartGrades;
-
-        protected global::System.Web.UI.WebControls.Button btnLogout;
     }
 }

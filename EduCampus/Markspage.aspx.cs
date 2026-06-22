@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
-namespace EduCampus
+namespace lecturer
 {
     public partial class Markspage : System.Web.UI.Page
     {

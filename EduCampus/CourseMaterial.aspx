@@ -1,12 +1,17 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="CourseMaterial.aspx.cs"
+<<<<<<< HEAD
     Inherits="EduCampus.CourseMaterial" %>
+=======
+    Inherits="lecturer.CourseMaterials" %>
+>>>>>>> parent of d9a0264 (newchanges)
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
     <title>View Course</title>
 
+<<<<<<< HEAD
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
@@ -52,6 +57,52 @@
 
             </div>
         </nav>
+=======
+    <style>
+        body {
+            background-color: #F8DDDD;
+            font-family: Arial;
+        }
+
+        .page-title {
+            color: #999;
+            margin-left: 10px;
+        }
+
+        .container {
+            width: 1000px;
+            margin: 10px auto;
+            background-color: #A4D8FF;
+            padding: 35px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            margin: 25px auto;
+            width: 85%;
+            text-align: center;
+        }
+
+        .filter-row {
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<form id="form1" runat="server">
+>>>>>>> parent of d9a0264 (newchanges)
 
     <div class="page-title">View Course</div>
 

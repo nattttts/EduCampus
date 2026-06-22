@@ -1,6 +1,7 @@
-<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="Markspage.aspx.cs"
-    Inherits="EduCampus.Markspage" %>
+<%@ Page Language="C#" AutoEventWireup="true" 
+    CodeBehind="Markspage.aspx.cs" 
+    Inherits="lecturer.Markspage" %>
+
 <!DOCTYPE html>
 
 <html>
@@ -23,7 +24,7 @@
                     <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="Dashboard">Home</a>
+                            <a class="nav-link" href="#">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
@@ -38,7 +39,7 @@
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="lecturer.aspx">Profile</a>
+                            <a class="nav-link" href="#">Profile</a>
                         </li>
                     </ul>
 

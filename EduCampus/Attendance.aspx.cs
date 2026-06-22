@@ -4,8 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
-namespace EduCampus
-
+namespace lecturer
 {
     public partial class Attendance : System.Web.UI.Page
     {
@@ -198,16 +197,7 @@ namespace EduCampus
                         (DropDownList)gvAttendance.Rows[i].FindControl("ddlStatus");
 
                     if (ddlStatus != null)
-                    {
-                        string status = dt.Rows[i]["Status"].ToString();
-
-                        // Only Present and Absent are allowed now.
-                        // If old records still contain "Late", show them as Absent to avoid dropdown error.
-                        if (status != "Present" && status != "Absent")
-                            status = "Absent";
-
-                        ddlStatus.SelectedValue = status;
-                    }
+                        ddlStatus.SelectedValue = dt.Rows[i]["Status"].ToString();
                 }
 
                 btnEdit.Enabled = dt.Rows.Count > 0;

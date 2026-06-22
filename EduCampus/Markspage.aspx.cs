@@ -21,38 +21,41 @@ namespace lecturer
             }
         }
 
-        private int GetLecturerID()
+        private int GetLecturerId()
         {
-            if (Session["LecturerID"] != null)
-                return Convert.ToInt32(Session["LecturerID"]);
-
-            if (Session["UserId"] == null)
+            if (Session["Email"] == null)
+            {
                 Response.Redirect("Login.aspx");
+                return 0;
+            }
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                string query = @"
+                    SELECT l.LecturerID
+                    FROM Lecturers l
+                    INNER JOIN Users u ON l.UserID = u.UserId
+                    WHERE u.Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
                 conn.Open();
-
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT LecturerID
-                      FROM Lecturers
-                      WHERE UserID = @UserID", conn);
-
-                cmd.Parameters.AddWithValue("@UserID", Convert.ToInt32(Session["UserId"]));
-
                 object result = cmd.ExecuteScalar();
 
                 if (result == null)
+                {
                     Response.Redirect("Login.aspx");
+                    return 0;
+                }
 
-                Session["LecturerID"] = Convert.ToInt32(result);
                 return Convert.ToInt32(result);
             }
         }
 
         private void LoadSession()
         {
-            int lecturerID = GetLecturerID();
+            int lecturerID = GetLecturerId();
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -90,7 +93,7 @@ namespace lecturer
             if (string.IsNullOrEmpty(ddlSession.SelectedValue))
                 return;
 
-            int lecturerID = GetLecturerID();
+            int lecturerID = GetLecturerId();
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -229,20 +232,21 @@ namespace lecturer
             return value;
         }
 
-        private (string grade, decimal gradePoint) CalculateGrade(decimal mark)
+        private void CalculateGrade(decimal mark, out string grade, out decimal gradePoint)
         {
-            if (mark >= 90) return ("A+", 4.00m);
-            if (mark >= 80) return ("A", 4.00m);
-            if (mark >= 75) return ("A-", 3.67m);
-            if (mark >= 70) return ("B+", 3.33m);
-            if (mark >= 65) return ("B", 3.00m);
-            if (mark >= 60) return ("B-", 2.67m);
-            if (mark >= 55) return ("C+", 2.33m);
-            if (mark >= 50) return ("C", 2.00m);
-            if (mark >= 45) return ("C-", 1.50m);
-            if (mark >= 40) return ("D", 1.00m);
+            if (mark >= 90) { grade = "A+"; gradePoint = 4.00m; return; }
+            if (mark >= 80) { grade = "A"; gradePoint = 4.00m; return; }
+            if (mark >= 75) { grade = "A-"; gradePoint = 3.67m; return; }
+            if (mark >= 70) { grade = "B+"; gradePoint = 3.33m; return; }
+            if (mark >= 65) { grade = "B"; gradePoint = 3.00m; return; }
+            if (mark >= 60) { grade = "B-"; gradePoint = 2.67m; return; }
+            if (mark >= 55) { grade = "C+"; gradePoint = 2.33m; return; }
+            if (mark >= 50) { grade = "C"; gradePoint = 2.00m; return; }
+            if (mark >= 45) { grade = "C-"; gradePoint = 1.50m; return; }
+            if (mark >= 40) { grade = "D"; gradePoint = 1.00m; return; }
 
-            return ("F", 0.00m);
+            grade = "F";
+            gradePoint = 0.00m;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -272,7 +276,9 @@ namespace lecturer
                     decimal finalExam = GetDecimalValue((TextBox)row.FindControl("txtFinalExam"));
 
                     decimal finalMark = assignment + quiz + midTest + finalExam;
-                    var result = CalculateGrade(finalMark);
+                    string grade;
+                    decimal gradePoint;
+                    CalculateGrade(finalMark, out grade, out gradePoint);
 
                     SqlCommand cmd = new SqlCommand(
                         @"IF EXISTS (SELECT 1 FROM CourseMarks WHERE DetailID = @DetailID)
@@ -301,8 +307,8 @@ namespace lecturer
                     cmd.Parameters.AddWithValue("@MidTest", midTest);
                     cmd.Parameters.AddWithValue("@FinalExam", finalExam);
                     cmd.Parameters.AddWithValue("@FinalMark", finalMark);
-                    cmd.Parameters.AddWithValue("@Grade", result.grade);
-                    cmd.Parameters.AddWithValue("@GradePoint", result.gradePoint);
+                    cmd.Parameters.AddWithValue("@Grade", grade);
+                    cmd.Parameters.AddWithValue("@GradePoint", gradePoint);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -310,6 +316,13 @@ namespace lecturer
 
             LoadStudents();
             lblMessage.Text = "Marks saved successfully.";
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("Login.aspx");
         }
     }
 }

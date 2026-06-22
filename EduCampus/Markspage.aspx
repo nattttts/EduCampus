@@ -1,5 +1,4 @@
-<%@ Page Language="C#" 
-    AutoEventWireup="true" 
+<%@ Page Language="C#" AutoEventWireup="true" 
     CodeBehind="Markspage.aspx.cs" 
     Inherits="lecturer.Markspage" %>
 
@@ -9,54 +8,51 @@
 <head runat="server">
     <title>Marks Management</title>
 
-    <style>
-        body {
-            background-color: #A4D8FF;
-            font-family: Arial;
-        }
-
-        .container {
-            width: 1200px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .button-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .btn {
-            width: 130px;
-            height: 40px;
-        }
-
-        .markBox {
-            width: 70px;
-        }
-
-        .message {
-            display: block;
-            margin: 10px 0;
-            font-weight: bold;
-            color: #b00020;
-        }
-    </style>
+        <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+    <body>
+    <form id="form1" runat="server">
+        <!-- Navigation bar -->
+        <nav class="navbar navbar-expand-lg bg-white">
+            <div class="container-fluid">
+                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
 
-<form id="form1" runat="server">
+                <div class="collapse navbar-collapse">
+                    <!-- Menu -->
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="Markspage.aspx">Marks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Profile</a>
+                        </li>
+                    </ul>
+
+                    <!-- Logout button -->
+                    <asp:Button ID="btnLogout" runat="server"
+                        Text="Logout"
+                        CssClass="btn btn-danger"
+                        OnClick="btnLogout_Click" />
+
+                </div>
+
+            </div>
+        </nav>
 
 <div class="container">
 
@@ -184,6 +180,5 @@
 </div>
 
 </form>
-
 </body>
 </html>

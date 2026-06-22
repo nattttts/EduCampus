@@ -271,8 +271,9 @@
       <DependentUpon>Attendance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Attendance.aspx.designer.cs">
-      <DependentUpon>Attendance.aspx</DependentUpon>
+	  <Compile Include="Attendance.aspx.designer.cs">
+		  <DependentUpon>Attendance.aspx</DependentUpon>
+	  </Compile>
     <Compile Include="AssignLecturer.aspx.cs">
       <DependentUpon>AssignLecturer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -323,8 +324,9 @@
       <DependentUpon>Results.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Results.aspx.designer.cs">
-      <DependentUpon>Results.aspx</DependentUpon>
+		<Compile Include="Results.aspx.designer.cs">
+			<DependentUpon>Results.aspx</DependentUpon>
+		</Compile>
     <Compile Include="ManageCalendar.aspx.cs">
       <DependentUpon>ManageCalendar.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -416,6 +418,7 @@
     </Compile>
     <Compile Include="StudentProfile.aspx.designer.cs">
       <DependentUpon>StudentProfile.aspx</DependentUpon>
+	</Compile>
     <Compile Include="StudentTranscript.aspx.cs">
       <DependentUpon>StudentTranscript.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -83,7 +83,7 @@
         runat="server"
         AutoGenerateColumns="False"
         CssClass="table table-bordered table-striped"
-        EmptyDataText="You have not enrolled in any courses. Course notes are only available for your enrolled courses.">
+        EmptyDataText="No notes available. Your course enrollment must be approved before you can access course notes.">
 
         <Columns>
 

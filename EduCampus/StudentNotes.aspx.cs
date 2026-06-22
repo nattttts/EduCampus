@@ -55,6 +55,7 @@ namespace EduCampus
                     ON s.UserID = u.UserID
 
                 WHERE u.Email = @Email
+                AND em.Status = 'Approved'
 
                 ORDER BY c.CourseCode";
 

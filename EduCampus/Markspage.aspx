@@ -1,5 +1,6 @@
-<%@ Page Language="C#" AutoEventWireup="true"
-    CodeFile="Markspage.aspx.cs"
+<%@ Page Language="C#" 
+    AutoEventWireup="true" 
+    CodeBehind="Markspage.aspx.cs" 
     Inherits="lecturer.Markspage" %>
 
 <!DOCTYPE html>

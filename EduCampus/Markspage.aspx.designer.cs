@@ -11,7 +11,7 @@ namespace lecturer
 {
 
 
-    public partial class Marks
+    public partial class Markspage
     {
 
         /// <summary>
@@ -42,13 +42,22 @@ namespace lecturer
         protected global::System.Web.UI.WebControls.DropDownList ddlCourse;
 
         /// <summary>
-        /// btnFilter control.
+        /// btnLoadStudents control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFilter;
+        protected global::System.Web.UI.WebControls.Button btnLoadStudents;
+
+        /// <summary>
+        /// lblMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMessage;
 
         /// <summary>
         /// gvMarks control.

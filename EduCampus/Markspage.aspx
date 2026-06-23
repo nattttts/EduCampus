@@ -1,16 +1,16 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="Markspage.aspx.cs"
+﻿<<%@ Page Language="C#" AutoEventWireup="true" 
+    CodeBehind="Markspage.aspx.cs" 
     Inherits="EduCampus.Markspage" %>
 
-    <!DOCTYPE html>
-    <html>
-    <head runat="server">
+<!DOCTYPE html>
+<html>
+<head runat="server">
     <title>Marks Management</title>
 
         <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    </head>
+</head>
 
     <body>
     <form id="form1" runat="server">

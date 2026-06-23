@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 
 namespace EduCampus
@@ -190,15 +191,15 @@ namespace EduCampus
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 string query = @"
-                    SELECT 
-                        CM.FinalGrade,
-                        COUNT(*) AS TotalStudents
-                    FROM CourseMarks CM
-                    INNER JOIN EnrollmentDetails ED 
-                        ON CM.DetailID = ED.DetailID
-                    WHERE ED.OfferingID = @OfferingID
-                    GROUP BY CM.FinalGrade
-                    ORDER BY CM.FinalGrade";
+            SELECT 
+                CM.FinalGrade,
+                COUNT(*) AS TotalStudents
+            FROM CourseMarks CM
+            INNER JOIN EnrollmentDetails ED 
+                ON CM.DetailID = ED.DetailID
+            WHERE ED.OfferingID = @OfferingID
+            GROUP BY CM.FinalGrade
+            ORDER BY CM.FinalGrade";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@OfferingID", ddlCourse.SelectedValue);
@@ -213,54 +214,16 @@ namespace EduCampus
                 }
             }
 
-            GradeLabelsJson = ToJsonStringArray(gradeLabels);
-            GradeDataJson = ToJsonNumberArray(gradeData);
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            GradeLabelsJson = js.Serialize(gradeLabels);
+            GradeDataJson = js.Serialize(gradeData);
         }
 
         private void ClearGradeChart()
         {
             GradeLabelsJson = "[]";
             GradeDataJson = "[]";
-        }
-
-        private string ToJsonStringArray(List<string> values)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[");
-
-            for (int i = 0; i < values.Count; i++)
-            {
-                if (i > 0)
-                {
-                    sb.Append(",");
-                }
-
-                sb.Append(""");
-                sb.Append(HttpUtility.JavaScriptStringEncode(values[i]));
-                sb.Append(""");
-            }
-
-            sb.Append("]");
-            return sb.ToString();
-        }
-
-        private string ToJsonNumberArray(List<int> values)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[");
-
-            for (int i = 0; i < values.Count; i++)
-            {
-                if (i > 0)
-                {
-                    sb.Append(",");
-                }
-
-                sb.Append(values[i]);
-            }
-
-            sb.Append("]");
-            return sb.ToString();
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

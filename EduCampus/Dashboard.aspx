@@ -58,92 +58,115 @@
 
         <style>
         body {
-            background-color: #A4D8FF;
-            font-family: Arial;
-        }
+    background-color: #A4D8FF;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
 
-        .container {
-            width: 1100px;
-            margin: 30px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto;
+    text-align: center;
+}
 
-        .filter-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+.section {
+    margin-top: 40px;
+    text-align: center;
+}
 
-        .section {
-            margin-top: 30px;
-        }
+h2, h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        .grid {
-            width: 100%;
-        }
+.grid {
+    margin: 0 auto;
+    width: auto;
+}
 
-        h2, h3 {
-            text-align: center;
-        }
+asp\:GridView,
+table {
+    margin: 0 auto;
+}
+
+select {
+    padding: 8px;
+    min-width: 450px;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.message {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+}
     </style>
+
+    <div class="container">
 
     <h2>Lecturer Dashboard</h2>
 
+    <div class="section">
+        <h3>Assigned Courses</h3>
+        <asp:GridView ID="gvAssignedCourses"
+            runat="server"
+            CssClass="grid">
+        </asp:GridView>
+    </div>
 
-    <h3>Assigned Courses</h3>
+    <div class="section">
+        <h3>Select Course</h3>
 
-    <asp:GridView ID="gvAssignedCourses" runat="server"
-        AutoGenerateColumns="False"
-        BorderWidth="1">
-        <Columns>
-            <asp:BoundField DataField="OfferingID" HeaderText="Offering ID" />
-            <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
-            <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
-            <asp:BoundField DataField="Session" HeaderText="Session" />
-        </Columns>
-    </asp:GridView>
+        <asp:DropDownList
+            ID="ddlCourse"
+            runat="server"
+            AutoPostBack="true"
+            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+        </asp:DropDownList>
 
-    <hr />
+        <br /><br />
 
-    <h3>Select Course</h3>
+        <asp:Label
+            ID="lblMessage"
+            runat="server"
+            CssClass="message">
+        </asp:Label>
+    </div>
 
-    <asp:DropDownList ID="ddlCourse" runat="server"
-        AutoPostBack="true"
-        OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-    </asp:DropDownList>
+    <div class="section">
+        <h3>Poor Attendance Students</h3>
 
-    <br /><br />
+        <asp:GridView
+            ID="gvPoorAttendance"
+            runat="server"
+            CssClass="grid">
+        </asp:GridView>
+    </div>
 
-    <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
+    <div class="section">
+        <h3>Student Grade Distribution</h3>
 
-    <hr />
+        <div class="chart-container">
+    <asp:Chart ID="chartGrades" runat="server" Width="700px" Height="400px">
+        <Series>
+            <asp:Series Name="Grades" ChartType="Column"></asp:Series>
+        </Series>
 
-    <h3>Poor Attendance Students</h3>
+        <ChartAreas>
+            <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
+        </ChartAreas>
+    </asp:Chart>
+</div>
+        </div>
+    </div>
 
-    <asp:GridView ID="gvPoorAttendance" runat="server"
-        AutoGenerateColumns="False"
-        BorderWidth="1">
-        <Columns>
-            <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
-            <asp:BoundField DataField="FullName" HeaderText="Student Name" />
-            <asp:BoundField DataField="TotalClass" HeaderText="Total Classes" />
-            <asp:BoundField DataField="AbsentCount" HeaderText="Absent" />
-            <asp:BoundField DataField="AttendancePercent" HeaderText="Attendance %" />
-        </Columns>
-    </asp:GridView>
-
-    <h3>Student Grade Distribution</h3>
-
-    <asp:Chart ID="chartGrades" runat="server" Width="600px" Height="350px">
-    <Series>
-        <asp:Series Name="Grades" ChartType="Column"></asp:Series>
-    </Series>
-    <ChartAreas>
-        <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-    </ChartAreas>
-</asp:Chart>
+</div>
 
 </form>
 </body>

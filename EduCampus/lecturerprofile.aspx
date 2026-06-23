@@ -25,21 +25,23 @@
             <ul class="navbar-nav me-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="Dashboard.aspx">Home</a>
+                    <a class="nav-link" href="LecturerDashboard.aspx">Dashboard</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="CourseMaterials.aspx">Course</a>
+                    <a class="nav-link" href="CourseMaterial.aspx">Course Materials</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                    <a class="nav-link" href="AttendanceManagement.aspx">Attendance</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="Markspage.aspx">Marks</a>
+                    <a class="nav-link" href="LecturerMarks.aspx">Marks</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link" href="LecturerAnnouncements.aspx">Announcements</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="LecturerProfile.aspx">Profile</a>
                 </li>

@@ -1,0 +1,301 @@
+﻿using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.UI.WebControls;
+
+namespace EduCampus
+{
+    public partial class ManageProgramme : System.Web.UI.Page
+    {
+        string connStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Protect page (must login first)
+            if (Session["Role"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            if (Session["Role"].ToString() != "Admin")
+            {
+                Response.Redirect("AccessDenied.aspx");
+                return;
+            }
+
+            if (!IsPostBack)
+            {
+                LoadProgrammes();
+            }
+        }
+
+        // Logout
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();              // clear session
+            Response.Redirect("Login.aspx"); // go back to login
+        }
+
+        // Load programme list
+        private void LoadProgrammes()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Programmes", conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvProgramme.DataSource = dt;
+                gvProgramme.DataBind();
+            }
+        }
+        private void SearchProgrammes()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                // Search programme
+                string query = @"
+                    SELECT 
+                        ProgrammeID,
+                        ProgrammeCode,
+                        ProgrammeName
+                    FROM Programmes
+                    WHERE ProgrammeCode LIKE @search
+                        OR ProgrammeName LIKE @search";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@search", "%" + txtSearch.Text.Trim() + "%");
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvProgramme.DataSource = dt;
+                gvProgramme.DataBind();
+            }
+        }
+
+        // Add programme
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validate that all fields have been filled in
+                if (txtCode.Text.Trim() == "" || txtName.Text.Trim() == "")
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = "Please fill in all fields.";
+                    return;
+                }
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    // Check if any duplicate programme code
+                    string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code";
+
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
+
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        lblMsg.ForeColor = System.Drawing.Color.Red;
+                        lblMsg.Text = "Programme code already exists.";
+                        return;
+                    }
+
+                    // Insert programme
+                    string query = "INSERT INTO Programmes (ProgrammeCode, ProgrammeName) VALUES (@code, @name)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@code", txtCode.Text.Trim().ToUpper());
+                    cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                lblMsg.ForeColor = System.Drawing.Color.Green;
+                lblMsg.Text = "Programme added successfully!";
+
+                // Clear form fields after successful add programme
+                txtCode.Text = "";
+                txtName.Text = "";
+
+                LoadProgrammes();
+            }
+            catch (Exception ex)
+            {
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Error: " + ex.Message;
+            }
+        }
+
+        // Clear button
+        protected void btnClear_Click(object sender, EventArgs e)
+        {
+            txtCode.Text = "";
+            txtName.Text = "";
+            lblMsg.Text = "";
+        }
+
+        // Search
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            SearchProgrammes();
+        }
+
+        private void RefreshProgrammeGrid()
+        {
+            if (txtSearch.Text.Trim() == "")
+                LoadProgrammes();
+            else
+                SearchProgrammes();
+        }
+
+        // Reset
+        protected void btnReset_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+            RefreshProgrammeGrid();
+        }
+
+        // Edit mode
+        protected void gvProgramme_RowEditing(object sender, System.Web.UI.WebControls.GridViewEditEventArgs e)
+        {
+            gvProgramme.EditIndex = e.NewEditIndex;
+            RefreshProgrammeGrid();
+        }
+
+        // Update
+        protected void gvProgramme_RowUpdating(object sender, System.Web.UI.WebControls.GridViewUpdateEventArgs e)
+        {
+            int id = Convert.ToInt32(gvProgramme.DataKeys[e.RowIndex].Value);
+
+            string code = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[1].Controls[0]).Text;
+            string name = ((System.Web.UI.WebControls.TextBox)gvProgramme.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
+
+            // Validate that all fields have been filled in
+            if (code.Trim() == "" || name.Trim() == "")
+            {
+                lblMsg.ForeColor = System.Drawing.Color.Red;
+                lblMsg.Text = "Please fill in all fields.";
+
+                gvProgramme.EditIndex = -1;
+                RefreshProgrammeGrid();
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                // Check if any duplicate programme code
+                string checkQuery = "SELECT COUNT(*) FROM Programmes WHERE ProgrammeCode = @code AND ProgrammeID != @id";
+
+                SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+
+                checkCmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
+                checkCmd.Parameters.AddWithValue("@id", id);
+
+                int count = (int)checkCmd.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = "Programme code already exists.";
+                    return;
+                }
+
+                // Update programme information
+                string query = "UPDATE Programmes SET ProgrammeCode=@code, ProgrammeName=@name WHERE ProgrammeID=@id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@code", code.Trim().ToUpper());
+                cmd.Parameters.AddWithValue("@name", name);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            // Exit edit mode and refresh the programme list
+            gvProgramme.EditIndex = -1;
+            RefreshProgrammeGrid();
+
+            lblMsg.ForeColor = System.Drawing.Color.Green;
+            lblMsg.Text = "Programme updated successfully!";
+        }
+
+        // Cancel
+        protected void gvProgramme_RowCancelingEdit(object sender, System.Web.UI.WebControls.GridViewCancelEditEventArgs e)
+        {
+            gvProgramme.EditIndex = -1;
+            RefreshProgrammeGrid();
+        }
+
+        // Delete
+        protected void gvProgramme_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        { 
+            int id = Convert.ToInt32(gvProgramme.DataKeys[e.RowIndex].Value);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                // Check if programme is assigned to any courses
+                string checkCourseQuery = "SELECT COUNT(*) FROM Courses WHERE ProgrammeID=@id";
+
+                SqlCommand checkCourseCmd = new SqlCommand(checkCourseQuery, conn);
+                checkCourseCmd.Parameters.AddWithValue("@id", id);
+
+                int courseCount = Convert.ToInt32(checkCourseCmd.ExecuteScalar());
+
+                // Check if programme is assigned to any students
+                string checkStudentQuery = "SELECT COUNT(*) FROM Students WHERE ProgrammeID=@id";
+
+                SqlCommand checkStudentCmd = new SqlCommand(checkStudentQuery, conn);
+                checkStudentCmd.Parameters.AddWithValue("@id", id);
+
+                int studentCount = Convert.ToInt32(checkStudentCmd.ExecuteScalar());
+
+                // If programme is assigned to courses or students, prevent deletion and show error message
+                if (courseCount > 0 && studentCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {courseCount} course(s) and {studentCount} student(s).";
+                    return;
+                }
+                else if (courseCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {courseCount} course(s).";
+                    return;
+                }
+                else if (studentCount > 0)
+                {
+                    lblMsg.ForeColor = System.Drawing.Color.Red;
+                    lblMsg.Text = $"Cannot delete programme: programme is assigned to {studentCount} student(s).";
+                    return;
+                }
+
+                // Delete only when programme no assigned to any course and student
+                string query = "DELETE FROM Programmes WHERE ProgrammeID=@id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+            // Refresh the programme list after successful deletion
+            RefreshProgrammeGrid();
+
+            lblMsg.ForeColor = System.Drawing.Color.Green;
+            lblMsg.Text = "Programme deleted successfully!";
+        }
+    }
+}

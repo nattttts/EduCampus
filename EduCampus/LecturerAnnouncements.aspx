@@ -21,7 +21,7 @@
                     <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="Dashboard.aspx">Dashboard</a>
+                            <a class="nav-link" href="LecturerDashboard.aspx">Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="CourseMaterial.aspx">Course Materials</a>

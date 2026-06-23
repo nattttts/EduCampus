@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="Dashboard.aspx.cs"
+    CodeBehind="LecturerDashboard.aspx.cs"
     Inherits="EduCampus.Dashboard" %>
 
 <!DOCTYPE html>

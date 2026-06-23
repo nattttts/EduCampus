@@ -123,7 +123,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="CourseMaterial.aspx" />
-    <Content Include="Dashboard.aspx" />
+    <Content Include="LecturerDashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -234,12 +234,12 @@
     <Compile Include="CourseMaterial.aspx.designer.cs">
       <DependentUpon>CourseMaterial.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Dashboard.aspx.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
+    <Compile Include="LecturerDashboard.aspx.cs">
+      <DependentUpon>LecturerDashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Dashboard.aspx.designer.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
+    <Compile Include="LecturerDashboard.aspx.designer.cs">
+      <DependentUpon>LecturerDashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>

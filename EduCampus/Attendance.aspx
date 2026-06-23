@@ -38,7 +38,7 @@
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Profile</a>
+                            <a class="nav-link" href="lecturerprofile.aspx">Profile</a>
                         </li>
                     </ul>
 

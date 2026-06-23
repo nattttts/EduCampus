@@ -89,19 +89,14 @@
     </div>
 
     <asp:GridView
-        ID="gvAttendance"
-        runat="server"
-        AutoGenerateColumns="False"
-        Width="100%"
-        BorderWidth="1">
+    ID="gvAttendance"
+    runat="server"
+    AutoGenerateColumns="False"
+    DataKeyNames="DetailID,AttendanceID"
+    Width="100%"
+    BorderWidth="1">
 
         <Columns>
-            <asp:TemplateField Visible="false">
-                <ItemTemplate>
-                    <asp:HiddenField ID="hfAttendanceID" runat="server" Value='<%# Eval("AttendanceID") %>' />
-                    <asp:HiddenField ID="hfDetailID" runat="server" Value='<%# Eval("DetailID") %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
 
             <asp:BoundField
                 DataField="StudentID"
@@ -124,7 +119,6 @@
                         Enabled="false">
                         <asp:ListItem Value="Present">Present</asp:ListItem>
                         <asp:ListItem Value="Absent">Absent</asp:ListItem>
-                        <asp:ListItem Value="Late">Late</asp:ListItem>
                     </asp:DropDownList>
                 </ItemTemplate>
             </asp:TemplateField>

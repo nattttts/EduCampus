@@ -255,17 +255,7 @@ namespace EduCampus
 
                 foreach (GridViewRow row in gvAttendance.Rows)
                 {
-                    HiddenField hfDetailID = (HiddenField)row.FindControl("hfDetailID");
-                    DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
-                    TextBox txtRemarks = (TextBox)row.FindControl("txtRemarks");
-
-                    if (hfDetailID == null || string.IsNullOrWhiteSpace(hfDetailID.Value))
-                        continue;
-
-                    if (ddlStatus == null)
-                        continue;
-
-                    int detailID = Convert.ToInt32(hfDetailID.Value);
+                    int detailID = Convert.ToInt32(gvAttendance.DataKeys[row.RowIndex]["DetailID"]);
 
                     SqlCommand cmd = new SqlCommand(
                         @"IF EXISTS (

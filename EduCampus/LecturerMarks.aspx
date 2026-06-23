@@ -104,6 +104,7 @@
                 <ItemStyle CssClass="d-none" />
                     <HeaderStyle CssClass="d-none" />
                 <ItemTemplate>
+                    <asp:HiddenField ID="hfStudentID" runat="server" Value='<%# Eval("StudentID") %>' />
                     <asp:HiddenField ID="hfDetailID" runat="server" Value='<%# Eval("DetailID") %>' />
                 </ItemTemplate>
             </asp:TemplateField>

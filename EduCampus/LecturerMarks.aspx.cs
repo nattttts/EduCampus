@@ -280,6 +280,35 @@ namespace EduCampus
                     decimal gradePoint;
                     CalculateGrade(finalMark, out grade, out gradePoint);
 
+                    bool marksChanged = true;
+
+                    SqlCommand checkCmd = new SqlCommand(
+                    @"SELECT AssignmentMark,
+                             QuizMark,
+                             MidTestMark,
+                             FinalExamMark
+                      FROM CourseMarks
+                      WHERE DetailID = @DetailID", conn);
+
+                    checkCmd.Parameters.AddWithValue("@DetailID", detailID);
+
+                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            decimal oldAssignment = Convert.ToDecimal(reader["AssignmentMark"]);
+                            decimal oldQuiz = Convert.ToDecimal(reader["QuizMark"]);
+                            decimal oldMidTest = Convert.ToDecimal(reader["MidTestMark"]);
+                            decimal oldFinalExam = Convert.ToDecimal(reader["FinalExamMark"]);
+
+                            marksChanged =
+                                oldAssignment != assignment ||
+                                oldQuiz != quiz ||
+                                oldMidTest != midTest ||
+                                oldFinalExam != finalExam;
+                        }
+                    }
+
                     SqlCommand cmd = new SqlCommand(
                         @"IF EXISTS (SELECT 1 FROM CourseMarks WHERE DetailID = @DetailID)
                           BEGIN
@@ -311,6 +340,38 @@ namespace EduCampus
                     cmd.Parameters.AddWithValue("@GradePoint", gradePoint);
 
                     cmd.ExecuteNonQuery();
+
+                    if (marksChanged)
+                    {
+                        HiddenField hfStudentID = (HiddenField)row.FindControl("hfStudentID");
+
+                        string studentID = hfStudentID.Value;
+
+                        // Get UserID from StudentID
+                        SqlCommand userCmd = new SqlCommand(
+                        @"SELECT UserID
+                          FROM Students
+                          WHERE StudentID = @StudentID", conn);
+
+                        userCmd.Parameters.AddWithValue("@StudentID", studentID);
+
+                        int userID = Convert.ToInt32(userCmd.ExecuteScalar());
+
+                        // Insert notification
+                        SqlCommand notificationCmd = new SqlCommand(
+                        @"INSERT INTO Notifications
+                          (Title, Message, UserID)
+                          VALUES
+                          (@Title, @Message, @UserID)", conn);
+
+                        notificationCmd.Parameters.AddWithValue("@Title", "Grade Updated");
+
+                        notificationCmd.Parameters.AddWithValue("@Message", "Your grade has been updated.");
+
+                        notificationCmd.Parameters.AddWithValue("@UserID", userID);
+
+                        notificationCmd.ExecuteNonQuery();
+                    }
                 }
             }
 

@@ -82,6 +82,12 @@ CREATE TABLE CourseOfferings (
 
 -- ANNOUNCEMENTS TABLE
 CREATE TABLE Announcements (
+    AnnouncementID INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(100) NOT NULL,
+    Message NVARCHAR(MAX) NOT NULL,
+    PostedDateTime DATETIME DEFAULT GETDATE(),
+    OfferingID INT,
+
     FOREIGN KEY (OfferingID) REFERENCES CourseOfferings(OfferingID)
 );
 

@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace EduCampus
@@ -192,14 +193,14 @@ namespace EduCampus
                 gvAttendance.DataSource = dt;
                 gvAttendance.DataBind();
 
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    DropDownList ddlStatus =
-                        (DropDownList)gvAttendance.Rows[i].FindControl("ddlStatus");
+                //for (int i = 0; i < dt.Rows.Count; i++)
+                //{
+                //    DropDownList ddlStatus =
+                //        (DropDownList)gvAttendance.Rows[i].FindControl("ddlStatus");
 
-                    if (ddlStatus != null)
-                        ddlStatus.SelectedValue = dt.Rows[i]["Status"].ToString();
-                }
+                //    if (ddlStatus != null)
+                //        ddlStatus.SelectedValue = dt.Rows[i]["Status"].ToString();
+                //}
 
                 btnEdit.Enabled = dt.Rows.Count > 0;
                 btnSave.Enabled = false;
@@ -255,18 +256,14 @@ namespace EduCampus
 
                 foreach (GridViewRow row in gvAttendance.Rows)
                 {
-                    HiddenField hfDetailID = (HiddenField)row.FindControl("hfDetailID");
+                    int detailID = Convert.ToInt32(gvAttendance.DataKeys[row.RowIndex].Value);
+
                     DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
                     TextBox txtRemarks = (TextBox)row.FindControl("txtRemarks");
 
-                    if (hfDetailID == null || string.IsNullOrWhiteSpace(hfDetailID.Value))
-                        continue;
-
                     if (ddlStatus == null)
                         continue;
-
-                    int detailID = Convert.ToInt32(hfDetailID.Value);
-
+                    
                     SqlCommand cmd = new SqlCommand(
                         @"IF EXISTS (
                       SELECT 1 FROM Attendance
@@ -297,8 +294,25 @@ namespace EduCampus
                 }
             }
 
-            LoadStudents();
+            //LoadStudents();
+            btnSave.Enabled = false;
+            btnEdit.Enabled = true;
             lblMessage.Text = "Attendance saved successfully.";
+        }
+
+        protected void gvAttendance_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                DropDownList ddlStatus = (DropDownList)e.Row.FindControl("ddlStatus");
+
+                if (ddlStatus != null)
+                {
+                    ddlStatus.Enabled = false;
+                    string status = DataBinder.Eval(e.Row.DataItem, "Status").ToString();
+                    ddlStatus.SelectedValue = status;
+                }
+            }
         }
 
 

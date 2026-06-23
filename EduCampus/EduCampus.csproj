@@ -103,7 +103,7 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="AccessDenied.aspx" />
-    <Content Include="Attendance.aspx" />
+    <Content Include="AttendanceManagement.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -213,12 +213,12 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Attendance.aspx.cs">
-      <DependentUpon>Attendance.aspx</DependentUpon>
+    <Compile Include="AttendanceManagement.aspx.cs">
+      <DependentUpon>AttendanceManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Attendance.aspx.designer.cs">
-      <DependentUpon>Attendance.aspx</DependentUpon>
+    <Compile Include="AttendanceManagement.aspx.designer.cs">
+      <DependentUpon>AttendanceManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>

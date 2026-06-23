@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="Attendance.aspx.cs"
+    CodeBehind="AttendanceManagement.aspx.cs"
     Inherits="EduCampus.Attendance" %>
 
 <!DOCTYPE html>
@@ -93,13 +93,15 @@
         runat="server"
         AutoGenerateColumns="False"
         Width="100%"
-        BorderWidth="1">
+        BorderWidth="1"
+        EnableViewState="true"
+        DataKeyNames="DetailID"
+        OnRowDataBound="gvAttendance_RowDataBound">
 
         <Columns>
             <asp:TemplateField Visible="false">
                 <ItemTemplate>
                     <asp:HiddenField ID="hfAttendanceID" runat="server" Value='<%# Eval("AttendanceID") %>' />
-                    <asp:HiddenField ID="hfDetailID" runat="server" Value='<%# Eval("DetailID") %>' />
                 </ItemTemplate>
             </asp:TemplateField>
 
@@ -120,8 +122,7 @@
                 <ItemTemplate>
                     <asp:DropDownList
                         ID="ddlStatus"
-                        runat="server"
-                        Enabled="false">
+                        runat="server">
                         <asp:ListItem Value="Present">Present</asp:ListItem>
                         <asp:ListItem Value="Absent">Absent</asp:ListItem>
                     </asp:DropDownList>

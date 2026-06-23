@@ -27,7 +27,7 @@
                             <a class="nav-link" href="CourseMaterial.aspx">Course Materials</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="Attendance.aspx">Attendance</a>
+                            <a class="nav-link" href="AttendanceManagement.aspx">Attendance</a>
                         </li>
                          <li class="nav-item">
                             <a class="nav-link" href="Markspage.aspx">Marks</a>

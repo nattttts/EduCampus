@@ -21,10 +21,10 @@
                     <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="Dashboard">Home</a>
+                            <a class="nav-link" href="Dashboard.aspx">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="CourseMaterial">Courses</a>
+                            <a class="nav-link" href="CourseMaterial.aspx">Course Materials</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Attendance.aspx">Attendance</a>

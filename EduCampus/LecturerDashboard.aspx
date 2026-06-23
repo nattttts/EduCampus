@@ -57,7 +57,6 @@
         <style>
             body {
                 background-color: #A4D8FF;
-                font-family: Arial, sans-serif;
                 margin: 0;
             }
 

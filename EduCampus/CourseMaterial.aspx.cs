@@ -73,7 +73,7 @@ namespace EduCampus
                     ",
                     conn);
 
-                cmd.Parameters.AddWithValue("@LecturerID", GetLecturerID());
+                cmd.Parameters.AddWithValue("@LecturerID", GetLecturerId());
 
                 ddlCourse.DataSource = cmd.ExecuteReader();
                 ddlCourse.DataTextField = "CourseDisplay";

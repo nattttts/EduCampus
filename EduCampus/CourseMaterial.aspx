@@ -19,7 +19,7 @@
                 <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
 
                 <div class="collapse navbar-collapse">
-                    <!-- Menu -->
+           
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="#">Home</a>
@@ -51,10 +51,6 @@
 
             </div>
         </nav>
-</form>
-<body>
-
-<form id="form1" runat="server">
 
     <div class="page-title">View Course</div>
 

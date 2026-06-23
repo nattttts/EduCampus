@@ -11,7 +11,7 @@ namespace EduCampus
 {
 
 
-    public partial class Attendance
+    public partial class AttendanceManagement
     {
 
         /// <summary>

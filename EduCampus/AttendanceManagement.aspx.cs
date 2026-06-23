@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 namespace EduCampus
 
 {
-    public partial class Attendance : System.Web.UI.Page
+    public partial class AttendanceManagement : System.Web.UI.Page
     {
         private readonly string connStr =
             ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;

@@ -1,4 +1,4 @@
-﻿<<%@ Page Language="C#" AutoEventWireup="true" 
+﻿<%@ Page Language="C#" AutoEventWireup="true" 
     CodeBehind="Markspage.aspx.cs" 
     Inherits="EduCampus.Markspage" %>
 

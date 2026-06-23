@@ -52,8 +52,6 @@
             </div>
         </nav>
 
-    <div class="page-title">View Course</div>
-
     <div class="container">
 
         <div class="box">

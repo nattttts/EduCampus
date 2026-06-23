@@ -49,6 +49,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DataVisualization">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
@@ -125,7 +128,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="LecturerAnnouncements.aspx" />
-    <Content Include="lecturerprofile.aspx" />
+    <Content Include="LecturerProfile.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logo.jpeg" />
     <Content Include="Markspage.aspx" />
@@ -255,12 +258,12 @@
     <Compile Include="LecturerAnnouncements.aspx.designer.cs">
       <DependentUpon>LecturerAnnouncements.aspx</DependentUpon>
     </Compile>
-    <Compile Include="lecturerprofile.aspx.cs">
-      <DependentUpon>lecturerprofile.aspx</DependentUpon>
+    <Compile Include="LecturerProfile.aspx.cs">
+      <DependentUpon>LecturerProfile.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="lecturerprofile.aspx.designer.cs">
-      <DependentUpon>lecturerprofile.aspx</DependentUpon>
+    <Compile Include="LecturerProfile.aspx.designer.cs">
+      <DependentUpon>LecturerProfile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>

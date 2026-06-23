@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
+using System.Web;
 using System.Web.UI.WebControls;
-using System.Web.UI.DataVisualization.Charting;
 
 namespace EduCampus
 {
     public partial class Dashboard : System.Web.UI.Page
     {
         string conStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
+
+        protected string GradeLabelsJson = "[]";
+        protected string GradeDataJson = "[]";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -179,6 +184,9 @@ namespace EduCampus
 
         private void LoadGradeChart()
         {
+            List<string> gradeLabels = new List<string>();
+            List<int> gradeData = new List<int>();
+
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 string query = @"
@@ -198,28 +206,61 @@ namespace EduCampus
                 con.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
 
-                ClearGradeChart();
-
                 while (dr.Read())
                 {
-                    string grade = dr["FinalGrade"].ToString();
-                    int totalStudents = Convert.ToInt32(dr["TotalStudents"]);
-
-                    chartGrades.Series["Grades"].Points.AddXY(grade, totalStudents);
+                    gradeLabels.Add(dr["FinalGrade"].ToString());
+                    gradeData.Add(Convert.ToInt32(dr["TotalStudents"]));
                 }
-
-                chartGrades.ChartAreas["ChartArea1"].AxisX.Title = "Grade";
-                chartGrades.ChartAreas["ChartArea1"].AxisY.Title = "Number of Students";
-                chartGrades.Series["Grades"].IsValueShownAsLabel = true;
-                chartGrades.Series["Grades"].ChartType = SeriesChartType.Column;
             }
+
+            GradeLabelsJson = ToJsonStringArray(gradeLabels);
+            GradeDataJson = ToJsonNumberArray(gradeData);
         }
 
         private void ClearGradeChart()
         {
-            chartGrades.Series["Grades"].Points.Clear();
-            chartGrades.ChartAreas["ChartArea1"].AxisX.Title = "Grade";
-            chartGrades.ChartAreas["ChartArea1"].AxisY.Title = "Number of Students";
+            GradeLabelsJson = "[]";
+            GradeDataJson = "[]";
+        }
+
+        private string ToJsonStringArray(List<string> values)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(",");
+                }
+
+                sb.Append(""");
+                sb.Append(HttpUtility.JavaScriptStringEncode(values[i]));
+                sb.Append(""");
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        private string ToJsonNumberArray(List<int> values)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(",");
+                }
+
+                sb.Append(values[i]);
+            }
+
+            sb.Append("]");
+            return sb.ToString();
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

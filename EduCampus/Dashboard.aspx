@@ -2,17 +2,17 @@
     CodeBehind="Dashboard.aspx.cs"
     Inherits="EduCampus.Dashboard" %>
 
-<%@ Register Assembly="System.Web.DataVisualization"
-    Namespace="System.Web.UI.DataVisualization.Charting"
-    TagPrefix="asp" %>
-
 <!DOCTYPE html>
 <html>
 <head runat="server">
     <title>Lecturer Dashboard</title>
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -34,7 +34,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="Attendance.aspx">Attendance</a>
                         </li>
-                         <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" href="Markspage.aspx">Marks</a>
                         </li>
                         <li class="nav-item">
@@ -50,124 +50,161 @@
                         Text="Logout"
                         CssClass="btn btn-danger"
                         OnClick="btnLogout_Click" />
-
                 </div>
-
             </div>
         </nav>
 
         <style>
-        body {
-    background-color: #A4D8FF;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
+            body {
+                background-color: #A4D8FF;
+                font-family: Arial, sans-serif;
+                margin: 0;
+            }
 
-.container {
-    width: 95%;
-    max-width: 1200px;
-    margin: 30px auto;
-    text-align: center;
-}
+            .container {
+                width: 95%;
+                max-width: 1200px;
+                margin: 30px auto;
+                text-align: center;
+                background: white;
+                padding: 25px;
+                border-radius: 10px;
+            }
 
-.section {
-    margin-top: 40px;
-    text-align: center;
-}
+            .section {
+                margin-top: 40px;
+                text-align: center;
+            }
 
-h2, h3 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+            h2, h3 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
 
-.grid {
-    margin: 0 auto;
-    width: auto;
-}
+            .grid {
+                margin: 0 auto;
+                width: auto;
+            }
 
-asp\:GridView,
-table {
-    margin: 0 auto;
-}
+            table {
+                margin: 0 auto;
+            }
 
-select {
-    padding: 8px;
-    min-width: 450px;
-}
+            select {
+                padding: 8px;
+                min-width: 450px;
+            }
 
-.chart-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
+            .chart-container {
+                width: 700px;
+                max-width: 100%;
+                height: 400px;
+                margin: 20px auto 0 auto;
+            }
 
-.message {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 15px;
-}
-    </style>
+            .message {
+                text-align: center;
+                font-weight: bold;
+                margin-top: 15px;
+            }
+        </style>
 
-    <div class="container">
+        <div class="container">
+            <h2>Lecturer Dashboard</h2>
 
-    <h2>Lecturer Dashboard</h2>
+            <div class="section">
+                <h3>Assigned Courses</h3>
+                <asp:GridView ID="gvAssignedCourses"
+                    runat="server"
+                    CssClass="grid">
+                </asp:GridView>
+            </div>
 
-    <div class="section">
-        <h3>Assigned Courses</h3>
-        <asp:GridView ID="gvAssignedCourses"
-            runat="server"
-            CssClass="grid">
-        </asp:GridView>
-    </div>
+            <div class="section">
+                <h3>Select Course</h3>
 
-    <div class="section">
-        <h3>Select Course</h3>
+                <asp:DropDownList
+                    ID="ddlCourse"
+                    runat="server"
+                    AutoPostBack="true"
+                    OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+                </asp:DropDownList>
 
-        <asp:DropDownList
-            ID="ddlCourse"
-            runat="server"
-            AutoPostBack="true"
-            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-        </asp:DropDownList>
+                <br /><br />
 
-        <br /><br />
+                <asp:Label
+                    ID="lblMessage"
+                    runat="server"
+                    CssClass="message">
+                </asp:Label>
+            </div>
 
-        <asp:Label
-            ID="lblMessage"
-            runat="server"
-            CssClass="message">
-        </asp:Label>
-    </div>
+            <div class="section">
+                <h3>Poor Attendance Students</h3>
 
-    <div class="section">
-        <h3>Poor Attendance Students</h3>
+                <asp:GridView
+                    ID="gvPoorAttendance"
+                    runat="server"
+                    CssClass="grid">
+                </asp:GridView>
+            </div>
 
-        <asp:GridView
-            ID="gvPoorAttendance"
-            runat="server"
-            CssClass="grid">
-        </asp:GridView>
-    </div>
+            <div class="section">
+                <h3>Student Grade Distribution</h3>
 
-    <div class="section">
-        <h3>Student Grade Distribution</h3>
-
-        <div class="chart-container">
-    <asp:Chart ID="chartGrades" runat="server" Width="700px" Height="400px">
-        <Series>
-            <asp:Series Name="Grades" ChartType="Column"></asp:Series>
-        </Series>
-
-        <ChartAreas>
-            <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-        </ChartAreas>
-    </asp:Chart>
-</div>
+                <div class="chart-container">
+                    <canvas id="gradeChart"></canvas>
+                </div>
+            </div>
         </div>
-    </div>
 
-</div>
+        <script>
+            const gradeLabels = <%= GradeLabelsJson %>;
+            const gradeData = <%= GradeDataJson %>;
 
-</form>
+            const ctx = document.getElementById('gradeChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: gradeLabels,
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: gradeData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Grade'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            title: {
+                                display: true,
+                                text: 'Number of Students'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    </form>
 </body>
 </html>

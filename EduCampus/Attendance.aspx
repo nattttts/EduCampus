@@ -124,7 +124,6 @@
                         Enabled="false">
                         <asp:ListItem Value="Present">Present</asp:ListItem>
                         <asp:ListItem Value="Absent">Absent</asp:ListItem>
-                        <asp:ListItem Value="Late">Late</asp:ListItem>
                     </asp:DropDownList>
                 </ItemTemplate>
             </asp:TemplateField>

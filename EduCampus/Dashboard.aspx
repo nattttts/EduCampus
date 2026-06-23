@@ -79,71 +79,24 @@
 
         .grid {
             width: 100%;
-            border-collapse: collapse;
-        }
-
-        .grid th {
-            background-color: #007bff;
-            color: white;
-            padding: 8px;
-        }
-
-        .grid td {
-            padding: 8px;
-            text-align: center;
         }
 
         h2, h3 {
             text-align: center;
         }
-
-        .message {
-            color: red;
-            text-align: center;
-            font-weight: bold;
-        }
     </style>
 
-<div class="container">
+    <h2>Dashboard</h2>
 
-    <h2>Lecturer Dashboard</h2>
+    <div class="filter-row">
 
-    <asp:Label
-        ID="lblMessage"
-        runat="server"
-        CssClass="message">
-    </asp:Label>
-
-    <div class="section">
-        <h3>View Assigned Courses</h3>
-
-        <asp:GridView
-            ID="gvAssignedCourses"
+        <asp:DropDownList
+            ID="ddlCourse"
             runat="server"
-            AutoGenerateColumns="False"
-            CssClass="grid">
+            AutoPostBack="true"
+            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+        </asp:DropDownList>
 
-            <Columns>
-                <asp:BoundField DataField="OfferingID" HeaderText="Offering ID" />
-                <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
-                <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
-                <asp:BoundField DataField="SessionName" HeaderText="Session" />
-            </Columns>
-
-        </asp:GridView>
-    </div>
-
-    <div class="section">
-        <h3>Select Course</h3>
-
-        <div class="filter-row">
-            <asp:DropDownList
-                ID="ddlCourse"
-                runat="server"
-                AutoPostBack="true"
-                OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-            </asp:DropDownList>
-        </div>
     </div>
 
     <div class="section">
@@ -218,8 +171,6 @@
         </asp:Chart>
 
     </div>
-
-</div>
 
 </form>
 </body>

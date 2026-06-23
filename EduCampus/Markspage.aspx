@@ -3,7 +3,6 @@
     Inherits="EduCampus.Markspage" %>
 
 <!DOCTYPE html>
-
 <html>
 <head runat="server">
     <title>Marks Management</title>

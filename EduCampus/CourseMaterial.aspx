@@ -7,19 +7,20 @@
 <head runat="server">
     <title>View Course</title>
 
+            <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 
     <body>
     <form id="form1" runat="server">
-
+        <!-- Navigation bar -->
         <nav class="navbar navbar-expand-lg bg-white">
             <div class="container-fluid">
                 <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
 
                 <div class="collapse navbar-collapse">
-           
+                    <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="#">Home</a>
@@ -41,16 +42,25 @@
                         </li>
                     </ul>
 
-               
+                    <!-- Logout button -->
                     <asp:Button ID="btnLogout" runat="server"
                         Text="Logout"
                         CssClass="btn btn-danger"
                         OnClick="btnLogout_Click" />
 
-                </div>
+        .btn {
+            padding: 8px 18px;
+            margin: 5px;
+        }
+    </style>
+</head>
 
             </div>
         </nav>
+</form>
+<body>
+
+<form id="form1" runat="server">
 
     <div class="page-title">View Course</div>
 

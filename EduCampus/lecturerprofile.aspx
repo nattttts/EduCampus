@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"
-    CodeBehind="lecturerprofile.aspx.cs"
-    Inherits="EduCampus.lecturerprofile" %>
+    CodeFile="LecturerProfile.aspx.cs"
+    Inherits="EduCampus.LecturerProfile" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<form id="form1" runat="server">
+<form id="form2" runat="server">
 
 <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
@@ -37,7 +37,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="Marks.aspx">Marks</a>
+                    <a class="nav-link" href="Markspage.aspx">Marks</a>
                 </li>
 
                 <li class="nav-item">
@@ -56,7 +56,7 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-5">
 
     <div class="row justify-content-center">
 

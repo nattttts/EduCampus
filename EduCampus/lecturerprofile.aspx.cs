@@ -4,11 +4,10 @@ using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.UI;
-using System.Xml.Linq;
 
 namespace EduCampus
 {
-    public partial class lecturerprofile : System.Web.UI.Page
+    public partial class LecturerProfile : System.Web.UI.Page
     {
         string cs = ConfigurationManager
             .ConnectionStrings["EduCampusDB"]

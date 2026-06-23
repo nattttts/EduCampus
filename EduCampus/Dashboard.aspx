@@ -56,13 +56,41 @@
             </div>
         </nav>
 
+        <style>
+        body {
+            background-color: #A4D8FF;
+            font-family: Arial;
+        }
+
+        .container {
+            width: 1100px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .grid {
+            width: 100%;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+    </style>
+
     <h2>Lecturer Dashboard</h2>
 
-    <asp:Button ID="btnLogout" runat="server"
-        Text="Logout"
-        OnClick="btnLogout_Click" />
-
-    <hr />
 
     <h3>Assigned Courses</h3>
 

@@ -131,7 +131,7 @@
     <Content Include="LecturerProfile.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Logo.jpeg" />
-    <Content Include="Markspage.aspx" />
+    <Content Include="LecturerMarks.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -272,12 +272,12 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Markspage.aspx.cs">
-      <DependentUpon>Markspage.aspx</DependentUpon>
+    <Compile Include="LecturerMarks.aspx.cs">
+      <DependentUpon>LecturerMarks.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Markspage.aspx.designer.cs">
-      <DependentUpon>Markspage.aspx</DependentUpon>
+    <Compile Include="LecturerMarks.aspx.designer.cs">
+      <DependentUpon>LecturerMarks.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">

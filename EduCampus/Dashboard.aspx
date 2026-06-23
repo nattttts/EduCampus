@@ -29,13 +29,13 @@
                             <a class="nav-link" href="Dashboard.aspx">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
+                            <a class="nav-link" href="CourseMaterial.aspx">Course Materials</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="AttendanceManagement.aspx">Attendance</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="Markspage.aspx">Marks</a>
+                            <a class="nav-link" href="LecturerMarks.aspx">Marks</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>

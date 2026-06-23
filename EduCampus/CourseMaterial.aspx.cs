@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 namespace EduCampus
 
 {
-    public partial class CourseMaterials : System.Web.UI.Page
+    public partial class CourseMaterial : System.Web.UI.Page
     {
         string connStr =
             ConfigurationManager.ConnectionStrings["EduCampusDB"]

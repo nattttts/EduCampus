@@ -2,17 +2,18 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
+using System.Web.UI.DataVisualization.Charting;
 
 namespace EduCampus
-
 {
     public partial class Dashboard : System.Web.UI.Page
     {
-        string conStr = ConfigurationManager.ConnectionStrings["EduCampusConnectionString"].ConnectionString;
+        string conStr = ConfigurationManager.ConnectionStrings["EduCampusDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["LecturerID"] == null)
+            if (Session["Email"] == null)
             {
                 Response.Redirect("Login.aspx");
                 return;
@@ -22,32 +23,58 @@ namespace EduCampus
             {
                 LoadAssignedCourses();
                 LoadCourseDropdown();
+                ClearGradeChart();
+            }
+        }
+
+        private int GetLecturerId()
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                string query = @"
+                    SELECT L.LecturerID
+                    FROM Lecturers L
+                    INNER JOIN Users U ON L.UserID = U.UserId
+                    WHERE U.Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", Session["Email"].ToString());
+
+                con.Open();
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    Response.Redirect("Login.aspx");
+                    return 0;
+                }
+
+                return Convert.ToInt32(result);
             }
         }
 
         private void LoadAssignedCourses()
         {
-            int lecturerId = Convert.ToInt32(Session["LecturerID"]);
+            int lecturerId = GetLecturerId();
 
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 string query = @"
                     SELECT 
-                        co.OfferingID,
-                        c.CourseCode,
-                        c.CourseName,
-                        s.SessionName
-                    FROM CourseOfferings co
-                    INNER JOIN Courses c ON co.CourseID = c.CourseID
-                    INNER JOIN Sessions s ON co.SessionID = s.SessionID
-                    WHERE co.LecturerID = @LecturerID";
+                        CO.OfferingID,
+                        C.CourseCode,
+                        C.CourseName,
+                        CO.Session
+                    FROM CourseOfferings CO
+                    INNER JOIN Courses C ON CO.CourseID = C.CourseID
+                    WHERE CO.LecturerID = @LecturerID
+                    ORDER BY CO.Session, C.CourseCode";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@LecturerID", lecturerId);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-
                 da.Fill(dt);
 
                 gvAssignedCourses.DataSource = dt;
@@ -57,24 +84,24 @@ namespace EduCampus
 
         private void LoadCourseDropdown()
         {
-            int lecturerId = Convert.ToInt32(Session["LecturerID"]);
+            int lecturerId = GetLecturerId();
 
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 string query = @"
                     SELECT 
-                        co.OfferingID,
-                        c.CourseCode + ' - ' + c.CourseName AS CourseDisplay
-                    FROM CourseOfferings co
-                    INNER JOIN Courses c ON co.CourseID = c.CourseID
-                    WHERE co.LecturerID = @LecturerID";
+                        CO.OfferingID,
+                        C.CourseCode + ' - ' + C.CourseName + ' (' + CO.Session + ')' AS CourseDisplay
+                    FROM CourseOfferings CO
+                    INNER JOIN Courses C ON CO.CourseID = C.CourseID
+                    WHERE CO.LecturerID = @LecturerID
+                    ORDER BY CO.Session, C.CourseCode";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@LecturerID", lecturerId);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-
                 da.Fill(dt);
 
                 ddlCourse.DataSource = dt;
@@ -82,20 +109,117 @@ namespace EduCampus
                 ddlCourse.DataValueField = "OfferingID";
                 ddlCourse.DataBind();
 
-                ddlCourse.Items.Insert(0, "-- Select Course --");
+                ddlCourse.Items.Insert(0, new ListItem("-- Select Course --", ""));
             }
         }
 
         protected void ddlCourse_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ddlCourse.SelectedIndex > 0)
+            lblMessage.Text = "";
+
+            if (string.IsNullOrEmpty(ddlCourse.SelectedValue))
             {
-                lblMessage.Text = "Selected course loaded.";
+                gvPoorAttendance.DataSource = null;
+                gvPoorAttendance.DataBind();
+                ClearGradeChart();
+                return;
             }
-            else
+
+            LoadPoorAttendance();
+            LoadGradeChart();
+        }
+
+        private void LoadPoorAttendance()
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
             {
-                lblMessage.Text = "";
+                string query = @"
+                    SELECT
+                        S.StudentID,
+                        U.FullName,
+                        COUNT(A.AttendanceID) AS TotalClass,
+                        SUM(CASE WHEN A.Status = 'Absent' THEN 1 ELSE 0 END) AS AbsentCount,
+                        CAST(
+                            (
+                                SUM(CASE WHEN A.Status = 'Present' THEN 1 ELSE 0 END) * 100.0
+                            ) / NULLIF(COUNT(A.AttendanceID), 0)
+                            AS DECIMAL(5,2)
+                        ) AS AttendancePercent
+                    FROM Attendance A
+                    INNER JOIN EnrollmentDetails ED ON A.DetailID = ED.DetailID
+                    INNER JOIN EnrollmentMaster EM ON ED.EnrolmentID = EM.EnrolmentID
+                    INNER JOIN Students S ON EM.StudentID = S.StudentID
+                    INNER JOIN Users U ON S.UserID = U.UserId
+                    WHERE ED.OfferingID = @OfferingID
+                    GROUP BY S.StudentID, U.FullName
+                    HAVING 
+                        CAST(
+                            (
+                                SUM(CASE WHEN A.Status = 'Present' THEN 1 ELSE 0 END) * 100.0
+                            ) / NULLIF(COUNT(A.AttendanceID), 0)
+                            AS DECIMAL(5,2)
+                        ) < 80
+                    ORDER BY AttendancePercent ASC";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@OfferingID", ddlCourse.SelectedValue);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvPoorAttendance.DataSource = dt;
+                gvPoorAttendance.DataBind();
+
+                lblMessage.Text = dt.Rows.Count > 0
+                    ? "Poor attendance students loaded."
+                    : "No poor attendance students found.";
             }
+        }
+
+        private void LoadGradeChart()
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                string query = @"
+                    SELECT 
+                        CM.FinalGrade,
+                        COUNT(*) AS TotalStudents
+                    FROM CourseMarks CM
+                    INNER JOIN EnrollmentDetails ED 
+                        ON CM.DetailID = ED.DetailID
+                    WHERE ED.OfferingID = @OfferingID
+                    GROUP BY CM.FinalGrade
+                    ORDER BY CM.FinalGrade";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@OfferingID", ddlCourse.SelectedValue);
+
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                ClearGradeChart();
+
+                while (dr.Read())
+                {
+                    string grade = dr["FinalGrade"].ToString();
+                    int totalStudents = Convert.ToInt32(dr["TotalStudents"]);
+
+                    chartGrades.Series["Grades"].Points.AddXY(grade, totalStudents);
+                }
+
+                chartGrades.ChartAreas["ChartArea1"].AxisX.Title = "Grade";
+                chartGrades.ChartAreas["ChartArea1"].AxisY.Title = "Number of Students";
+                chartGrades.Series["Grades"].IsValueShownAsLabel = true;
+                chartGrades.Series["Grades"].ChartType = SeriesChartType.Column;
+            }
+        }
+
+        private void ClearGradeChart()
+        {
+            chartGrades.Series["Grades"].Points.Clear();
+            chartGrades.ChartAreas["ChartArea1"].AxisX.Title = "Grade";
+            chartGrades.ChartAreas["ChartArea1"].AxisY.Title = "Number of Students";
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

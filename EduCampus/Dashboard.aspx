@@ -1,4 +1,4 @@
-﻿﻿<%@ Page Language="C#" AutoEventWireup="true"
+﻿<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="Dashboard.aspx.cs"
     Inherits="EduCampus.Dashboard" %>
 
@@ -9,25 +9,27 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>Dashboard</title>
-
+    <title>Lecturer Dashboard</title>
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 
-    <body>
+<body>
     <form id="form1" runat="server">
+        <!-- Navigation bar -->
         <nav class="navbar navbar-expand-lg bg-white">
             <div class="container-fluid">
-                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2" />
+                <img src="logo.jpeg" alt="Logo" width="50" height="50" class="me-2">
 
                 <div class="collapse navbar-collapse">
+                    <!-- Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="Dashboard.aspx">Home</a>
+                            <a class="nav-link" href="Dashboard">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="CourseMaterial.aspx">Courses</a>
+                            <a class="nav-link" href="CourseMaterial">Courses</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Attendance.aspx">Attendance</a>
@@ -39,11 +41,12 @@
                             <a class="nav-link active" href="LecturerAnnouncements.aspx">Announcements</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Profile</a>
+                            <a class="nav-link" href="LecturerProfile.aspx">Profile</a>
                         </li>
                     </ul>
 
-                    <asp:Button ID="btnLogout" runat="server"
+                    <!-- Logout button -->
+                    <asp:Button ID="Button1" runat="server"
                         Text="Logout"
                         CssClass="btn btn-danger"
                         OnClick="btnLogout_Click" />
@@ -53,124 +56,66 @@
             </div>
         </nav>
 
-    <style>
-        body {
-            background-color: #A4D8FF;
-            font-family: Arial;
-        }
+    <h2>Lecturer Dashboard</h2>
 
-        .container {
-            width: 1100px;
-            margin: 30px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
+    <asp:Button ID="btnLogout" runat="server"
+        Text="Logout"
+        OnClick="btnLogout_Click" />
 
-        .filter-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+    <hr />
 
-        .section {
-            margin-top: 30px;
-        }
+    <h3>Assigned Courses</h3>
 
-        .grid {
-            width: 100%;
-        }
+    <asp:GridView ID="gvAssignedCourses" runat="server"
+        AutoGenerateColumns="False"
+        BorderWidth="1">
+        <Columns>
+            <asp:BoundField DataField="OfferingID" HeaderText="Offering ID" />
+            <asp:BoundField DataField="CourseCode" HeaderText="Course Code" />
+            <asp:BoundField DataField="CourseName" HeaderText="Course Name" />
+            <asp:BoundField DataField="Session" HeaderText="Session" />
+        </Columns>
+    </asp:GridView>
 
-        h2, h3 {
-            text-align: center;
-        }
-    </style>
+    <hr />
 
-    <h2>Dashboard</h2>
+    <h3>Select Course</h3>
 
-    <div class="filter-row">
+    <asp:DropDownList ID="ddlCourse" runat="server"
+        AutoPostBack="true"
+        OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
+    </asp:DropDownList>
 
-        <asp:DropDownList
-            ID="ddlCourse"
-            runat="server"
-            AutoPostBack="true"
-            OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged">
-        </asp:DropDownList>
+    <br /><br />
 
-    </div>
+    <asp:Label ID="lblMessage" runat="server" ForeColor="Green"></asp:Label>
 
-    <div class="section">
+    <hr />
 
-        <h3>Poor Attendance Students</h3>
+    <h3>Poor Attendance Students</h3>
 
-        <asp:GridView
-            ID="gvPoorAttendance"
-            runat="server"
-            AutoGenerateColumns="False"
-            CssClass="grid">
+    <asp:GridView ID="gvPoorAttendance" runat="server"
+        AutoGenerateColumns="False"
+        BorderWidth="1">
+        <Columns>
+            <asp:BoundField DataField="StudentID" HeaderText="Student ID" />
+            <asp:BoundField DataField="FullName" HeaderText="Student Name" />
+            <asp:BoundField DataField="TotalClass" HeaderText="Total Classes" />
+            <asp:BoundField DataField="AbsentCount" HeaderText="Absent" />
+            <asp:BoundField DataField="AttendancePercent" HeaderText="Attendance %" />
+        </Columns>
+    </asp:GridView>
 
-            <Columns>
+    <h3>Student Grade Distribution</h3>
 
-                <asp:BoundField
-                    DataField="StudentID"
-                    HeaderText="Student ID" />
-
-                <asp:BoundField
-                    DataField="StudentName"
-                    HeaderText="Student Name" />
-
-                <asp:BoundField
-                    DataField="TotalClasses"
-                    HeaderText="Total Classes" />
-
-                <asp:BoundField
-                    DataField="PresentCount"
-                    HeaderText="Present" />
-
-                <asp:BoundField
-                    DataField="AttendancePercentage"
-                    HeaderText="Attendance %"
-                    DataFormatString="{0:N2}%" />
-
-            </Columns>
-
-        </asp:GridView>
-
-    </div>
-
-    <div class="section">
-
-        <h3>Grade Distribution</h3>
-
-        <asp:Chart
-            ID="chartGrades"
-            runat="server"
-            Width="900px"
-            Height="400px">
-
-            <ChartAreas>
-                <asp:ChartArea Name="ChartArea1">
-                    <AxisX Title="Grade"></AxisX>
-                    <AxisY Title="Number of Students"></AxisY>
-                </asp:ChartArea>
-            </ChartAreas>
-
-            <Series>
-                <asp:Series
-                    Name="Grades"
-                    ChartType="Column"
-                    XValueMember="FinalGrade"
-                    YValueMembers="StudentCount">
-                </asp:Series>
-            </Series>
-
-            <Titles>
-                <asp:Title Text="Grade Distribution"></asp:Title>
-            </Titles>
-
-        </asp:Chart>
-
-    </div>
+    <asp:Chart ID="chartGrades" runat="server" Width="600px" Height="350px">
+    <Series>
+        <asp:Series Name="Grades" ChartType="Column"></asp:Series>
+    </Series>
+    <ChartAreas>
+        <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
+    </ChartAreas>
+</asp:Chart>
 
 </form>
 </body>

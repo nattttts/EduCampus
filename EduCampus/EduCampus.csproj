@@ -106,7 +106,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="About.aspx" />
     <Content Include="AccessDenied.aspx" />
     <Content Include="AttendanceManagement.aspx" />
     <Content Include="admin.css" />
@@ -118,7 +117,6 @@
     <Content Include="AdminAnnouncements.aspx" />
     <Content Include="AdminViewEnrollment.aspx" />
     <Content Include="AssignLecturer.aspx" />
-    <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -139,7 +137,6 @@
     <Content Include="CourseMaterial.aspx" />
     <Content Include="LecturerDashboard.aspx" />
     <Content Include="CourseResults.aspx" />
-    <Content Include="Default.aspx" />
     <Content Include="EnrollmentStatistics.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -273,13 +270,6 @@
       <DependentUpon>AdminViewEnrollment.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="About.aspx.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="About.aspx.designer.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="AttendanceManagement.aspx.cs">
       <DependentUpon>AttendanceManagement.aspx</DependentUpon>
@@ -302,13 +292,6 @@
     <Compile Include="AssignLecturer.aspx.designer.cs">
       <DependentUpon>AssignLecturer.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Contact.aspx.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Contact.aspx.designer.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-    </Compile>
     <Compile Include="CourseMaterial.aspx.cs">
       <DependentUpon>CourseMaterial.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -329,13 +312,6 @@
     </Compile>
     <Compile Include="CourseResults.aspx.designer.cs">
       <DependentUpon>CourseResults.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="EnrollmentStatistics.aspx.cs">
       <DependentUpon>EnrollmentStatistics.aspx</DependentUpon>

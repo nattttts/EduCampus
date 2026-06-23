@@ -107,6 +107,7 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="AccessDenied.aspx" />
+    <Content Include="admin.css" />
     <Content Include="Attendance.aspx" />
     <Content Include="AcademicResults.aspx" />
     <Content Include="AccessDenied.aspx" />
@@ -202,6 +203,7 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
+    <Content Include="student.css" />
     <Content Include="StudentCalendar.aspx" />
     <Content Include="StudentDashboard.aspx" />
     <Content Include="StudentEnrollCourse.aspx" />
@@ -271,9 +273,9 @@
       <DependentUpon>Attendance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-	  <Compile Include="Attendance.aspx.designer.cs">
-		  <DependentUpon>Attendance.aspx</DependentUpon>
-	  </Compile>
+    <Compile Include="Attendance.aspx.designer.cs">
+      <DependentUpon>Attendance.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AssignLecturer.aspx.cs">
       <DependentUpon>AssignLecturer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -324,9 +326,9 @@
       <DependentUpon>Results.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-		<Compile Include="Results.aspx.designer.cs">
-			<DependentUpon>Results.aspx</DependentUpon>
-		</Compile>
+    <Compile Include="Results.aspx.designer.cs">
+      <DependentUpon>Results.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ManageCalendar.aspx.cs">
       <DependentUpon>ManageCalendar.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -418,7 +420,7 @@
     </Compile>
     <Compile Include="StudentProfile.aspx.designer.cs">
       <DependentUpon>StudentProfile.aspx</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="StudentTranscript.aspx.cs">
       <DependentUpon>StudentTranscript.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

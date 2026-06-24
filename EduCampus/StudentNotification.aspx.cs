@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.Services.Description;
 
 namespace EduCampus
 {
@@ -126,13 +127,25 @@ namespace EduCampus
 
                 // GET ANNOUNCEMENTS
                 string query = @"
-                    SELECT DISTINCT a.Title, a.Message, a.PostedDateTime
-                    FROM Announcements a
-                    INNER JOIN CourseOfferings co ON a.OfferingID = co.OfferingID
-                    INNER JOIN EnrollmentDetails ed ON co.OfferingID = ed.OfferingID
-                    INNER JOIN EnrollmentMaster em ON ed.EnrolmentID = em.EnrolmentID
-                    WHERE em.StudentID = @StudentID
-                    ORDER BY a.PostedDateTime DESC";
+                SELECT DISTINCT
+                       a.Title,
+                       a.Message,
+                       a.PostedDateTime
+                FROM Announcements a
+
+                LEFT JOIN CourseOfferings co
+                    ON a.OfferingID = co.OfferingID
+
+                LEFT JOIN EnrollmentDetails ed
+                    ON co.OfferingID = ed.OfferingID
+
+                LEFT JOIN EnrollmentMaster em
+                    ON ed.EnrolmentID = em.EnrolmentID
+
+                WHERE em.StudentID = @StudentID
+                   OR a.OfferingID IS NULL
+
+                ORDER BY a.PostedDateTime DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
